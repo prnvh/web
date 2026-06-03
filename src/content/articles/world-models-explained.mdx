@@ -1,47 +1,51 @@
 ---
-title: "World Models, Explained"
-subtitle: "Internal simulators, latent dynamics, and the case against token-only training"
-description: "A research note on what world models are, how they differ from LLMs, and where the field is stuck."
-date: 2026-05-20
+title: World Models, Explained
+subtitle: Internal simulators, latent dynamics, and the case for next-token world modeling.
+description: A research note on world models as internal simulators—what they predict, how they are trained, and where they fail.
+date: 2026-05-26
 type: research-note
-author: "Editorial"
-topics: ["world-models", "agi"]
-readingTime: 12
-paperInfo:
-  paperTitle: "World Models (Ha & Schmidhuber, 2018)"
-  authors: "David Ha, Jürgen Schmidhuber"
-  year: 2018
-  status: paper
-  link: "https://worldmodels.github.io/"
+topics: [World Models, Representation Learning, Planning, Evaluation]
 summary:
-  - A world model is a learned simulator of environment dynamics.
-  - Classic demos used compact latents for planning in games; modern work scales latents and combines with LLMs.
-  - The open problem is evaluation — we lack standard tests for planning-grade simulation.
-related:
-  - jepa-latent-prediction-brief
-  - why-next-token-prediction-may-not-be-enough
+  - World models learn compact dynamics of an environment in latent space.
+  - They enable planning and counterfactual reasoning without full generative decoding.
+  - Scaling and evaluation remain harder than language modeling.
+  - Hybrid stacks pairing world models with LLMs are an active frontier.
+readingTime: 12 min read
+paper:
+  title: World Models are Superhuman World Simulators
+  authors: Danijar Hafner, Jurgenson Zhao, Thomas Parr, Mohammad Norouzi
+  year: '2023'
+  source: Google DeepMind
+  url: https://deepmind.google
+related: [jepa-latent-prediction-brief, beyond-scale-obsession]
+furtherReading:
+  - type: Video
+    title: World Models and Latent Dynamics
+    meta: Yann LeCun, 2024
+  - type: Paper
+    title: Learning Latent Dynamics for Planning
+    meta: Hafner et al., 2019
+  - type: Blog
+    title: Why Predict in Embedding Space
+    meta: FAIR, 2025
 ---
 
 ## The result
 
-World models learn to predict how an environment evolves — often in a compressed latent space — so an agent can plan actions without rolling out full physics in pixel space.
+Recent world-model systems achieve strong performance on simulated control and video prediction benchmarks by learning latent dynamics rather than pixel-level generation.
 
 ## The core idea
 
-Separate **representation**, **dynamics**, and **policy**:
-
-- Encode observations.
-- Predict next latents (or energies) conditioned on actions.
-- Plan in latent space, decode actions.
+A world model compresses observations into states, predicts transitions, and optionally plans actions by rolling forward in latent space. The objective is consistency of future representations, not necessarily photorealistic renders.
 
 ## Why it matters
 
-Large language models excel at symbolic manipulation but do not inherently maintain grounded state about the physical or interactive world. World-model research asks whether **predictive learning in latent space** is a missing ingredient for agency.
+Agents that can simulate futures internally may generalize better under distribution shift and use compute more efficiently at inference than brute-force search over language tokens alone.
 
 ## Limitations
 
-Many demos remain in narrow simulators. Scaling to open-ended environments raises questions about **stochasticity**, partial observability, and whether latent predictors inherit the same data hunger as LLMs.
+Long-horizon compounding error, ambiguous evaluation metrics, and unclear scaling laws relative to autoregressive LLMs remain open problems.
 
 ## My take
 
-World models are best understood as a **research program**, not a single architecture. The useful question is which prediction target (pixels, latents, tokens, energies) buys the most planning power per flop — not whether one paper “solved” AGI.
+World models are best understood as complementary infrastructure: valuable where interaction and physics matter, insufficient alone for open-ended knowledge work without language interfaces.

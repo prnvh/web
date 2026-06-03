@@ -1,45 +1,32 @@
 ---
-import {
-  formatDate,
-  formatArticleType,
-  getArticleHref,
-  getReadingTimeLabel,
-  type ArticleListItem,
-} from '../utils/articles';
+import { articlePath, formatDate, typeLabelUpper, type Article } from '@/lib/articles';
 
 interface Props {
-  articles: ArticleListItem[];
-  heading?: string;
+  articles: Article[];
 }
 
-const { articles, heading = 'Read next' } = Astro.props;
-const items = articles.slice(0, 3);
+const { articles } = Astro.props;
 ---
 
-{items.length > 0 && (
-  <section class="fm-read-next" aria-labelledby="read-next-heading">
-    <h2 id="read-next-heading">{heading}</h2>
-    <div class="fm-read-next-grid">
-      {items.map((article) => {
-        const dek = article.subtitle ?? article.description ?? '';
-        const time = getReadingTimeLabel(article.readingTime);
-        return (
-          <article class="fm-read-next-card">
-            <p class="fm-read-next-kicker">{formatArticleType(article.type)}</p>
-            <h3 class="fm-read-next-title">
-              <a href={getArticleHref(article)}>{article.title}</a>
+{articles.length > 0 && (
+  <section class="read-next">
+    <div class="site-container">
+      <h2>Read next</h2>
+      <div class="read-next__grid">
+        {articles.slice(0, 3).map((item) => (
+          <article class="read-next__item">
+            <p class="read-next__type">{typeLabelUpper(item.data.type)}</p>
+            <h3 class="read-next__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
             </h3>
-            {dek && <p class="fm-read-next-dek">{dek}</p>}
-            <p class="fm-read-next-meta">
-              <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-              {time && <> · {time}</>}
+            <p class="read-next__sum">{item.data.description}</p>
+            <p class="read-next__meta">
+              {formatDate(item.data.date)} · {item.data.readingTime}
+              <a href={articlePath(item)} aria-label={`Read ${item.data.title}`}>→</a>
             </p>
-            <a class="fm-read-next-arrow" href={getArticleHref(article)} aria-hidden="true">
-              →
-            </a>
           </article>
-        );
-      })}
+        ))}
+      </div>
     </div>
   </section>
 )}

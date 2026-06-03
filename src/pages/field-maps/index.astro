@@ -1,26 +1,33 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import MapRow from '../../components/MapRow.astro';
-import { getByType, toListItem } from '../../utils/articles';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getByType, articlePath, formatDate } from '@/lib/articles';
+import '@/styles/listing.css';
 
-const maps = (await getByType('field-map')).map(toListItem);
+const maps = await getByType('field-map');
 ---
 
-<BaseLayout title="Field Maps" description="Durable maps of research areas.">
-  <div class="listing site-container">
+<BaseLayout title="Field Maps" description="Evergreen guides to complicated research areas.">
+  <div class="site-container">
     <header class="page-header">
-      <h1 class="page-title">Field Maps</h1>
-      <p class="page-dek">Durable maps of research areas — evergreen guides with reading paths and open questions.</p>
+      <h1>Field Maps</h1>
+      <p>Evergreen guides to complicated research areas.</p>
     </header>
-    <div class="maps-list">
-      {maps.map((article, i) => (
-        <MapRow article={article} index={i + 1} />
+    <ul class="archive-list">
+      {maps.map((item) => (
+        <li class="archive-row">
+          <span class="archive-row__date">
+            Updated {formatDate(item.data.updated ?? item.data.date)}
+          </span>
+          <div>
+            <p class="archive-row__type">Field Map</p>
+            <h2 class="archive-row__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
+            </h2>
+            <p class="archive-row__dek">{item.data.subtitle ?? item.data.description}</p>
+          </div>
+          <span class="archive-row__meta">{item.data.readingTime}</span>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </BaseLayout>
-
-<style>
-  .listing { padding: 1.5rem 0 2.5rem; }
-  .maps-list { border-top: 2px solid var(--rule); }
-</style>

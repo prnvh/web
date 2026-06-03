@@ -1,16 +1,100 @@
 ---
-import ArticleDetail from '../../components/ArticleDetail.astro';
-import { getByType, getArticleSlug } from '../../utils/articles';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import NewsletterBand from '@/components/NewsletterBand.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import {
+  formatDate,
+  typeLabelUpper,
+  articlePath,
+  getRelated,
+  getByType,
+} from '@/lib/articles';
+import '@/styles/article.css';
 
 export async function getStaticPaths() {
-  const entries = await getByType('field-map');
-  return entries.map((entry) => ({
-    params: { slug: getArticleSlug(entry) },
-    props: { entry },
+  const articles = await getCollection('articles', ({ data }) => data.type === 'field-map');
+  return articles.map((article) => ({
+    params: { slug: article.id.replace(/\.mdx?$/, '') },
+    props: { article },
   }));
 }
 
-const { entry } = Astro.props;
+type Props = { article: CollectionEntry<'articles'> };
+const { article } = Astro.props;
+const { title, subtitle, date, readingTime, topics, orientation, mapSections, author } =
+  article.data;
+const heroImage = article.data.heroImage ?? '/images/field-map-hero.jpg';
+const essays = (await getByType('essay')).slice(0, 3);
+const related = await getRelated(article.data.related);
+const readList = related.length ? related : essays;
 ---
 
-<ArticleDetail entry={entry} />
+<BaseLayout title={title} description={article.data.description} footerVariant="compact">
+  <article class="article-page">
+    <div class="site-container">
+      <header class="field-map-hero">
+        <div>
+          <p class="meta-label">{typeLabelUpper(article.data.type)}</p>
+          <h1 class="article-hero__title">{title}</h1>
+          {subtitle && <p class="article-hero__subtitle">{subtitle}</p>}
+          <p class="meta-line">
+            {formatDate(date)} · {readingTime} · By {author}
+          </p>
+          {topics.length > 0 && <p class="topic-tags">{topics.join(', ')}</p>}
+        </div>
+        <img class="field-map-hero__image" src={heroImage} alt="" width={380} height={280} />
+      </header>
+
+      <div class="article-layout">
+        <div class="article-main">
+          {orientation && (
+            <div class="orientation-box">
+              <p class="orientation-box__label">Orientation</p>
+              <p style="margin:0">{orientation}</p>
+            </div>
+          )}
+          {mapSections.map((section) => (
+            <section id={section.id} class="map-section">
+              <span class="map-section__num">{section.number}</span>
+              <div>
+                <h2 class="map-section__title">{section.title}</h2>
+                <p class="map-section__desc">{section.description}</p>
+              </div>
+              <span class="map-section__time">{section.readingTime}</span>
+            </section>
+          ))}
+        </div>
+        <aside class="article-rail">
+          <div class="article-rail__block">
+            <h2 class="article-rail__heading">On this page</h2>
+            <nav class="on-page-nav" aria-label="On this page">
+              {mapSections.map((s) => (
+                <a href={`#${s.id}`}>{s.number}. {s.title}</a>
+              ))}
+            </nav>
+          </div>
+          <div class="article-rail__block">
+            <h2 class="article-rail__heading">Related Reading</h2>
+            {readList.map((item) => (
+              <article class="rail-item">
+                <p class="meta-label" style="font-size:10px;margin-bottom:0.25rem">
+                  {item.data.type === 'essay' ? 'Essay' : 'Field Map'}
+                </p>
+                <p class="rail-item__date">{formatDate(item.data.date)}</p>
+                <h3 class="rail-item__title">
+                  <a href={articlePath(item)}>{item.data.title}</a>
+                </h3>
+                <p class="rail-item__sum">{item.data.description}</p>
+                <p class="meta-line">{item.data.readingTime}</p>
+              </article>
+            ))}
+            <p style="margin-top:0.75rem">
+              <a class="link-arrow" href="/essays">Browse all essays →</a>
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </article>
+  <NewsletterBand />
+</BaseLayout>

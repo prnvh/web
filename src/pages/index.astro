@@ -1,132 +1,131 @@
 ---
-import { render } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ShareBar from '../components/ShareBar.astro';
-import { site } from '../config/site';
-import { normalizeSummary } from '../lib/summary';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
-  formatDate,
-  getArticleHref,
+  getFeatured,
   getByType,
-  getReadingTimeLabel,
-  toListItem,
-} from '../utils/articles';
+  articlePath,
+  formatDate,
+  formatShortDate,
+} from '@/lib/articles';
+import '@/styles/home.css';
 
-const briefEntries = await getByType('brief');
-const briefs = briefEntries.map(toListItem);
-const featuredEntry =
-  briefEntries.find((e) => e.data.featured) ?? briefEntries[0];
-const featured = featuredEntry ? toListItem(featuredEntry) : null;
-const featuredSlug = featured?.slug;
-const railBriefs = briefs.filter((b) => b.slug !== featuredSlug).slice(0, 4);
+const featured = await getFeatured();
+const briefs = await getByType('brief');
+const notes = await getByType('research-note');
+const essays = await getByType('essay');
+const maps = await getByType('field-map');
 
-let Content: Awaited<ReturnType<typeof render>>['Content'] | null = null;
-let summary: string[] = [];
-
-if (featuredEntry) {
-  const rendered = await render(featuredEntry);
-  Content = rendered.Content;
-  summary = normalizeSummary(featuredEntry.data.summary);
-}
-
-const heroImage = site.heroImage;
-const topicLine = [
-  { label: 'World Models', href: '/topics/world-models' },
-  { label: 'Representation Learning', href: '/topics/world-models' },
-];
+const latestBriefs = briefs.filter((b) => b.id !== featured?.id).slice(0, 4);
+const heroImage = featured?.data.heroImage ?? '/images/home-featured.jpg';
 ---
 
-<BaseLayout title={site.name} description={site.description} bodyClass="page-home">
-  {featured && Content && (
-    <div class="site-container">
-      <div class="fm-columns">
-        <article class="fm-main">
-          <header class="fm-article-head">
-            <p class="fm-kicker">Brief</p>
-            <div class="fm-head-row">
-              <div>
-                <h1 class="fm-title">
-                  <a href={getArticleHref(featured)} style="color:inherit;text-decoration:none">
-                    {featured.title}
-                  </a>
-                </h1>
-                {(featured.subtitle ?? featured.description) && (
-                  <p class="fm-dek">{featured.subtitle ?? featured.description}</p>
-                )}
-                <p class="fm-meta">
-                  <time datetime={featured.date.toISOString()}>{formatDate(featured.date)}</time>
-                  {getReadingTimeLabel(featured.readingTime) && (
-                    <> · {getReadingTimeLabel(featured.readingTime)}</>
-                  )}
-                </p>
-                <p class="fm-tags">
-                  {topicLine.map((t, i) => (
-                    <>
-                      {i > 0 && ', '}
-                      <a href={t.href}>{t.label}</a>
-                    </>
-                  ))}
-                </p>
-              </div>
-              <figure class="fm-head-media">
-                <img src={heroImage} alt="" width="200" height="200" loading="eager" />
-              </figure>
-            </div>
-          </header>
-
-          {summary.length > 0 && (
-            <aside class="fm-in-short" aria-label="In short">
-              <p class="fm-in-short-label">In Short</p>
-              <ul>
-                {summary.map((item) => (
-                  <li>{item}</li>
-                ))}
-              </ul>
-            </aside>
-          )}
-
-          <div class="fm-body">
-            <Content />
-          </div>
-
-          <ShareBar />
-        </article>
-
-        <aside class="fm-rail" aria-label="Latest briefs">
-          <h2 class="fm-rail-title">Latest Briefs</h2>
-          {railBriefs.map((article) => {
-            const dek = article.subtitle ?? article.description ?? '';
-            return (
-              <article class="fm-rail-item">
-                <a href={getArticleHref(article)}>
-                  <p class="fm-rail-item-date">
-                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-                  </p>
-                  <span class="fm-rail-item-title">{article.title}</span>
-                  {dek && <span class="fm-rail-item-dek">{dek}</span>}
-                </a>
-              </article>
-            );
-          })}
-          <a class="fm-rail-more" href="/briefs">View all briefs →</a>
-        </aside>
-      </div>
-
-      <section class="fm-newsletter" aria-labelledby="home-nl">
-        <div class="fm-newsletter-inner">
-          <div>
-            <h2 id="home-nl">The weekly note.</h2>
-            <p>
-              One thoughtful email on frontier AI research, culture, and the systems behind technical
-              progress.
-            </p>
-          </div>
-          <form class="fm-newsletter-form" action="/subscribe" method="get">
-            <input type="email" name="email" required placeholder="Your email address" />
-            <button type="submit">Subscribe</button>
-          </form>
+<BaseLayout footerVariant="essay">
+  <div class="site-container">
+    {featured && (
+      <section class="home-lead" aria-label="Featured story">
+        <div class="home-lead__main">
+          <p class="meta-label">Brief</p>
+          <h2 class="home-lead__headline">
+            <a href={articlePath(featured)}>{featured.data.title}</a>
+          </h2>
+          <p class="home-lead__dek">{featured.data.subtitle ?? featured.data.description}</p>
+          <p class="home-lead__meta">
+            {formatDate(featured.data.date)} · {featured.data.readingTime}
+          </p>
+          <p class="topic-tags">
+            {featured.data.topics.join(' / ')}
+          </p>
         </div>
+        <div class="home-lead__image-wrap">
+          <img
+            class="home-lead__image"
+            src={heroImage}
+            alt=""
+            width={220}
+            height={330}
+          />
+        </div>
+        <aside class="home-lead__rail home-brief-rail">
+          <h3 class="home-lead__label">Latest Briefs</h3>
+          {latestBriefs.map((item) => (
+            <article class="home-brief-item">
+              <p class="home-brief-item__date">{formatShortDate(item.data.date)}</p>
+              <h4 class="home-brief-item__title">
+                <a href={articlePath(item)}>{item.data.title}</a>
+              </h4>
+              <p class="home-brief-item__sum">{item.data.description}</p>
+            </article>
+          ))}
+          <p class="home-brief-rail__footer">
+            <a class="link-arrow" href="/briefs">View all briefs →</a>
+          </p>
+        </aside>
       </section>
-    </div>
-  )}
+    )}
+
+    <section class="home-columns" aria-label="Sections">
+      <div class="home-column">
+        <h3 class="home-column__title">Research Notes</h3>
+        {notes.slice(0, 2).map((item) => (
+          <article class="home-story">
+            <p class="home-story__type">Research Note</p>
+            <h4 class="home-story__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
+            </h4>
+            <p class="home-story__sum">{item.data.description}</p>
+            <p class="home-story__meta">
+              {formatDate(item.data.date)} · {item.data.readingTime}
+            </p>
+          </article>
+        ))}
+        <a class="link-arrow" href="/research-notes">View all notes →</a>
+      </div>
+      <div class="home-column">
+        <h3 class="home-column__title">Essays</h3>
+        {essays.slice(0, 2).map((item) => (
+          <article class="home-story">
+            <p class="home-story__type">Essay</p>
+            <h4 class="home-story__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
+            </h4>
+            <p class="home-story__sum">{item.data.description}</p>
+            <p class="home-story__meta">
+              {formatDate(item.data.date)} · {item.data.readingTime}
+            </p>
+          </article>
+        ))}
+        <a class="link-arrow" href="/essays">View all essays →</a>
+      </div>
+      <div class="home-column">
+        <h3 class="home-column__title">Field Maps</h3>
+        {maps.slice(0, 2).map((item, i) => (
+          <article class="home-story">
+            <p class="home-story__type home-story__type--accent">
+              Field Map {String(i + 1).padStart(2, '0')}
+            </p>
+            <h4 class="home-story__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
+            </h4>
+            <p class="home-story__sum">{item.data.description}</p>
+            <p class="home-story__meta">
+              Updated {formatDate(item.data.updated ?? item.data.date)}
+            </p>
+          </article>
+        ))}
+        <a class="link-arrow" href="/field-maps">View all maps →</a>
+      </div>
+    </section>
+
+    <section class="home-newsletter" aria-labelledby="home-newsletter">
+      <div>
+        <h2 id="home-newsletter">Get the weekly note.</h2>
+        <p>One clear briefing on frontier AI, research, and technology every week or two.</p>
+      </div>
+      <form class="newsletter-form" action="/subscribe" method="get">
+        <label class="sr-only" for="home-email">Email</label>
+        <input id="home-email" type="email" name="email" placeholder="Your email address" required />
+        <button type="submit">Subscribe</button>
+      </form>
+    </section>
+  </div>
 </BaseLayout>

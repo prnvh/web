@@ -1,18 +1,31 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import NewsletterBlock from '../components/NewsletterBlock.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/config/site';
 ---
 
-<BaseLayout title="Subscribe" description="Get the weekly note.">
-  <div class="subscribe-page site-container">
-    <header class="page-header">
-      <h1 class="page-title">Subscribe</h1>
-      <p class="page-dek">One clear briefing every week or two.</p>
-    </header>
-    <NewsletterBlock />
+<BaseLayout title="Subscribe" description="Get the frontier briefing by email.">
+  <div class="site-container" style="padding:2.5rem 0 3rem;max-width:40rem">
+    <h1 style="font-family:var(--font-serif);font-size:2rem;font-weight:700;margin:0 0 0.5rem">
+      Get the frontier briefing.
+    </h1>
+    <p style="color:var(--muted);margin:0 0 2rem">{site.newsletter.subtext}</p>
+
+    <h2 style="font-size:1.1rem;margin:0 0 0.75rem">What readers get</h2>
+    <ul style="margin:0 0 2rem;padding-left:1.25rem;color:var(--muted)">
+      <li>New essays and research notes</li>
+      <li>Brief explanations of important papers and announcements</li>
+      <li>Reading paths and field maps</li>
+      <li>Notes on what seems overhyped or underrated</li>
+    </ul>
+
+    <form class="newsletter-form" style="min-width:0;width:100%;margin-bottom:1rem" method="post" action="#">
+      <label class="sr-only" for="subscribe-email">Email</label>
+      <input id="subscribe-email" type="email" name="email" placeholder="Your email address" required />
+      <button type="submit">Subscribe</button>
+    </form>
+    <p style="font-family:var(--font-sans);font-size:12px;color:var(--faint)">{site.newsletter.privacy}</p>
+    <p style="margin-top:2rem">
+      <a href="/articles">Browse the archive →</a>
+    </p>
   </div>
 </BaseLayout>
-
-<style>
-  .subscribe-page { padding: 1.5rem 0 2.5rem; max-width: 32rem; }
-</style>

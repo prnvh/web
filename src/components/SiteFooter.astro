@@ -1,0 +1,60 @@
+---
+import { site, navLinks } from '@/config/site';
+
+interface Props {
+  variant?: 'default' | 'essay' | 'compact';
+}
+
+const { variant = 'default' } = Astro.props;
+---
+
+<footer class:list={['site-footer', { 'site-footer--essay': variant === 'essay', 'site-footer--compact': variant === 'compact' }]}>
+  <div class="site-container">
+    {variant === 'compact' ? (
+      <div class="site-footer__grid site-footer--compact">
+        <div class="site-footer__brand">
+          <strong>{site.name}</strong>
+          <p>{site.tagline}</p>
+        </div>
+        <nav class="site-footer__links-row" aria-label="Footer">
+          {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+          <a href="/subscribe">Subscribe</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
+        <p class="site-footer__copy">© {new Date().getFullYear()} {site.name}</p>
+      </div>
+    ) : (
+      <div class="site-footer__grid">
+        <div class="site-footer__brand">
+          <strong>{site.name}</strong>
+          <p>{site.tagline}</p>
+        </div>
+        <div class="site-footer__col">
+          <ul>
+            <li><a href="/briefs">Briefs</a></li>
+            <li><a href="/research-notes">Research Notes</a></li>
+            <li><a href="/essays">Essays</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__col">
+          <ul>
+            <li><a href="/field-maps">Field Maps</a></li>
+            <li><a href="/topics">Topics</a></li>
+            <li><a href="/start-here">Start Here</a></li>
+          </ul>
+        </div>
+        <div class="site-footer__col">
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/subscribe">Subscribe</a></li>
+            <li><a href="/rss.xml">RSS</a></li>
+          </ul>
+        </div>
+        <p class="site-footer__copy">
+          © {new Date().getFullYear()} {site.name}
+          {variant === 'essay' && ' All rights reserved.'}
+        </p>
+      </div>
+    )}
+  </div>
+</footer>

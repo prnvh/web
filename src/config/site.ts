@@ -1,72 +1,25 @@
-export const siteConfig = {
+export const site = {
   name: 'Frontier Manual',
   tagline:
     'A publication on frontier AI, research culture, and the systems behind technical progress.',
   description:
-    'Essays, briefs, and notes on AI research, compute, evaluation, and the people building the field.',
-  heroImage: '/images/brief-hero.jpg',
-  url: import.meta.env.SITE_URL ?? 'https://example.com',
-  subscribePath: '/subscribe',
-  searchPath: '/search',
-  rssPath: '/rss.xml',
-  contactPath: '/about#contact',
-  contactEmail: 'hello@example.com',
-  newsletterEmbedUrl: import.meta.env.NEWSLETTER_EMBED_URL ?? '',
-  analyticsDomain: import.meta.env.PLAUSIBLE_DOMAIN ?? '',
-  topics: [
-    'agi',
-    'world-models',
-    'energy-based-models',
-    'evaluation',
-    'compute',
-    'interpretability',
-    'ai-safety',
-    'open-source-ai',
-    'india-ai',
-    'data-efficient-ai',
-  ] as const,
+    'Frontier AI, research analysis, and technical news for readers who want depth without hype.',
+  url: 'https://frontiermanual.com',
+  author: 'Frontier Manual',
+  newsletter: {
+    headline: 'Get the weekly note.',
+    subtext:
+      'One clear briefing on frontier AI, research, and technology every week or two.',
+    privacy: 'No spam. Unsubscribe anytime.',
+  },
 } as const;
 
-export type SiteTopicSlug = (typeof siteConfig.topics)[number];
-
-export const site = siteConfig;
-
-export const navItems = [
-  { label: 'Briefs', href: '/briefs' },
-  { label: 'Research Notes', href: '/research-notes' },
-  { label: 'Essays', href: '/essays' },
-  { label: 'Field Maps', href: '/field-maps' },
-  { label: 'Topics', href: '/topics' },
-  { label: 'Start Here', href: '/start-here' },
-  { label: 'About', href: '/about' },
+export const navLinks = [
+  { href: '/briefs', label: 'Briefs' },
+  { href: '/research-notes', label: 'Research Notes' },
+  { href: '/essays', label: 'Essays' },
+  { href: '/field-maps', label: 'Field Maps' },
+  { href: '/topics', label: 'Topics' },
+  { href: '/start-here', label: 'Start Here' },
+  { href: '/about', label: 'About' },
 ] as const;
-
-export const footerColumns = [
-  {
-    links: [
-      { label: 'Briefs', href: '/briefs' },
-      { label: 'Research Notes', href: '/research-notes' },
-      { label: 'Essays', href: '/essays' },
-    ],
-  },
-  {
-    links: [
-      { label: 'Field Maps', href: '/field-maps' },
-      { label: 'Topics', href: '/topics' },
-      { label: 'Start Here', href: '/start-here' },
-    ],
-  },
-  {
-    links: [
-      { label: 'About', href: '/about' },
-      { label: 'Subscribe', href: '/subscribe' },
-      { label: 'RSS', href: '/rss.xml' },
-      { label: 'Contact', href: '/about#contact' },
-    ],
-  },
-] as const;
-
-export function getAnalyticsScript(domain: string = siteConfig.analyticsDomain): string {
-  if (!domain) return '';
-  return `<script defer data-domain="${domain}" src="https://plausible.io/js/script.js"></script>`;
-}

@@ -1,26 +1,31 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import BriefRow from '../../components/BriefRow.astro';
-import { getByType, toListItem } from '../../utils/articles';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getByType, articlePath, formatDate, typeLabelUpper } from '@/lib/articles';
+import '@/styles/listing.css';
 
-const briefs = (await getByType('brief')).map(toListItem);
+const briefs = await getByType('brief');
 ---
 
 <BaseLayout title="Briefs" description="Short analysis of recent developments in frontier AI and technology.">
-  <div class="listing site-container">
+  <div class="site-container">
     <header class="page-header">
-      <h1 class="page-title">Briefs</h1>
-      <p class="page-dek">Short analysis of recent papers, benchmarks, model releases, and technical shifts.</p>
+      <h1>Briefs</h1>
+      <p>Short analysis of recent developments in frontier AI and technology.</p>
     </header>
-    <div class="wire-list">
-      {briefs.map((article) => (
-        <BriefRow article={article} />
+    <ul class="archive-list">
+      {briefs.map((item) => (
+        <li class="archive-row">
+          <span class="archive-row__date">{formatDate(item.data.date)}</span>
+          <div>
+            <p class="archive-row__type">{typeLabelUpper(item.data.type)}</p>
+            <h2 class="archive-row__title">
+              <a href={articlePath(item)}>{item.data.title}</a>
+            </h2>
+            <p class="archive-row__dek">{item.data.subtitle ?? item.data.description}</p>
+          </div>
+          <span class="archive-row__meta">{item.data.readingTime}</span>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </BaseLayout>
-
-<style>
-  .listing { padding: 1.5rem 0 2.5rem; }
-  .wire-list { border-top: 2px solid var(--rule); }
-</style>

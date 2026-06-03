@@ -1,36 +1,20 @@
 ---
+import { summaryList } from '@/lib/articles';
+
 interface Props {
-  items: string[];
+  summary: string | string[];
   label?: string;
-  variant?: 'list' | 'icon';
 }
 
-const { items, label = 'In Short', variant = 'list' } = Astro.props;
-const isIcon = variant === 'icon';
+const { summary, label = 'In Short' } = Astro.props;
+const items = summaryList(summary);
 ---
 
-{items.length > 0 && (
-  <aside
-    class:list={['summary-box', isIcon && 'summary-box--icon']}
-    aria-labelledby="summary-box-heading"
-  >
-    {isIcon ? (
-      <>
-        <span class="summary-box__icon" aria-hidden="true">i</span>
-        <div>
-          <p class="summary-box__label" id="summary-box-heading">{label}</p>
-          <p class="summary-box__text">{items.join(' ')}</p>
-        </div>
-      </>
-    ) : (
-      <>
-        <p class="summary-box__label" id="summary-box-heading">{label}</p>
-        <ul class="summary-box__list">
-          {items.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      </>
-    )}
-  </aside>
-)}
+<aside class="summary-box" aria-label="Summary">
+  <p class="summary-box__label">{label}</p>
+  {items.length === 1 ? <p>{items[0]}</p> : (
+    <ul>
+      {items.map((item) => <li>{item}</li>)}
+    </ul>
+  )}
+</aside>

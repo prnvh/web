@@ -1,87 +1,66 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ReadingPath from '../components/ReadingPath.astro';
-import { getArticles, getArticleSlug, getArticlePath } from '../utils/articles';
-
-const all = await getArticles();
-const bySlug = new Map(all.map((a) => [getArticleSlug(a), a]));
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { articlePath } from '@/lib/articles';
 
 const paths = [
   {
     title: 'Frontier AI foundations',
-    description: 'Scaling, evaluation, and what counts as evidence in frontier systems.',
-    difficulty: 'accessible',
-    slugs: ['frontier-ai-foundations', 'why-next-token-prediction-may-not-be-enough', 'scaling-laws-still-matter'],
+    level: 'accessible',
+    description: 'Core concepts before diving into specialized camps.',
+    slugs: ['beyond-scale-obsession', 'world-models-explained'],
   },
   {
     title: 'AGI and world models',
-    description: 'Architectural bets beyond next-token prediction.',
-    difficulty: 'intermediate',
-    slugs: ['a-map-of-current-agi-research-directions', 'world-models-explained', 'jepa-latent-prediction-brief'],
+    level: 'intermediate',
+    description: 'Prediction, simulation, and planning in learned systems.',
+    slugs: ['agi-research-map', 'jepa-latent-prediction-brief', 'world-models-explained'],
   },
   {
     title: 'Evaluation and benchmarks',
-    description: 'What leaderboards measure and when they mislead.',
-    difficulty: 'intermediate',
-    slugs: ['benchmarks-that-matter', 'a-map-of-ai-evaluation'],
-  },
-  {
-    title: 'Compute and infrastructure',
-    description: 'Training economics and the systems layer under model progress.',
-    difficulty: 'technical',
-    slugs: ['compute-frontier-brief'],
-  },
-  {
-    title: 'Interpretability and safety',
-    description: 'Mechanistic work and what we can claim today.',
-    difficulty: 'technical',
-    slugs: ['interpretability-landscape-brief'],
-  },
-  {
-    title: 'India and frontier AI',
-    description: 'Policy, talent, and deployment without hype framing.',
-    difficulty: 'accessible',
-    slugs: ['india-ai-policy-brief'],
+    level: 'technical',
+    description: 'What we measure and what we miss.',
+    slugs: ['beyond-scale-obsession'],
   },
 ];
+
+const all = await getCollection('articles');
 ---
 
-<BaseLayout
-  title="Start Here"
-  description="Reading paths for new readers."
->
-  <div class="start-page site-container">
+<BaseLayout title="Start Here" description="Reading paths for new readers of Frontier Manual.">
+  <div class="site-container" style="padding-bottom:3rem">
     <header class="page-header">
-      <h1 class="page-title">Start Here</h1>
-      <p class="page-dek">
-        This publication explains frontier AI and technology for technical readers who want depth without unnecessary fog.
+      <h1>Start Here</h1>
+      <p>
+        This publication explains frontier AI and technology for technical readers who want depth
+        without unnecessary fog.
       </p>
     </header>
 
-    <div class="paths">
-      {paths.map((path) => {
-        const articles = path.slugs
-          .map((s) => bySlug.get(s))
-          .filter(Boolean)
-          .map((entry) => ({
-            title: entry!.data.title,
-            href: getArticlePath(entry!),
-          }));
-        if (articles.length === 0) return null;
-        return (
-          <ReadingPath
-            title={path.title}
-            description={path.description}
-            difficulty={path.difficulty}
-            articles={articles}
-          />
-        );
-      })}
-    </div>
+    {paths.map((path) => (
+      <section style="margin-bottom:2.5rem">
+        <h2 class="home-story__title" style="font-size:1.35rem">{path.title}</h2>
+        <p class="meta-line" style="margin-bottom:0.75rem">
+          {path.level}
+        </p>
+        <p class="home-story__sum">{path.description}</p>
+        <ul class="archive-list">
+          {path.slugs.map((slug) => {
+            const item = all.find((a) => a.id.replace(/\.mdx?$/, '') === slug);
+            if (!item) return null;
+            return (
+              <li class="archive-row">
+                <span />
+                <div>
+                  <h3 class="archive-row__title">
+                    <a href={articlePath(item)}>{item.data.title}</a>
+                  </h3>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ))}
   </div>
 </BaseLayout>
-
-<style>
-  .start-page { padding: 1.75rem 0 3rem; max-width: 720px; }
-  .paths { margin-top: 0.5rem; }
-</style>

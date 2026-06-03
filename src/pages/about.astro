@@ -1,64 +1,43 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../config/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/config/site';
 ---
 
 <BaseLayout title="About" description={`About ${site.name}`}>
-  <div class="static-page site-container">
-    <header class="page-header">
-      <h1 class="page-title">About</h1>
-    </header>
+  <div class="site-container prose" style="padding:2rem 0 3rem">
+    <h1 style="font-size:2rem;margin-top:0;border:0;padding:0">About</h1>
 
-    <div class="article-body">
-      <h2>What this is</h2>
-      <p>
-        {site.name} is a text-first publication on frontier AI, research analysis, and deep technology. It publishes briefs, research notes, long essays, and field maps — structured so you can read one piece or follow a topic for months.
-      </p>
+    <h2>What this is</h2>
+    <p>
+      {site.name} is an independent publication on frontier AI, research culture, and the systems
+      behind technical progress. We publish briefs, research notes, essays, and field maps—not press
+      releases.
+    </p>
 
-      <h2>Who it is for</h2>
-      <p>
-        Engineers, researchers, policy readers, and technically curious people who want primary-source context and clear argument — not press-release summaries or product marketing dressed as analysis.
-      </p>
+    <h2>Who it is for</h2>
+    <p>
+      Engineers, researchers, and technical readers who want depth, sources, and clear writing
+      without hype.
+    </p>
 
-      <h2>What it covers</h2>
-      <p>
-        AGI directions, world models, evaluation, compute, interpretability, safety, open-source systems, data-efficient learning, and regional context (including India & AI). Coverage follows what is actually moving in research — not whatever is trending on social feeds.
-      </p>
+    <h2>What it covers</h2>
+    <p>
+      AGI research directions, world models, evaluation, compute, interpretability, safety, and the
+      policy and industry context around frontier AI—including India’s role in the ecosystem.
+    </p>
 
-      <h2>Editorial principles</h2>
-      <ul>
-        <li>Clarity over hype.</li>
-        <li>Sources over vibes.</li>
-        <li>Accessible, not shallow.</li>
-        <li>Opinion is labeled as opinion.</li>
-        <li>Corrections are welcome.</li>
-      </ul>
+    <h2>Editorial principles</h2>
+    <ul>
+      <li>Clarity over hype.</li>
+      <li>Sources over vibes.</li>
+      <li>Accessible, not shallow.</li>
+      <li>Opinion is labeled as opinion.</li>
+      <li>Corrections are welcome.</li>
+    </ul>
 
-      <h2>About the author</h2>
-      <p>
-        Written and edited by a single author. Replace this paragraph with your background — institution, focus areas, and why you publish — in plain language.
-      </p>
-
-      <h2 id="contact">Contact</h2>
-      <p>
-        Email: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
-      </p>
-    </div>
+    <h2>Contact</h2>
+    <p>
+      <a href="mailto:hello@frontiermanual.com">hello@frontiermanual.com</a>
+    </p>
   </div>
 </BaseLayout>
-
-<style>
-  .static-page {
-    padding: 1.75rem 0 3rem;
-    max-width: 720px;
-  }
-
-  .static-page .article-body h2 {
-    font-size: 1.35rem;
-    margin-top: 2rem;
-  }
-
-  .static-page .article-body h2:first-child {
-    margin-top: 0;
-  }
-</style>

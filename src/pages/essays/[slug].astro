@@ -1,16 +1,37 @@
 ---
-import ArticleDetail from '../../components/ArticleDetail.astro';
-import { getByType, getArticleSlug } from '../../utils/articles';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import ReadNextGrid from '@/components/ReadNextGrid.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { getRelated } from '@/lib/articles';
 
 export async function getStaticPaths() {
-  const entries = await getByType('essay');
-  return entries.map((entry) => ({
-    params: { slug: getArticleSlug(entry) },
-    props: { entry },
+  const articles = await getCollection('articles', ({ data }) => data.type === 'essay');
+  return articles.map((article) => ({
+    params: { slug: article.id.replace(/\.mdx?$/, '') },
+    props: { article },
   }));
 }
 
-const { entry } = Astro.props;
+type Props = { article: CollectionEntry<'articles'> };
+const { article } = Astro.props;
+const related = await getRelated(article.data.related);
+const heroImage = article.data.heroImage ?? '/images/essay-hero.jpg';
+const { pullQuote, pullQuoteAttribution } = article.data;
 ---
 
-<ArticleDetail entry={entry} />
+<ArticleLayout
+  article={article}
+  variant="essay"
+  heroImage={heroImage}
+  footerVariant="essay"
+>
+  <Fragment slot="rail">
+    {pullQuote && (
+      <figure class="pull-quote">
+        <blockquote>{pullQuote}</blockquote>
+        <cite>— {pullQuoteAttribution ?? 'Frontier Manual'}</cite>
+      </figure>
+    )}
+  </Fragment>
+  <ReadNextGrid slot="after-article" articles={related} />
+</ArticleLayout>

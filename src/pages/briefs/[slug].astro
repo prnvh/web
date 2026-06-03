@@ -1,16 +1,50 @@
 ---
-import ArticleDetail from '../../components/ArticleDetail.astro';
-import { getByType, getArticleSlug } from '../../utils/articles';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import ShareBar from '@/components/ShareBar.astro';
+import {
+  getCollection,
+  type CollectionEntry,
+} from 'astro:content';
+import {
+  articlePath,
+  formatShortDate,
+  getByType,
+} from '@/lib/articles';
 
 export async function getStaticPaths() {
-  const entries = await getByType('brief');
-  return entries.map((entry) => ({
-    params: { slug: getArticleSlug(entry) },
-    props: { entry },
+  const articles = await getCollection('articles', ({ data }) => data.type === 'brief');
+  return articles.map((article) => ({
+    params: { slug: article.id.replace(/\.mdx?$/, '') },
+    props: { article },
   }));
 }
 
-const { entry } = Astro.props;
+type Props = { article: CollectionEntry<'articles'> };
+const { article } = Astro.props;
+const briefs = await getByType('brief');
+const railBriefs = briefs.filter((b) => b.id !== article.id).slice(0, 4);
+const heroImage = article.data.heroImage ?? '/images/brief-hero.jpg';
 ---
 
-<ArticleDetail entry={entry} />
+<ArticleLayout article={article} variant="brief" heroImage={heroImage} footerVariant="compact">
+  <Fragment slot="after-body">
+    <ShareBar title={article.data.title} />
+  </Fragment>
+  <Fragment slot="rail">
+    <div class="article-rail__block">
+      <h2 class="article-rail__heading">Latest Briefs</h2>
+      {railBriefs.map((item) => (
+        <article class="rail-item">
+          <p class="rail-item__date">{formatShortDate(item.data.date)}</p>
+          <h3 class="rail-item__title">
+            <a href={articlePath(item)}>{item.data.title}</a>
+          </h3>
+          <p class="rail-item__sum">{item.data.description}</p>
+        </article>
+      ))}
+      <p style="margin-top:0.75rem">
+        <a class="link-arrow" href="/briefs">View all briefs →</a>
+      </p>
+    </div>
+  </Fragment>
+</ArticleLayout>

@@ -1,40 +1,38 @@
 ---
-interface Props {
-  paper: string;
-  year?: string | number;
-  authors?: string;
-  source?: string;
-  sourceUrl?: string;
+interface Paper {
+  title: string;
+  authors: string;
+  year: string;
+  source: string;
+  url?: string;
 }
 
-const { paper, year, authors, source, sourceUrl } = Astro.props;
+const { paper } = Astro.props as { paper: Paper };
 ---
 
-<aside class="fm-paper-table" slot="paper-meta" aria-label="Paper metadata">
-  <div class="fm-paper-cell">
-    <p class="fm-paper-label">Paper</p>
-    <p class="fm-paper-value">{paper}</p>
+<div class="paper-meta">
+  <div>
+    <p class="paper-meta__label">Paper</p>
+    <p class="paper-meta__value">{paper.title}</p>
   </div>
-  {year !== undefined && (
-    <div class="fm-paper-cell">
-      <p class="fm-paper-label">Year</p>
-      <p class="fm-paper-value">{year}</p>
-    </div>
-  )}
-  {authors && (
-    <div class="fm-paper-cell">
-      <p class="fm-paper-label">Authors</p>
-      <p class="fm-paper-value">{authors}</p>
-    </div>
-  )}
-  <div class="fm-paper-cell">
-    <p class="fm-paper-label">Source</p>
-    <p class="fm-paper-value">
-      {sourceUrl ? (
-        <a href={sourceUrl} rel="noopener noreferrer">{source ?? 'Link'} ↗</a>
+  <div>
+    <p class="paper-meta__label">Year</p>
+    <p class="paper-meta__value">{paper.year}</p>
+  </div>
+  <div>
+    <p class="paper-meta__label">Authors</p>
+    <p class="paper-meta__value">{paper.authors}</p>
+  </div>
+  <div>
+    <p class="paper-meta__label">Source</p>
+    <p class="paper-meta__value">
+      {paper.url ? (
+        <a href={paper.url} target="_blank" rel="noopener noreferrer">
+          {paper.source} ↗
+        </a>
       ) : (
-        (source ?? '—')
+        paper.source
       )}
     </p>
   </div>
-</aside>
+</div>

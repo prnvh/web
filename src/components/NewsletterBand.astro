@@ -1,29 +1,17 @@
 ---
-import { site } from '../config/site';
+import { site } from '@/config/site';
 ---
 
-<section class="newsletter-band" aria-labelledby="newsletter-band-heading">
+<section class="newsletter-band" aria-labelledby="newsletter-heading">
   <div class="site-container newsletter-band__inner">
     <div>
-      <h2 class="newsletter-band__title" id="newsletter-band-heading">The weekly note.</h2>
-      <p class="newsletter-band__dek">
-        One thoughtful email on frontier AI research, culture, and the systems behind technical progress.
-      </p>
+      <h2 id="newsletter-heading">{site.newsletter.headline}</h2>
+      <p>{site.newsletter.subtext}</p>
     </div>
-    <form class="newsletter-band__form" action={site.subscribePath} method="get">
-      <label class="visually-hidden" for="band-email">Email</label>
-      <input id="band-email" name="email" type="email" required placeholder="Your email address" />
-      <button type="submit" class="button">Subscribe</button>
+    <form class="newsletter-form" action="/subscribe" method="get">
+      <label class="sr-only" for="email-band">Email</label>
+      <input id="email-band" type="email" name="email" placeholder="Your email address" required autocomplete="email" />
+      <button type="submit">Subscribe</button>
     </form>
   </div>
 </section>
-
-<style>
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-  }
-</style>

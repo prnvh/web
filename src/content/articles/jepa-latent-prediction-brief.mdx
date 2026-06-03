@@ -1,44 +1,33 @@
 ---
-title: "JEPA and the Return of Latent Prediction"
-subtitle: "Why several labs are betting on embedding-space forecasting again—and what changed."
-description: "A brief on Joint Embedding Predictive Architectures and what they change about world-model training."
+title: JEPA and the Return of Latent Prediction
+subtitle: Why several labs are betting on embedding-space forecasting again—and what changed.
+description: Several frontier labs are revisiting joint-embedding predictive architectures for world modeling and representation learning.
 date: 2026-05-28
 type: brief
-author: "Editorial"
-topics: ["world-models", "energy-based-models"]
-tags: ["JEPA", "LeCun", "representation learning"]
-readingTime: 7
-featured: true
+topics: [World Models, Representation Learning]
 summary:
-  - JEPA predicts in representation space, not raw pixels or tokens.
-  - The bet is that abstract latents are easier to scale and plan over.
-  - Open questions remain around grounding, evaluation, and hybrid LLM stacks.
-related:
-  - world-models-explained
-  - why-next-token-prediction-may-not-be-enough
-sources:
-  - title: "A Path Towards Autonomous Machine Intelligence (LeCun, 2022)"
-    url: "https://openreview.net/pdf?id=BZ5a1r-kVsf"
+  - JEPA-style models predict in representation space rather than pixel or token space.
+  - The approach trades generative fidelity for stability and abstraction.
+  - Recent work reconnects latent prediction to world models and planning.
+  - Open questions remain around scaling, evaluation, and hybrid LLM stacks.
+readingTime: 7 min read
+featured: true
+heroImage: /images/brief-hero.jpg
+related: [world-models-explained, beyond-scale-obsession]
 ---
 
 ## What happened
 
-Several research groups have renewed interest in **latent prediction** — training models to forecast future states in an embedding space rather than reconstructing pixels or generating the next token in a sequence. Joint Embedding Predictive Architectures (JEPA) are the clearest articulation of this bet.
+LeCun and collaborators have renewed attention on Joint-Embedding Predictive Architectures (JEPA): models that predict future states in a learned latent space rather than reconstructing pixels or tokens directly. Several labs are exploring similar embedding-space forecasting stacks for video, robotics, and multimodal agents.
 
 ## Why it matters
 
-If the bottleneck in world modeling is **representation quality**, not decoder fidelity, then training can focus compute on learning stable abstract states. That shifts evaluation: you care whether latents support planning and counterfactual reasoning, not whether generated frames look crisp.
+If useful world models can be built without expensive generative decoding, training becomes more stable and evaluation becomes less tied to perceptual metrics that obscure reasoning quality. That shifts the competitive landscape away from pure scaling narratives toward representation design.
 
 ## Technical context
 
-A JEPA-style stack typically has:
-
-1. An encoder that maps observations to embeddings.
-2. A predictor that forecasts future embeddings from context.
-3. A loss that pulls predicted and target embeddings together while avoiding collapse (often via masking, negative pairs, or architectural asymmetry).
-
-The contrast with autoregressive LLMs is structural: language models optimize next-token likelihood over a discrete channel; JEPA-style models optimize **compatibility** between context and plausible futures in a continuous latent space.
+JEPA trains an encoder and predictor so that representations of future observations are close to representations of actual futures, while avoiding collapse through asymmetric architectures and stop-gradient targets. The bet is that abstraction in embedding space is the right object for planning—not raw sensory prediction.
 
 ## What to watch next
 
-Whether latent predictors **compose with language models** (tool use, instruction following) or remain siloed perception modules. Also whether benchmarks emerge that measure planning-relevant latent quality — not just reconstruction proxies.
+Whether JEPA-class models scale to long-horizon tasks, how they compose with language models, and which benchmarks actually reward latent prediction over next-token likelihood.
