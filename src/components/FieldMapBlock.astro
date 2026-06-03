@@ -9,19 +9,17 @@ interface Props {
 const { article, index } = Astro.props;
 const href = getArticleHref(article);
 const dek = article.subtitle ?? article.description ?? '';
+const updated = formatDate(article.date);
 ---
 
 <article class="field-map-block">
   <a class="field-map-link" href={href}>
-    {index !== undefined && <span class="field-map-num">{String(index).padStart(2, '0')}</span>}
+    {index !== undefined && <span class="field-map-num" aria-hidden="true">{String(index).padStart(2, '0')}</span>}
     <div class="field-map-body">
       <p class="label field-map-label">Field Map</p>
       <h3 class="field-map-title">{article.title}</h3>
       {dek && <p class="field-map-dek">{dek}</p>}
-      <p class="label field-map-meta">
-        Updated {formatDate(article.date)}
-        {article.topics?.length ? ` · ${article.topics.join(' · ')}` : ''}
-      </p>
+      <p class="label field-map-meta">Updated {updated}</p>
     </div>
   </a>
 </article>
@@ -29,8 +27,11 @@ const dek = article.subtitle ?? article.description ?? '';
 <style>
   .field-map-block {
     border-top: 2px solid var(--rule);
-    border-bottom: 1px solid var(--border);
-    padding: 1.25rem 0;
+    padding: 1.35rem 0;
+  }
+
+  .field-map-block + .field-map-block {
+    border-top: 1px solid var(--border);
   }
 
   .field-map-link {
@@ -42,13 +43,13 @@ const dek = article.subtitle ?? article.description ?? '';
 
   .field-map-num {
     font-family: var(--font-display);
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.04em;
     color: var(--faint);
     flex-shrink: 0;
-    width: 2.5rem;
+    min-width: 2.25rem;
   }
 
   .field-map-label {
@@ -58,7 +59,7 @@ const dek = article.subtitle ?? article.description ?? '';
 
   .field-map-title {
     font-family: var(--font-display);
-    font-size: 1.45rem;
+    font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 1.1;

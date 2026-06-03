@@ -15,18 +15,18 @@ const dek = article.subtitle ?? article.description ?? '';
   <a class="essay-item-link" href={href}>
     <h3 class="essay-item-title">{article.title}</h3>
     {dek && <p class="essay-item-dek">{dek}</p>}
-    <p class="essay-item-meta">{formatDate(article.date)}</p>
+    <p class="label essay-item-meta">{formatDate(article.date)}</p>
   </a>
 </article>
 
 <style>
   .essay-item {
-    padding: 1.25rem 0;
+    padding: 1.5rem 0;
     border-top: 1px solid var(--border);
   }
 
   .essay-item--featured {
-    padding: 0 0 1.75rem;
+    padding: 0 0 2rem;
     border-top: none;
     border-bottom: 1px solid var(--border);
     margin-bottom: 0.5rem;
@@ -40,7 +40,7 @@ const dek = article.subtitle ?? article.description ?? '';
 
   .essay-item-title {
     font-family: var(--font-display);
-    font-size: clamp(28px, 3.5vw, 44px);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
     line-height: 1.02;
     letter-spacing: -0.04em;
     font-weight: 700;
@@ -49,7 +49,7 @@ const dek = article.subtitle ?? article.description ?? '';
   }
 
   .essay-item--featured .essay-item-title {
-    font-size: clamp(32px, 4vw, 52px);
+    font-size: clamp(2rem, 3.5vw, 3.25rem);
     max-width: 18ch;
   }
 
@@ -58,17 +58,13 @@ const dek = article.subtitle ?? article.description ?? '';
     font-size: 1.05rem;
     line-height: 1.55;
     color: var(--muted);
-    margin: 0.65rem 0 0.5rem;
+    margin: 0.85rem 0 0.65rem;
     max-width: 50ch;
   }
 
   .essay-item-meta {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--faint);
     margin: 0;
+    color: var(--faint);
   }
 
   .essay-item-link:hover .essay-item-title {
