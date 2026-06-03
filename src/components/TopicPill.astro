@@ -10,14 +10,13 @@ const { topic, href } = Astro.props;
 const link = href ?? `/topics/${slugifyTopic(topic)}`;
 ---
 
-<a class="topic-pill" href={link}>{topic}</a>
+<a class="topic-pill label" href={link}>{topic}</a>
 
 <style>
   .topic-pill {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-size: var(--text-meta-size);
     color: var(--text);
     text-decoration: underline;
     text-underline-offset: 2px;

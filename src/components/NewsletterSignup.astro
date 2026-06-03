@@ -9,10 +9,13 @@ interface Props {
 const { compact = false, action = '#' } = Astro.props;
 ---
 
-<aside class:list={['newsletter', { 'newsletter--compact': compact }]} aria-labelledby="newsletter-heading">
-  <h2 class="newsletter-heading" id="newsletter-heading">Weekly briefing</h2>
+<aside
+  class:list={['newsletter', { 'newsletter--compact': compact }]}
+  aria-labelledby="newsletter-heading"
+>
+  <h2 class="newsletter-heading" id="newsletter-heading">Get the frontier briefing</h2>
   <p class="newsletter-text">
-    Briefs and research notes in your inbox — no hype, no daily noise.
+    One clear briefing on frontier AI, research, and technology every week or two.
   </p>
 
   <slot name="embed">
@@ -37,7 +40,15 @@ const { compact = false, action = '#' } = Astro.props;
 
 <style>
   .newsletter {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    background: var(--paper);
+  }
+
+  .newsletter--compact {
     padding: 0;
+    border: none;
+    background: transparent;
   }
 
   .newsletter--compact .newsletter-heading {
@@ -77,7 +88,7 @@ const { compact = false, action = '#' } = Astro.props;
     font-size: 14px;
     padding: 0.5rem 0.65rem;
     border: 1px solid var(--border);
-    background: var(--paper);
+    background: var(--bg);
     color: var(--text);
     border-radius: 0;
   }

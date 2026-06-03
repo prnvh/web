@@ -1,14 +1,16 @@
 ---
 import ArticleTypeLabel from './ArticleTypeLabel.astro';
+import BriefWireItem from './BriefWireItem.astro';
 import { formatDate, getArticleHref, type ArticleListItem } from '../utils/articles';
 
 interface Props {
   article: ArticleListItem;
   dek?: string;
   showTopics?: boolean;
+  compact?: boolean;
 }
 
-const { article, dek, showTopics = false } = Astro.props;
+const { article, dek, showTopics = false, compact = false } = Astro.props;
 const href = getArticleHref(article);
 const description = dek ?? article.subtitle ?? article.description ?? '';
 const dateLabel = formatDate(article.date);
@@ -20,28 +22,32 @@ const readingLabel =
     : null;
 ---
 
-<article class="article-row">
-  <a class="article-row-link" href={href}>
-    <div class="article-row-meta label">
-      <time datetime={typeof article.date === 'string' ? article.date : article.date.toISOString()}>
-        {dateLabel}
-      </time>
-      <span class="sep" aria-hidden="true">·</span>
-      <ArticleTypeLabel type={article.type} />
-      {readingLabel && (
-        <>
-          <span class="sep" aria-hidden="true">·</span>
-          <span class="reading">{readingLabel}</span>
-        </>
-      )}
-    </div>
-    <h3 class="article-row-title">{article.title}</h3>
-    {description && <p class="article-row-dek">{description}</p>}
-  </a>
-  {showTopics && article.topics && article.topics.length > 0 && (
-    <p class="article-row-topics label">{article.topics.join(' · ')}</p>
-  )}
-</article>
+{compact ? (
+  <BriefWireItem article={article} />
+) : (
+  <article class="article-row">
+    <a class="article-row-link" href={href}>
+      <div class="article-row-meta label">
+        <time datetime={typeof article.date === 'string' ? article.date : article.date.toISOString()}>
+          {dateLabel}
+        </time>
+        <span class="sep" aria-hidden="true">·</span>
+        <ArticleTypeLabel type={article.type} />
+        {readingLabel && (
+          <>
+            <span class="sep" aria-hidden="true">·</span>
+            <span class="reading">{readingLabel}</span>
+          </>
+        )}
+      </div>
+      <h3 class="article-row-title">{article.title}</h3>
+      {description && <p class="article-row-dek">{description}</p>}
+    </a>
+    {showTopics && article.topics && article.topics.length > 0 && (
+      <p class="article-row-topics label">{article.topics.join(' · ')}</p>
+    )}
+  </article>
+)}
 
 <style>
   .article-row {
@@ -67,14 +73,11 @@ const readingLabel =
     align-items: center;
     gap: 0.35rem;
     margin-bottom: 0.25rem;
-  }
-
-  .article-row-meta :global(.type-label) {
-    color: var(--muted);
+    color: var(--faint);
   }
 
   .sep {
-    color: var(--faint);
+    color: var(--border);
   }
 
   .reading {
