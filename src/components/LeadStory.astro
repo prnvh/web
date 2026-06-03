@@ -1,5 +1,5 @@
 ---
-import { formatDate, formatArticleType, getArticleHref, getReadingTimeLabel, type ArticleListItem } from '../utils/articles';
+import { formatDate, formatArticleType, getArticleHref, getReadingTimeLabel, slugifyTopic, type ArticleListItem } from '../utils/articles';
 
 interface Props {
   article: ArticleListItem;
@@ -25,15 +25,18 @@ const timeLabel = getReadingTimeLabel(article.readingTime);
     {timeLabel && <span> · {timeLabel}</span>}
   </p>
   {topics.length > 0 && (
-    <p class="lead-topics">{topics.join(' / ')}</p>
+    <p class="lead-topics">
+      {topics.map((topic, i) => (
+        <>
+          {i > 0 && <span aria-hidden="true"> / </span>}
+          <a href={`/topics/${slugifyTopic(topic)}`}>{topic}</a>
+        </>
+      ))}
+    </p>
   )}
 </article>
 
 <style>
-  .lead-story {
-    padding: 0;
-  }
-
   .lead-type {
     margin: 0 0 0.5rem;
     color: var(--accent);
@@ -53,11 +56,11 @@ const timeLabel = getReadingTimeLabel(article.readingTime);
 
   .lead-dek {
     font-family: var(--font-body);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     line-height: 1.55;
     color: var(--muted);
-    margin: 0.75rem 0 0;
-    max-width: 44ch;
+    margin: 0.7rem 0 0;
+    max-width: 36ch;
   }
 
   .lead-meta {
@@ -74,7 +77,12 @@ const timeLabel = getReadingTimeLabel(article.readingTime);
     font-size: 10.5px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin: 0.45rem 0 0;
+    margin: 0.5rem 0 0;
+  }
+
+  .lead-topics a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

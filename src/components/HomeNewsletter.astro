@@ -1,0 +1,84 @@
+---
+import { site } from '../config/site';
+---
+
+<section class="home-newsletter" aria-labelledby="home-newsletter-heading">
+  <div class="home-newsletter-inner">
+    <div class="home-newsletter-copy">
+      <h2 class="home-newsletter-title" id="home-newsletter-heading">The weekly note.</h2>
+      <p class="home-newsletter-dek">
+        Essays, briefs, and field maps — one email every week or two.
+      </p>
+    </div>
+    <form class="home-newsletter-form" action="#" method="post">
+      <label class="visually-hidden" for="home-email">Email</label>
+      <input id="home-email" name="email" type="email" required placeholder="Your email address" />
+      <button type="submit" class="button">Subscribe</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .home-newsletter {
+    border: 1px solid var(--rule);
+    margin-top: 0;
+  }
+
+  .home-newsletter-inner {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem 1.35rem;
+    align-items: center;
+  }
+
+  @media (min-width: 720px) {
+    .home-newsletter-inner {
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+    }
+  }
+
+  .home-newsletter-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.35rem;
+  }
+
+  .home-newsletter-dek {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+    max-width: 32ch;
+  }
+
+  .home-newsletter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: stretch;
+    min-width: min(100%, 320px);
+  }
+
+  .home-newsletter-form input {
+    flex: 1 1 10rem;
+    min-width: 0;
+    font-family: var(--font-ui);
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 0;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+</style>

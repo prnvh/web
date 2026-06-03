@@ -1,157 +1,250 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LeadStory from '../components/LeadStory.astro';
-import SecondaryStory from '../components/SecondaryStory.astro';
-import BriefRow from '../components/BriefRow.astro';
-import NoteRow from '../components/NoteRow.astro';
-import MapRow from '../components/MapRow.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import NewsletterBlock from '../components/NewsletterBlock.astro';
+import HomeBriefRail from '../components/HomeBriefRail.astro';
+import HomeColumnStory from '../components/HomeColumnStory.astro';
+import HomeMapItem from '../components/HomeMapItem.astro';
+import HomeNewsletter from '../components/HomeNewsletter.astro';
 import { site } from '../config/site';
+import { topics } from '../data/topics';
 import { getByType, toListItem } from '../utils/articles';
 
 const briefs = (await getByType('brief')).map(toListItem);
 const notes = (await getByType('research-note')).map(toListItem);
+const essays = (await getByType('essay')).map(toListItem);
 const maps = (await getByType('field-map')).map(toListItem);
 
 const lead = briefs.find((a) => a.featured) ?? briefs[0];
 const leadSlug = lead?.slug;
-const secondary = briefs.filter((a) => a.slug !== leadSlug).slice(0, 2);
-const excludeSlugs = new Set(
-  [leadSlug, ...secondary.map((a) => a.slug)].filter(Boolean) as string[],
-);
-const otherBriefs = briefs.filter((a) => !excludeSlugs.has(a.slug));
-const railBriefs = otherBriefs.slice(0, 4);
-const sectionBriefs = otherBriefs.slice(4);
-const homeNotes = notes.slice(0, 4);
+const railBriefs = briefs.filter((a) => a.slug !== leadSlug).slice(0, 4);
+
+const homeNotes = notes.slice(0, 2);
+const homeEssays = essays.slice(0, 2);
 const homeMaps = maps.slice(0, 2);
+
+const exploreTopics = topics.slice(0, 6);
 ---
 
 <BaseLayout title={site.name} description={site.description}>
-  <div class="front site-container">
+  <div class="home site-container">
     {lead && (
-      <section class="front-hero" aria-label="Front page">
-        <div class="front-hero-grid">
-          <div class="front-hero-main">
+      <section class="home-hero" aria-label="Front page">
+        <div class="home-hero-grid">
+          <div class="home-hero-lead">
             <LeadStory article={lead} />
           </div>
-          <aside class="front-hero-side">
-            {secondary.map((article) => (
-              <SecondaryStory article={article} />
-            ))}
-            {railBriefs.length > 0 && (
-              <div class="front-rail-briefs">
-                <p class="label rail-label">Latest briefs</p>
-                {railBriefs.map((article) => (
-                  <BriefRow article={article} showDek={false} />
-                ))}
-              </div>
-            )}
+          <figure class="home-hero-media">
+            <img
+              src={site.heroImage}
+              alt=""
+              width="400"
+              height="560"
+              loading="eager"
+              decoding="async"
+            />
+          </figure>
+          <aside class="home-hero-rail">
+            <HomeBriefRail articles={railBriefs} />
           </aside>
         </div>
       </section>
     )}
 
-    {sectionBriefs.length > 0 && (
-      <section class="front-block">
-        <SectionHeader title="Latest Briefs" href="/briefs" linkLabel="All briefs" />
-        {sectionBriefs.map((article) => (
-          <BriefRow article={article} />
-        ))}
-      </section>
-    )}
-
-    {homeNotes.length > 0 && (
-      <section class="front-block">
-        <SectionHeader title="Research Notes" href="/research-notes" linkLabel="All notes" />
-        <div class="notes-grid">
+    <section class="home-trio" aria-label="Research, essays, and maps">
+      <div class="home-trio-grid">
+        <div class="home-trio-col">
+          <h2 class="label home-trio-heading">Research Notes</h2>
           {homeNotes.map((article) => (
-            <NoteRow article={article} />
+            <HomeColumnStory article={article} />
           ))}
+          <a class="col-more" href="/research-notes">View all notes →</a>
         </div>
-      </section>
-    )}
-
-    {homeMaps.length > 0 && (
-      <section class="front-block">
-        <SectionHeader title="Field Maps" href="/field-maps" linkLabel="All maps" />
-        {homeMaps.map((article, i) => (
-          <MapRow article={article} index={i + 1} />
-        ))}
-      </section>
-    )}
-
-    <section class="front-block front-block--newsletter">
-      <SectionHeader title="Newsletter" />
-      <NewsletterBlock />
-      <p class="front-start label">
-        New here? <a href="/start-here">Start here</a>
-      </p>
+        <div class="home-trio-col">
+          <h2 class="label home-trio-heading">Essays</h2>
+          {homeEssays.map((article) => (
+            <HomeColumnStory article={article} />
+          ))}
+          <a class="col-more" href="/essays">View all essays →</a>
+        </div>
+        <div class="home-trio-col">
+          <h2 class="label home-trio-heading">Field Maps</h2>
+          {homeMaps.map((article, i) => (
+            <HomeMapItem article={article} index={i + 1} />
+          ))}
+          <a class="col-more" href="/field-maps">View all maps →</a>
+        </div>
+      </div>
     </section>
+
+    <section class="home-topics-strip" aria-label="Explore topics">
+      <h2 class="label home-topics-heading">Explore topics</h2>
+      <div class="home-topics-row">
+        {exploreTopics.map((topic, i) => (
+          <>
+            {i > 0 && <span class="topics-divider" aria-hidden="true" />}
+            <a href={`/topics/${topic.slug}`}>{topic.title}</a>
+          </>
+        ))}
+        <span class="topics-divider" aria-hidden="true" />
+        <a class="topics-all" href="/topics">All topics →</a>
+      </div>
+    </section>
+
+    <HomeNewsletter />
   </div>
 </BaseLayout>
 
 <style>
-  .front {
-    padding: 0.5rem 0 2rem;
+  .home {
+    padding: 0 0 2rem;
   }
 
-  .front-hero {
-    padding-bottom: 1.75rem;
-    margin-bottom: 0.25rem;
-    border-bottom: 2px solid var(--rule);
+  .home-hero {
+    padding: 1.25rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
   }
 
-  .front-hero-grid {
+  .home-hero-grid {
     display: grid;
-    gap: 1.75rem;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 960px) {
+    .home-hero-grid {
+      grid-template-columns: 1.1fr 0.75fr 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    .home-hero-lead {
+      padding-right: 1.75rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .home-hero-media {
+      margin: 0;
+      padding: 0 1.75rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .home-hero-rail {
+      padding-left: 1.75rem;
+    }
+  }
+
+  .home-hero-media img {
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+    aspect-ratio: 5 / 7;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (max-width: 959px) {
+    .home-hero-media {
+      margin: 0;
+      max-width: 280px;
+    }
+
+    .home-hero-media img {
+      max-width: 100%;
+    }
+  }
+
+  .home-trio {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .home-trio-grid {
+    display: grid;
+    gap: 1.5rem;
   }
 
   @media (min-width: 900px) {
-    .front-hero-grid {
-      grid-template-columns: 3fr 2fr;
-      gap: 2.5rem;
-      align-items: start;
+    .home-trio-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+
+    .home-trio-col {
+      padding: 0 1.5rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .home-trio-col:first-child {
+      padding-left: 0;
+    }
+
+    .home-trio-col:last-child {
+      border-right: none;
+      padding-right: 0;
     }
   }
 
-  .front-rail-briefs {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 2px solid var(--rule);
+  .home-trio-heading {
+    margin: 0 0 0.85rem;
+    display: block;
   }
 
-  .rail-label {
-    margin: 0 0 0.5rem;
+  .home-topics-strip {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  .front-block {
-    padding: 1.75rem 0;
-    border-top: 1px solid var(--border);
+  .home-topics-heading {
+    margin: 0 0 0.65rem;
+    display: block;
   }
 
-  .notes-grid {
-    display: grid;
-    gap: 0;
+  .home-topics-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0;
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  @media (min-width: 768px) {
-    .notes-grid {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 2.5rem;
-    }
-  }
-
-  .front-block--newsletter {
-    padding-bottom: 0;
-  }
-
-  .front-start {
-    margin: 1.25rem 0 0;
-    color: var(--faint);
-  }
-
-  .front-start a {
+  .home-topics-row a {
     color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding: 0 0.5rem;
+  }
+
+  .home-topics-row a:hover,
+  .topics-all {
+    color: var(--accent);
+  }
+
+  .topics-divider {
+    width: 1px;
+    height: 0.85rem;
+    background: var(--border);
+    margin: 0 0.15rem;
+  }
+
+  .home-trio-col :global(.col-story:first-of-type) {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  :global(.col-more) {
+    display: inline-block;
+    margin-top: 0.85rem;
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

@@ -1,5 +1,5 @@
 ---
-import { navItems } from '../config/site';
+import { navItems, site } from '../config/site';
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) =>
@@ -16,4 +16,7 @@ const isCurrent = (href: string) =>
       </li>
     ))}
   </ul>
+  <a class="nav-search" href={site.searchPath} aria-label="Search">
+    <span class="nav-search-icon" aria-hidden="true">⌕</span>
+  </a>
 </nav>

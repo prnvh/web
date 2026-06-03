@@ -1,0 +1,72 @@
+---
+import { formatDate, getArticleHref, type ArticleListItem } from '../utils/articles';
+
+interface Props {
+  article: ArticleListItem;
+  index: number;
+}
+
+const { article, index } = Astro.props;
+const href = getArticleHref(article);
+const dek = article.subtitle ?? article.description ?? '';
+const num = String(index).padStart(2, '0');
+---
+
+<article class="home-map-item">
+  <a href={href}>
+    <p class="label home-map-label">Field Map {num}</p>
+    <h3 class="home-map-title">{article.title}</h3>
+    {dek && <p class="home-map-dek">{dek}</p>}
+    <p class="label home-map-meta">Updated {formatDate(article.date)}</p>
+  </a>
+</article>
+
+<style>
+  .home-map-item {
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .home-map-item:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .home-map-item a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+
+  .home-map-label {
+    margin: 0 0 0.4rem;
+    color: var(--accent);
+  }
+
+  .home-map-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  .home-map-dek {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 0.3rem 0 0.35rem;
+  }
+
+  .home-map-meta {
+    margin: 0;
+    color: var(--faint);
+  }
+
+  .home-map-item a:hover .home-map-title {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>
