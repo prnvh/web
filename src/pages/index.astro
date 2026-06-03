@@ -1,198 +1,132 @@
 ---
+import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import '../styles/home.css';
+import ShareBar from '../components/ShareBar.astro';
 import { site } from '../config/site';
+import { normalizeSummary } from '../lib/summary';
 import {
   formatDate,
   getArticleHref,
-  getReadingTimeLabel,
   getByType,
+  getReadingTimeLabel,
   toListItem,
 } from '../utils/articles';
 
-const briefs = (await getByType('brief')).map(toListItem);
-const notes = (await getByType('research-note')).map(toListItem);
-const essays = (await getByType('essay')).map(toListItem);
-const maps = (await getByType('field-map')).map(toListItem);
+const briefEntries = await getByType('brief');
+const briefs = briefEntries.map(toListItem);
+const featuredEntry =
+  briefEntries.find((e) => e.data.featured) ?? briefEntries[0];
+const featured = featuredEntry ? toListItem(featuredEntry) : null;
+const featuredSlug = featured?.slug;
+const railBriefs = briefs.filter((b) => b.slug !== featuredSlug).slice(0, 4);
 
-const lead = briefs.find((a) => a.featured) ?? briefs[0];
-const leadSlug = lead?.slug;
-const railBriefs = briefs.filter((a) => a.slug !== leadSlug).slice(0, 3);
+let Content: Awaited<ReturnType<typeof render>>['Content'] | null = null;
+let summary: string[] = [];
 
-const homeNotes = notes.slice(0, 2);
-const homeEssays = essays.slice(0, 2);
-const homeMaps = maps.slice(0, 2);
+if (featuredEntry) {
+  const rendered = await render(featuredEntry);
+  Content = rendered.Content;
+  summary = normalizeSummary(featuredEntry.data.summary);
+}
 
-const homeTopics = [
-  { label: 'AGI', href: '/topics/agi' },
+const heroImage = site.heroImage;
+const topicLine = [
   { label: 'World Models', href: '/topics/world-models' },
-  { label: 'Evaluation', href: '/topics/evaluation' },
-  { label: 'Compute', href: '/topics/compute' },
-  { label: 'Interpretability', href: '/topics/interpretability' },
-  { label: 'AI Safety', href: '/topics/ai-safety' },
-  { label: 'Open Source AI', href: '/topics/open-source-ai' },
-  { label: 'India & AI', href: '/topics/india-ai' },
+  { label: 'Representation Learning', href: '/topics/world-models' },
 ];
-
-const leadHref = lead ? getArticleHref(lead) : '#';
-const leadDek = lead?.subtitle ?? lead?.description ?? '';
-const leadTime = lead ? getReadingTimeLabel(lead.readingTime) : '';
 ---
 
 <BaseLayout title={site.name} description={site.description} bodyClass="page-home">
-  <div class="home site-container">
-    {lead && (
-      <section class="home-hero" aria-label="Front page">
-        <div class="home-hero-grid">
-          <div class="home-hero-lead">
-            <p class="kicker">Brief</p>
-            <a href={leadHref}>
-              <h2 class="lead-title">{lead.title}</h2>
-              {leadDek && <p class="lead-dek">{leadDek}</p>}
-            </a>
-            <p class="lead-meta meta">
-              <time datetime={lead.date.toISOString()}>{formatDate(lead.date)}</time>
-              {leadTime && <> · {leadTime}</>}
-            </p>
-            <p class="lead-topics">
-              <a href="/topics/world-models">World Models</a><span aria-hidden="true">, </span>
-              <a href="/topics/world-models">Representation Learning</a>
-            </p>
+  {featured && Content && (
+    <div class="site-container">
+      <div class="fm-columns">
+        <article class="fm-main">
+          <header class="fm-article-head">
+            <p class="fm-kicker">Brief</p>
+            <div class="fm-head-row">
+              <div>
+                <h1 class="fm-title">
+                  <a href={getArticleHref(featured)} style="color:inherit;text-decoration:none">
+                    {featured.title}
+                  </a>
+                </h1>
+                {(featured.subtitle ?? featured.description) && (
+                  <p class="fm-dek">{featured.subtitle ?? featured.description}</p>
+                )}
+                <p class="fm-meta">
+                  <time datetime={featured.date.toISOString()}>{formatDate(featured.date)}</time>
+                  {getReadingTimeLabel(featured.readingTime) && (
+                    <> · {getReadingTimeLabel(featured.readingTime)}</>
+                  )}
+                </p>
+                <p class="fm-tags">
+                  {topicLine.map((t, i) => (
+                    <>
+                      {i > 0 && ', '}
+                      <a href={t.href}>{t.label}</a>
+                    </>
+                  ))}
+                </p>
+              </div>
+              <figure class="fm-head-media">
+                <img src={heroImage} alt="" width="200" height="200" loading="eager" />
+              </figure>
+            </div>
+          </header>
+
+          {summary.length > 0 && (
+            <aside class="fm-in-short" aria-label="In short">
+              <p class="fm-in-short-label">In Short</p>
+              <ul>
+                {summary.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </aside>
+          )}
+
+          <div class="fm-body">
+            <Content />
           </div>
 
-          <figure class="home-hero-media">
-            <img
-              src={site.heroImage}
-              alt=""
-              width="188"
-              height="533"
-              loading="eager"
-              decoding="async"
-            />
-          </figure>
+          <ShareBar />
+        </article>
 
-          <aside class="home-hero-rail">
-            <h2 class="section-label">Latest Briefs</h2>
-            <ul class="brief-rail-list">
-              {railBriefs.map((article) => {
-                const dek = article.subtitle ?? article.description ?? '';
-                return (
-                  <li class="brief-rail-item">
-                    <a href={getArticleHref(article)}>
-                      <p class="brief-rail-meta meta">
-                        <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-                      </p>
-                      <span class="brief-rail-title">{article.title}</span>
-                      {dek && <span class="brief-rail-dek">{dek}</span>}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-            <a class="link-accent brief-rail-more" href="/briefs">View all briefs →</a>
-          </aside>
+        <aside class="fm-rail" aria-label="Latest briefs">
+          <h2 class="fm-rail-title">Latest Briefs</h2>
+          {railBriefs.map((article) => {
+            const dek = article.subtitle ?? article.description ?? '';
+            return (
+              <article class="fm-rail-item">
+                <a href={getArticleHref(article)}>
+                  <p class="fm-rail-item-date">
+                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+                  </p>
+                  <span class="fm-rail-item-title">{article.title}</span>
+                  {dek && <span class="fm-rail-item-dek">{dek}</span>}
+                </a>
+              </article>
+            );
+          })}
+          <a class="fm-rail-more" href="/briefs">View all briefs →</a>
+        </aside>
+      </div>
+
+      <section class="fm-newsletter" aria-labelledby="home-nl">
+        <div class="fm-newsletter-inner">
+          <div>
+            <h2 id="home-nl">The weekly note.</h2>
+            <p>
+              One thoughtful email on frontier AI research, culture, and the systems behind technical
+              progress.
+            </p>
+          </div>
+          <form class="fm-newsletter-form" action="/subscribe" method="get">
+            <input type="email" name="email" required placeholder="Your email address" />
+            <button type="submit">Subscribe</button>
+          </form>
         </div>
       </section>
-    )}
-
-    <section class="home-trio" aria-label="Research, essays, and maps">
-      <div class="home-trio-grid">
-        <div class="home-trio-col">
-          <h2 class="section-label">Research Notes</h2>
-          {homeNotes.map((article) => {
-            const dek = article.subtitle ?? article.description ?? '';
-            return (
-              <article class="entry">
-                <a href={getArticleHref(article)}>
-                  <p class="entry-meta meta">
-                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-                  </p>
-                  <h3 class="entry-title">{article.title}</h3>
-                  {dek && <p class="entry-dek">{dek}</p>}
-                </a>
-              </article>
-            );
-          })}
-          <a class="link-accent col-more" href="/research-notes">View all notes →</a>
-        </div>
-
-        <div class="home-trio-col">
-          <h2 class="section-label">Essays</h2>
-          {homeEssays.map((article) => {
-            const dek = article.subtitle ?? article.description ?? '';
-            return (
-              <article class="entry">
-                <a href={getArticleHref(article)}>
-                  <p class="entry-meta meta">
-                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-                  </p>
-                  <h3 class="entry-title">{article.title}</h3>
-                  {dek && <p class="entry-dek">{dek}</p>}
-                </a>
-              </article>
-            );
-          })}
-          <a class="link-accent col-more" href="/essays">View all essays →</a>
-        </div>
-
-        <div class="home-trio-col">
-          <h2 class="section-label">Field Maps</h2>
-          {homeMaps.map((article, i) => {
-            const dek = article.subtitle ?? article.description ?? '';
-            const num = String(i + 1).padStart(2, '0');
-            return (
-              <article class="entry">
-                <a href={getArticleHref(article)}>
-                  <p class="map-label">Field Map {num}</p>
-                  <h3 class="entry-title">{article.title}</h3>
-                  {dek && <p class="entry-dek">{dek}</p>}
-                  <p class="map-updated meta">Updated {formatDate(article.date)}</p>
-                </a>
-              </article>
-            );
-          })}
-          <a class="link-accent col-more" href="/field-maps">View all maps →</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="home-topics-strip" aria-label="Explore topics">
-      <h2 class="section-label home-topics-label">Explore topics</h2>
-      <div class="home-topics-row">
-        {homeTopics.map((topic, i) => (
-          <>
-            {i > 0 && <span class="pipe" aria-hidden="true">|</span>}
-            <a href={topic.href}>{topic.label}</a>
-          </>
-        ))}
-        <a class="topics-all link-accent" href="/topics">All topics →</a>
-      </div>
-    </section>
-
-    <section class="home-newsletter" aria-labelledby="home-newsletter-heading">
-      <div class="home-newsletter-inner">
-        <div>
-          <h2 class="home-newsletter-title" id="home-newsletter-heading">The weekly note.</h2>
-          <p class="home-newsletter-dek">
-            One thoughtful email on frontier AI research, culture, and the systems behind technical progress.
-          </p>
-        </div>
-        <form class="home-newsletter-form" action="#" method="post">
-          <label class="visually-hidden" for="home-email">Email</label>
-          <input id="home-email" name="email" type="email" required placeholder="Your email address" />
-          <button type="submit" class="button">Subscribe</button>
-        </form>
-      </div>
-    </section>
-  </div>
+    </div>
+  )}
 </BaseLayout>
-
-<style>
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-  }
-</style>

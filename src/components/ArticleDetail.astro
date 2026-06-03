@@ -29,7 +29,7 @@ const toc = headings
 const canonical = new URL(getArticlePath(entry), Astro.site).toString();
 
 const allBriefs = (await getByType('brief')).map(toListItem);
-const railBriefs = allBriefs.filter((b) => b.slug !== slug).slice(0, 3);
+const railBriefs = allBriefs.filter((b) => b.slug !== slug).slice(0, 4);
 
 const allNotes = (await getByType('research-note')).map(toListItem);
 const railNotes = allNotes.filter((n) => n.slug !== slug).slice(0, 3);
@@ -39,9 +39,11 @@ const furtherReading =
     if (typeof s === 'string') {
       return { label: 'Source', title: s, href: '#' };
     }
-    const label =
-      s.note ??
-      (s.url?.includes('arxiv') ? 'Paper' : s.url?.includes('youtube') ? 'Video' : 'Blog');
+    const label = s.url?.includes('arxiv')
+      ? 'Paper'
+      : s.url?.includes('youtube')
+        ? 'Video'
+        : 'Blog';
     return { label, title: s.title, href: s.url ?? '#' };
   }) ?? [];
 
@@ -52,10 +54,7 @@ const paperAuthors = data.paperInfo?.authors
   : undefined;
 
 const pullQuote = data.pullQuote
-  ? {
-      text: data.pullQuote.text,
-      attribution: data.pullQuote.attribution,
-    }
+  ? { text: data.pullQuote.text, attribution: data.pullQuote.attribution }
   : data.type === 'essay'
     ? {
         text: 'Progress is no longer about how much we can scale, but how precisely we can steer.',
@@ -89,13 +88,13 @@ const pullQuote = data.pullQuote
       paper={data.paperInfo.paperTitle}
       year={data.paperInfo.year}
       authors={paperAuthors}
-      source="Paper"
+      source={data.paperInfo.institution ?? 'Paper'}
       sourceUrl={data.paperInfo.link}
     />
   )}
-  {data.orientation && (
-    <div slot="orientation" class="orientation-box">
-      <p class="orientation-box__label">Orientation</p>
+  {data.orientation && data.type === 'field-map' && (
+    <div slot="orientation" class="fm-orientation">
+      <p class="fm-orientation-label">Orientation</p>
       <p><strong>Covers:</strong> {data.orientation.covers}</p>
       <p><strong>For:</strong> {data.orientation.audience}</p>
       <p>

@@ -1,16 +1,13 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import SummaryBox from '../components/SummaryBox.astro';
-import PaperMetaTable from '../components/PaperMetaTable.astro';
 import ShareBar from '../components/ShareBar.astro';
-import NewsletterBand from '../components/NewsletterBand.astro';
+import PaperMetaTable from '../components/PaperMetaTable.astro';
 import ReadNextGrid from '../components/ReadNextGrid.astro';
-import ArticleRail from '../components/ArticleRail.astro';
 import {
   formatArticleType,
   formatDate,
+  getArticleHref,
   getReadingTimeLabel,
-  slugifyTopic,
   type ArticleListItem,
   type ArticleType,
 } from '../utils/articles';
@@ -42,7 +39,6 @@ interface Props {
   canonical?: string;
   heroImage?: string;
   pullQuote?: PullQuote;
-  headerMode?: 'masthead' | 'compact';
   railBriefs?: ArticleListItem[];
   railNotes?: ArticleListItem[];
   furtherReading?: { label: string; title: string; href: string }[];
@@ -63,13 +59,12 @@ const {
   canonical,
   heroImage,
   pullQuote,
-  headerMode = type === 'essay' ? 'compact' : 'masthead',
   railBriefs = [],
   railNotes = [],
   furtherReading = [],
 } = Astro.props;
 
-const pageClass = `page-article page-${type.replace(/-/g, '-')}`;
+const pageClass = `page-article page-${type}`;
 const kicker = formatArticleType(type).toUpperCase();
 const dateStr = formatDate(date);
 const timeStr = getReadingTimeLabel(readingTime);
@@ -79,6 +74,7 @@ const topicLinks = topics.map((slug) => ({
 }));
 
 const h2Sections = toc.filter((h) => h.depth === 2);
+
 const defaultHero =
   type === 'brief'
     ? '/images/brief-hero.jpg'
@@ -88,6 +84,7 @@ const defaultHero =
         ? '/images/field-map-hero.jpg'
         : undefined;
 const heroSrc = type === 'research-note' ? undefined : (heroImage ?? defaultHero);
+const headerMode = type === 'essay' ? 'compact' : 'masthead';
 ---
 
 <BaseLayout
@@ -97,149 +94,277 @@ const heroSrc = type === 'research-note' ? undefined : (heroImage ?? defaultHero
   bodyClass={pageClass}
   headerMode={headerMode}
 >
-  <article class="article-shell site-container">
-    <header class="article-hero-split">
-      <div class="article-hero-text">
-        <p class="article-kicker">{kicker}</p>
-        <h1 class="article-title">{title}</h1>
-        {subtitle && <p class="article-subtitle">{subtitle}</p>}
-        <p class="article-meta">
-          {dateStr}
-          {timeStr && <> · {timeStr}</>}
-          {author && <> · {author}</>}
-        </p>
-        {topicLinks.length > 0 && (
-          <p class="article-tags">
-            {topicLinks.map((t, i) => (
-              <>
-                {i > 0 && ', '}
-                <a href={`/topics/${t.slug}`}>{t.label}</a>
-              </>
-            ))}
-          </p>
-        )}
-      </div>
-      {heroSrc && (
-        <figure class="article-hero-media">
-          <img src={heroSrc} alt="" width="400" height="500" loading="eager" decoding="async" />
-        </figure>
-      )}
-    </header>
-
-    {type === 'research-note' && (
-      <slot name="paper-meta" />
-    )}
-
-    {type === 'field-map' && (
-      <slot name="orientation" />
-    )}
-
-    {summary.length > 0 && (
-      <SummaryBox items={summary} variant={type === 'essay' ? 'icon' : 'list'} />
-    )}
-
-    {type === 'field-map' ? (
-      <div class="fieldmap-body-grid">
-        <div>
-          {h2Sections.length > 0 && (
-            <ol class="fieldmap-sections">
-              {h2Sections.map((section, i) => (
-                <li class="fieldmap-section">
-                  <span class="fieldmap-section__num">{String(i + 1).padStart(2, '0')}</span>
-                  <div>
-                    <h2 class="fieldmap-section__title">
-                      <a href={`#${section.slug}`}>{section.text}</a>
-                    </h2>
-                  </div>
-                  <span class="fieldmap-section__time">{timeStr || ''}</span>
-                </li>
-              ))}
-            </ol>
-          )}
-          <div class="article-body">
-            <slot />
+  <div class="site-container">
+    {type === 'essay' ? (
+      <div class="fm-essay-stage">
+        <header class="fm-article-head">
+          <p class="fm-kicker">{kicker}</p>
+          <div class="fm-head-row">
+            <div>
+              <h1 class="fm-title">{title}</h1>
+              {subtitle && <p class="fm-dek">{subtitle}</p>}
+              <p class="fm-meta">
+                {dateStr}
+                {timeStr && <> · {timeStr}</>}
+              </p>
+              {topicLinks.length > 0 && (
+                <p class="fm-tags">
+                  <span>Topics: </span>
+                  {topicLinks.map((t, i) => (
+                    <>
+                      {i > 0 && ' '}
+                      <a href={`/topics/${t.slug}`}>{t.label}</a>
+                    </>
+                  ))}
+                </p>
+              )}
+            </div>
+            {heroSrc && (
+              <figure class="fm-head-media">
+                <img src={heroSrc} alt="" width="260" height="325" loading="eager" />
+              </figure>
+            )}
           </div>
-        </div>
-        <aside class="article-rail" aria-label="Supplementary">
-          {h2Sections.length > 0 && (
-            <section class="rail-block">
-              <h2 class="rail-block__heading">On this page</h2>
-              <ul class="rail-toc">
-                {h2Sections.map((h) => (
-                  <li>
-                    <a href={`#${h.slug}`}>{h.text}</a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-          {related.length > 0 && (
-            <ArticleRail
-              heading="Related reading"
-              articles={related}
-              moreHref="/essays"
-              moreLabel="Browse all essays →"
-            />
-          )}
-        </aside>
-      </div>
-    ) : type === 'essay' ? (
-      <>
-        <div class="essay-body-grid">
-          <div class="article-body">
+        </header>
+
+        {summary.length > 0 && (
+          <aside class="fm-in-short fm-in-short--essay" aria-label="In short">
+            <span class="fm-in-short-icon" aria-hidden="true">i</span>
+            <div>
+              <p class="fm-in-short-label">In Short</p>
+              <p class="fm-in-short-text">{summary.join(' ')}</p>
+            </div>
+          </aside>
+        )}
+
+        <div class="fm-essay-columns">
+          <div class="fm-body">
             <slot />
           </div>
           {pullQuote && (
-            <aside class="essay-pull-quote" aria-label="Pull quote">
-              <blockquote class="pull-quote">
+            <aside aria-label="Pull quote">
+              <blockquote class="fm-pull-quote">
                 {pullQuote.text}
                 {pullQuote.attribution && <cite>{pullQuote.attribution}</cite>}
               </blockquote>
             </aside>
           )}
         </div>
+
         {related.length > 0 && <ReadNextGrid articles={related} />}
+      </div>
+    ) : type === 'field-map' ? (
+      <>
+        <header class="fm-article-head">
+          <p class="fm-kicker">{kicker}</p>
+          <div class="fm-head-row">
+            <div>
+              <h1 class="fm-title">{title}</h1>
+              {subtitle && <p class="fm-dek">{subtitle}</p>}
+              <p class="fm-meta">
+                {dateStr}
+                {timeStr && <> · {timeStr}</>}
+                {author && <> · {author}</>}
+              </p>
+              {topicLinks.length > 0 && (
+                <p class="fm-tags">
+                  {topicLinks.map((t, i) => (
+                    <>
+                      {i > 0 && ', '}
+                      <a href={`/topics/${t.slug}`}>{t.label}</a>
+                    </>
+                  ))}
+                </p>
+              )}
+            </div>
+            {heroSrc && (
+              <figure class="fm-head-media">
+                <img src={heroSrc} alt="" width="320" height="240" loading="eager" />
+              </figure>
+            )}
+          </div>
+        </header>
+
+        <slot name="orientation" />
+
+        <div class="fm-columns">
+          <div class="fm-main">
+            {h2Sections.length > 0 && (
+              <ol class="fm-map-sections">
+                {h2Sections.map((section, i) => (
+                  <li class="fm-map-section">
+                    <span class="fm-map-num">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <h2 class="fm-map-section-title">
+                        <a href={`#${section.slug}`}>{section.text}</a>
+                      </h2>
+                    </div>
+                    <span class="fm-map-time">{timeStr ?? ''}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+            <div class="fm-body">
+              <slot />
+            </div>
+          </div>
+          <aside class="fm-rail">
+            {h2Sections.length > 0 && (
+              <div class="fm-rail-section">
+                <span class="fm-rail-section-label" aria-hidden="true"></span>
+                <h2 class="fm-rail-section-title">On this page</h2>
+                <ol class="fm-toc">
+                  {h2Sections.map((h, i) => (
+                    <li>
+                      <a href={`#${h.slug}`}>
+                        {String(i + 1).padStart(2, '0')} {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+            {related.length > 0 && (
+              <div class="fm-rail-section">
+                <span class="fm-rail-section-label" aria-hidden="true"></span>
+                <h2 class="fm-rail-section-title">Related reading</h2>
+                {related.map((article) => {
+                  const dek = article.subtitle ?? article.description ?? '';
+                  return (
+                    <article class="fm-rail-item">
+                      <a href={getArticleHref(article)}>
+                        <p class="fm-rail-item-date">
+                          <time datetime={article.date.toISOString()}>
+                            {formatDate(article.date)}
+                          </time>
+                        </p>
+                        <span class="fm-rail-item-title">{article.title}</span>
+                        {dek && <span class="fm-rail-item-dek">{dek}</span>}
+                      </a>
+                    </article>
+                  );
+                })}
+                <a class="fm-rail-more" href="/essays">Browse all essays →</a>
+              </div>
+            )}
+          </aside>
+        </div>
       </>
     ) : (
-      <div class="article-columns">
-        <div class="article-main">
-          <div class="article-body">
+      <div class="fm-columns">
+        <article class="fm-main">
+          <header class="fm-article-head">
+            <p class="fm-kicker">{kicker}</p>
+            <div class="fm-head-row">
+              <div>
+                <h1 class="fm-title">{title}</h1>
+                {subtitle && <p class="fm-dek">{subtitle}</p>}
+                <p class="fm-meta">
+                  {dateStr}
+                  {timeStr && <> · {timeStr}</>}
+                  {author && <> · {author}</>}
+                </p>
+                {topicLinks.length > 0 && (
+                  <p class="fm-tags">
+                    {topicLinks.map((t, i) => (
+                      <>
+                        {i > 0 && ', '}
+                        <a href={`/topics/${t.slug}`}>{t.label}</a>
+                      </>
+                    ))}
+                  </p>
+                )}
+              </div>
+              {heroSrc && (
+                <figure class="fm-head-media">
+                  <img src={heroSrc} alt="" width="200" height="200" loading="eager" />
+                </figure>
+              )}
+            </div>
+          </header>
+
+          <slot name="paper-meta" />
+
+          {summary.length > 0 && (
+            <aside class="fm-in-short" aria-label="In short">
+              <p class="fm-in-short-label">In Short</p>
+              <ul>
+                {summary.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </aside>
+          )}
+
+          <div class="fm-body">
             <slot />
           </div>
+
           {type === 'brief' && <ShareBar />}
-        </div>
-        <aside class="article-rail" aria-label="Supplementary">
+        </article>
+
+        <aside class="fm-rail">
           {type === 'brief' && railBriefs.length > 0 && (
-            <ArticleRail
-              heading="Latest briefs"
-              articles={railBriefs}
-              moreHref="/briefs"
-              moreLabel="View all briefs →"
-            />
+            <>
+              <h2 class="fm-rail-title">Latest Briefs</h2>
+              {railBriefs.map((article) => {
+                const dek = article.subtitle ?? article.description ?? '';
+                return (
+                  <article class="fm-rail-item">
+                    <a href={getArticleHref(article)}>
+                      <p class="fm-rail-item-date">
+                        <time datetime={article.date.toISOString()}>
+                          {formatDate(article.date)}
+                        </time>
+                      </p>
+                      <span class="fm-rail-item-title">{article.title}</span>
+                      {dek && <span class="fm-rail-item-dek">{dek}</span>}
+                    </a>
+                  </article>
+                );
+              })}
+              <a class="fm-rail-more" href="/briefs">View all briefs →</a>
+            </>
           )}
+
           {type === 'research-note' && (
             <>
               {railNotes.length > 0 && (
-                <ArticleRail
-                  heading="Related notes"
-                  articles={railNotes}
-                  moreHref="/research-notes"
-                  moreLabel="View all notes →"
-                />
+                <div class="fm-rail-section">
+                  <span class="fm-rail-section-label" aria-hidden="true"></span>
+                  <h2 class="fm-rail-section-title">Related notes</h2>
+                  {railNotes.map((article) => {
+                    const dek = article.subtitle ?? article.description ?? '';
+                    return (
+                      <article class="fm-rail-item">
+                        <a href={getArticleHref(article)}>
+                          <p class="fm-rail-item-date">
+                            <time datetime={article.date.toISOString()}>
+                              {formatDate(article.date)}
+                            </time>
+                          </p>
+                          <span class="fm-rail-item-title">{article.title}</span>
+                          {dek && <span class="fm-rail-item-dek">{dek}</span>}
+                        </a>
+                      </article>
+                    );
+                  })}
+                  <a class="fm-rail-more" href="/research-notes">View all research notes →</a>
+                </div>
               )}
               {furtherReading.length > 0 && (
-                <section class="rail-block">
-                  <h2 class="rail-block__heading">Further reading</h2>
+                <div class="fm-rail-section">
+                  <span class="fm-rail-section-label" aria-hidden="true"></span>
+                  <h2 class="fm-rail-section-title">Further reading</h2>
                   {furtherReading.map((item) => (
-                    <article class="rail-item">
+                    <article class="fm-rail-item">
                       <a href={item.href}>
-                        <p class="rail-item__meta">{item.label}</p>
-                        <span class="rail-item__title">{item.title}</span>
+                        <p class="fm-rail-item-date">{item.label}</p>
+                        <span class="fm-rail-item-title">{item.title}</span>
                       </a>
                     </article>
                   ))}
-                  <a class="rail-more" href="/research-notes">View all notes →</a>
-                </section>
+                </div>
               )}
             </>
           )}
@@ -247,6 +372,20 @@ const heroSrc = type === 'research-note' ? undefined : (heroImage ?? defaultHero
       </div>
     )}
 
-    <NewsletterBand />
-  </article>
+    <section class="fm-newsletter" aria-labelledby="article-nl">
+      <div class="fm-newsletter-inner">
+        <div>
+          <h2 id="article-nl">The weekly note.</h2>
+          <p>
+            One thoughtful email on frontier AI research, culture, and the systems behind technical
+            progress.
+          </p>
+        </div>
+        <form class="fm-newsletter-form" action="/subscribe" method="get">
+          <input type="email" name="email" required placeholder="Your email address" />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </div>
 </BaseLayout>

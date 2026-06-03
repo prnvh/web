@@ -1,5 +1,5 @@
 @import "./tokens.css";
-@import "./editorial.css";
+@import "./fm.css";
 
 @import "@fontsource/source-serif-4/400.css";
 @import "@fontsource/source-serif-4/600.css";
@@ -37,11 +37,7 @@ video {
   height: auto;
 }
 
-.site-container {
-  max-width: var(--page-width);
-  margin: 0 auto;
-  padding: 0 var(--page-gutter);
-}
+/* .site-container defined in fm.css */
 
 .label {
   font-family: var(--font-ui);

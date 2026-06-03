@@ -3,12 +3,10 @@ const url = Astro.url.href;
 const encoded = encodeURIComponent(url);
 ---
 
-<div class="share-bar">
+<div class="fm-share">
   <span>Share</span>
-  <div class="share-bar__links">
-    <a href={url} aria-label="Copy link">Link</a>
-    <a href={`https://twitter.com/intent/tweet?url=${encoded}`} rel="noopener noreferrer">X</a>
-    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`} rel="noopener noreferrer">LinkedIn</a>
-    <a href={`mailto:?body=${encoded}`}>Email</a>
-  </div>
+  <a href={url}>Link</a>
+  <a href={`https://twitter.com/intent/tweet?url=${encoded}`} rel="noopener noreferrer">X</a>
+  <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`} rel="noopener noreferrer">LinkedIn</a>
+  <a href={`mailto:?body=${encoded}`}>Email</a>
 </div>
