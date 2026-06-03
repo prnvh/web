@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ReadingPath from '../components/ReadingPath.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { getArticles, getArticleSlug, getArticlePath } from '../utils/articles';
+
+const all = await getArticles();
+const bySlug = new Map(all.map((a) => [getArticleSlug(a), a]));
+
+const paths = [
+  {
+    title: 'Frontier AI foundations',
+    description: 'Core concepts in scaling, evaluation, and what “frontier” actually means in research discourse.',
+    difficulty: 'accessible',
+    slugs: ['frontier-ai-foundations', 'why-next-token-prediction-may-not-be-enough', 'scaling-laws-still-matter'],
+  },
+  {
+    title: 'AGI and world models',
+    description: 'Architectural bets beyond next-token prediction — latent prediction, planning, and generality.',
+    difficulty: 'intermediate',
+    slugs: ['a-map-of-current-agi-research-directions', 'world-models-explained', 'jepa-latent-prediction-brief'],
+  },
+  {
+    title: 'Evaluation and benchmarks',
+    description: 'What leaderboards measure, when they mislead, and how to read new results.',
+    difficulty: 'intermediate',
+    slugs: ['benchmarks-that-matter', 'a-map-of-ai-evaluation'],
+  },
+  {
+    title: 'Compute and infrastructure',
+    description: 'Training economics, clusters, and the systems layer under model progress.',
+    difficulty: 'technical',
+    slugs: ['compute-frontier-brief'],
+  },
+  {
+    title: 'Interpretability and safety',
+    description: 'Mechanistic understanding, alignment debates, and what is knowable today.',
+    difficulty: 'technical',
+    slugs: ['interpretability-landscape-brief'],
+  },
+  {
+    title: 'India and frontier AI',
+    description: 'Policy, talent, and deployment context for AI in India — without hype framing.',
+    difficulty: 'accessible',
+    slugs: ['india-ai-policy-brief'],
+  },
+];
+---
+
+<BaseLayout
+  title="Start Here"
+  description="Reading paths for new readers — oriented coverage of frontier AI and technology."
+>
+  <div class="start-page site-container">
+    <header>
+      <h1 class="page-title">Start Here</h1>
+      <p class="page-intro">
+        This publication explains frontier AI and technology for technical readers who want depth without unnecessary fog. Use the paths below instead of scrolling a chronological feed.
+      </p>
+    </header>
+
+    <div class="paths">
+      {paths.map((path) => {
+        const articles = path.slugs
+          .map((s) => bySlug.get(s))
+          .filter(Boolean)
+          .map((entry) => ({
+            title: entry!.data.title,
+            href: getArticlePath(entry!),
+          }));
+        if (articles.length === 0) return null;
+        return (
+          <ReadingPath
+            title={path.title}
+            description={path.description}
+            difficulty={path.difficulty}
+            articles={articles}
+          />
+        );
+      })}
+    </div>
+
+    <NewsletterSignup />
+  </div>
+</BaseLayout>
+
+<style>
+  .start-page {
+    padding: 2rem 0 3rem;
+    max-width: 720px;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .page-intro {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 1rem 0 2rem;
+    max-width: 58ch;
+  }
+
+  .paths {
+    margin-bottom: 2.5rem;
+  }
+</style>

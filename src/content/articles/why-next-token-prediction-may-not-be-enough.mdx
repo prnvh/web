@@ -1,0 +1,46 @@
+---
+title: "Why Next-Token Prediction May Not Be Enough"
+subtitle: "A structural argument about objectives, not a bet against LLMs"
+description: "An essay on limits of autoregressive training for grounded agency and long-horizon planning."
+date: 2026-05-10
+type: essay
+author: "Editorial"
+topics: ["agi", "world-models"]
+readingTime: 18
+featured: true
+summary:
+  - Next-token prediction is a powerful but narrow training signal.
+  - Agency requires state, action, and counterfactual structure that text-only objectives under-specify.
+  - Hybrid stacks (LLM + world model) are the pragmatic near-term path.
+related:
+  - world-models-explained
+  - a-map-of-current-agi-research-directions
+---
+
+## The claim
+
+Autoregressive language modeling is the best general-purpose **interface** we have for knowledge work. It is not obviously the best **objective** for learning grounded, long-horizon agency.
+
+## The context
+
+Scaling laws and instruction tuning pushed LLMs into tool use, coding, and multimodal inputs. That success encourages a narrative: keep scaling tokens and generality follows. World-model researchers push back: **prediction in the environment’s native state space** may be necessary for reliable planning.
+
+## The simple explanation
+
+Next-token training asks: “What symbol comes next?” Planning asks: “If I act, what **state** comes next — and is it good?” Those are related but not identical. You can be excellent at the first while brittle at the second.
+
+## The technical core
+
+Autoregressive models factorize joint distributions over sequences. That is efficient for language. For control, you often want **Markovian latent dynamics** with explicit action conditioning and multi-step rollouts. Energy-based and latent-predictive objectives encode **compatibility** between context and futures — a different inductive bias.
+
+## The strongest objection
+
+LLMs plus retrieval, tools, and multimodal encoders may approximate world models **at the application layer** without changing the core objective. If product-level agency arrives first, laboratory world models could remain niche.
+
+## My view
+
+Treat next-token prediction as a **scaffold**, not a complete theory of intelligence. The interesting engineering is hybrid: language for abstraction, latent predictors for state, evals that test rollouts not single-shot answers.
+
+## What to watch next
+
+Benchmarks that require **closed-loop** interaction (not one-shot QA), and whether latent predictors trained at scale improve tool-using agents measurably.

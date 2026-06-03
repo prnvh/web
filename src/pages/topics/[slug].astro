@@ -1,0 +1,193 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleRow from '../../components/ArticleRow.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+import { topics, getTopicBySlug } from '../../data/topics';
+import {
+  getArticles,
+  getArticleSlug,
+  getArticlePath,
+  toListItem,
+} from '../../utils/articles';
+
+export function getStaticPaths() {
+  return topics.map((topic) => ({
+    params: { slug: topic.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const topic = getTopicBySlug(slug!);
+if (!topic) return Astro.redirect('/topics');
+
+const all = await getArticles();
+const bySlug = new Map(all.map((a) => [getArticleSlug(a), a]));
+const startHere = topic.startHere
+  .map((s) => bySlug.get(s))
+  .filter((e): e is NonNullable<typeof e> => Boolean(e))
+  .map(toListItem);
+const latest = all
+  .filter((e) =>
+    e.data.topics.some((t) => {
+      const normalized = t.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      return normalized === topic.slug || normalized.includes(topic.slug);
+    }),
+  )
+  .slice(0, 6)
+  .map(toListItem);
+---
+
+<BaseLayout title={topic.title} description={topic.description}>
+  <div class="topic-page site-container">
+    <header class="topic-header">
+      <h1 class="topic-title">{topic.title}</h1>
+      <p class="topic-dek">{topic.description}</p>
+    </header>
+
+    {startHere.length > 0 && (
+      <section aria-labelledby="start-here-topic">
+        <h2 class="section-label" id="start-here-topic">Start here</h2>
+        <ol class="start-list">
+          {startHere.map((item) => (
+            <li>
+              <a href={getArticlePath(bySlug.get(item.slug)!)}>
+                {item.title}
+              </a>
+              {(item.subtitle ?? item.description) && (
+                <span class="start-desc">{item.subtitle ?? item.description}</span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {latest.length > 0 && (
+      <section aria-labelledby="latest-topic">
+        <h2 class="section-label" id="latest-topic">Latest</h2>
+        {latest.map((article) => (
+          <ArticleRow article={article} />
+        ))}
+      </section>
+    )}
+
+    <section aria-labelledby="questions-topic">
+      <h2 class="section-label" id="questions-topic">Key questions</h2>
+      <ul class="key-questions">
+        {topic.keyQuestions.map((q) => (
+          <li>{q}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="concepts-topic">
+      <h2 class="section-label" id="concepts-topic">Core concepts</h2>
+      <dl class="glossary">
+        {topic.coreConcepts.map(({ term, definition }) => (
+          <>
+            <dt>{term}</dt>
+            <dd>{definition}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+
+    <section class="topic-newsletter">
+      <NewsletterSignup />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .topic-page {
+    padding: 2rem 0 3rem;
+    max-width: 720px;
+  }
+
+  .topic-title {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0;
+    line-height: 0.98;
+  }
+
+  .topic-dek {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 0.85rem 0 2rem;
+  }
+
+  .topic-header {
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2rem;
+  }
+
+  .section-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2rem 0 1rem;
+    font-weight: 600;
+  }
+
+  .start-list {
+    list-style: decimal;
+    padding-left: 1.35rem;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 17px;
+  }
+
+  .start-list li {
+    margin-bottom: 0.85rem;
+  }
+
+  .start-list a {
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .start-desc {
+    display: block;
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 0.2rem;
+  }
+
+  .key-questions {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.55;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .glossary dt {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    margin-top: 1rem;
+  }
+
+  .glossary dd {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+    line-height: 1.55;
+  }
+
+  .topic-newsletter {
+    margin-top: 2.5rem;
+    max-width: 26rem;
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import { formatArticleType, type ArticleType } from '../utils/articles';
+
+interface Props {
+  type: ArticleType;
+}
+
+const { type } = Astro.props;
+const label = formatArticleType(type);
+---
+
+<span class="type-label">{label}</span>
+
+<style>
+  .type-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+</style>

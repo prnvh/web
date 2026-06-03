@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleRow from '../../components/ArticleRow.astro';
+import SearchBox from '../../components/SearchBox.astro';
+import { getArticles, toListItem } from '../../utils/articles';
+
+const articles = (await getArticles()).map(toListItem);
+const years = [...new Set(articles.map((a) => a.date.getFullYear()))].sort((a, b) => b - a);
+---
+
+<BaseLayout
+  title="All Articles"
+  description="Archive of briefs, research notes, essays, and field maps."
+>
+  <div class="archive site-container">
+    <header class="listing-header">
+      <h1 class="listing-title">All Articles</h1>
+      <p class="listing-dek">Chronological archive. Use search for full-text lookup.</p>
+      <SearchBox />
+    </header>
+
+    <nav class="archive-filters" aria-label="Filter by year">
+      {years.map((year) => (
+        <a href={`#year-${year}`}>{year}</a>
+      ))}
+    </nav>
+
+    {years.map((year) => {
+      const group = articles.filter((a) => a.date.getFullYear() === year);
+      return (
+        <section id={`year-${year}`} aria-labelledby={`heading-${year}`}>
+          <h2 class="year-heading" id={`heading-${year}`}>{year}</h2>
+          {group.map((article) => (
+            <ArticleRow article={article} showTopics />
+          ))}
+        </section>
+      );
+    })}
+  </div>
+</BaseLayout>
+
+<style>
+  .archive {
+    padding: 2rem 0 3rem;
+  }
+
+  .listing-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .listing-dek {
+    font-family: var(--font-serif);
+    color: var(--muted);
+    margin: 0.75rem 0 1rem;
+  }
+
+  .listing-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.25rem;
+  }
+
+  .archive-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .archive-filters a {
+    color: var(--muted);
+    text-decoration: underline;
+  }
+
+  .year-heading {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 2rem 0 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .year-heading:first-of-type {
+    border-top: none;
+    margin-top: 0;
+  }
+</style>

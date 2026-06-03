@@ -1,0 +1,65 @@
+---
+import { site } from '../config/site';
+import { formatDate } from '../utils/articles';
+import Masthead from './Masthead.astro';
+import Nav from './Nav.astro';
+
+const today = formatDate(new Date());
+const subscribeHref = site.subscribePath ?? '/subscribe';
+---
+
+<header class="site-header">
+  <div class="site-container">
+    <div class="header-strip">
+      <time class="header-date" datetime={new Date().toISOString().slice(0, 10)}>{today}</time>
+      <span class="header-tagline">{site.tagline}</span>
+      <a class="header-subscribe" href={subscribeHref}>Subscribe</a>
+    </div>
+    <Masthead />
+    <Nav />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .header-tagline {
+    flex: 1;
+    text-align: center;
+    display: none;
+  }
+
+  .header-subscribe {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .header-subscribe:hover {
+    color: var(--text);
+  }
+
+  @media (min-width: 640px) {
+    .header-tagline {
+      display: block;
+    }
+  }
+</style>

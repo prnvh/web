@@ -1,0 +1,74 @@
+---
+export interface TocHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: TocHeading[];
+  label?: string;
+}
+
+const { headings, label = 'On this page' } = Astro.props;
+const items = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{items.length > 0 && (
+  <nav class="toc" aria-labelledby="toc-heading">
+    <p class="toc-label" id="toc-heading">{label}</p>
+    <ol class="toc-list">
+      {items.map((heading) => (
+        <li class:list={[`depth-${heading.depth}`]}>
+          <a href={`#${heading.slug}`}>{heading.text}</a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .toc-label {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-list li + li {
+    margin-top: 0.35rem;
+  }
+
+  .toc-list a {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .toc-list a:hover {
+    color: var(--accent);
+  }
+
+  .depth-3 {
+    padding-left: 0.85rem;
+  }
+
+  .depth-3 a {
+    color: var(--muted);
+  }
+</style>

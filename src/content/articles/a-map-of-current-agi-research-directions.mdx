@@ -1,0 +1,75 @@
+---
+title: "A Map of Current AGI Research Directions"
+subtitle: "Scaling, world models, neurosymbolic stacks, and evaluation — without the marketing"
+description: "An evergreen field map of major AGI research camps, key papers, and open questions."
+date: 2026-04-15
+updated: 2026-05-01
+type: field-map
+author: "Editorial"
+topics: ["agi"]
+readingTime: 22
+orientation:
+  covers: "Major research programs claiming progress toward general intelligence"
+  audience: "Technical readers who know ML basics but want a structured map"
+  readFirst:
+    - why-next-token-prediction-may-not-be-enough
+    - world-models-explained
+summary:
+  - "AGI is not one program — it is a bundle of bets on scaling, objectives, and evaluation."
+  - "Four durable camps — scale+RLHF, world models, neurosymbolic/hybrid, and new architectures."
+  - "Progress metrics remain contested; read claims through benchmarks and failure modes."
+related:
+  - why-next-token-prediction-may-not-be-enough
+  - frontier-ai-foundations
+---
+
+## The problem
+
+“AGI” functions as both a **research north star** and a **marketing label**. This map separates camps by what they optimize, what they assume about data, and how they propose to measure generality.
+
+## Major camps / approaches
+
+### Scale + alignment stack
+
+Continue pretraining larger multimodal models; align with RLHF/RLAIF; add tools and memory at the product layer. **Bet:** generality is an emergent property of scale plus interaction data.
+
+### World models & latent prediction
+
+Learn environment dynamics in latent space; combine with planners or LLM interfaces. **Bet:** agency requires predictive state, not just symbolic fluency.
+
+### Neurosymbolic / modular stacks
+
+Explicit reasoning modules, verifiers, or program interpreters wrapped around neural nets. **Bet:** reliability requires structure beyond end-to-end tokens.
+
+### Post-transformer architectures
+
+State-space models, long-conv hybrids, retrieval-heavy layers. **Bet:** attention-dominated stacks hit efficiency or reasoning ceilings.
+
+## Important papers
+
+Use this section as a reading list anchor — add your own notes as the field moves:
+
+- Scaling laws and emergent abilities literature (Kaplan, Hoffmann, Wei et al.)
+- World Models (Ha & Schmidhuber)
+- JEPA / latent prediction position papers (LeCun et al.)
+- ARC-style generalization benchmarks (Chollet)
+
+## Open questions
+
+- What **capabilities** are still missing after tool use and long context?
+- Which objectives improve **closed-loop** performance, not leaderboard snapshots?
+- Can we measure generality without hidden training-set overlap?
+
+## What seems promising
+
+Hybrid systems: LLM interfaces + verifiers + latent predictors for state. Investment in **evaluation** that rewards multi-step reliability.
+
+## What seems overhyped
+
+Single-number “human-level” claims, demo videos without reproducible evals, and AGI timelines driven by fundraising cycles rather than falsifiable benchmarks.
+
+## Reading path
+
+1. *Why Next-Token Prediction May Not Be Enough* (essay)
+2. *World Models, Explained* (research note)
+3. *JEPA and the Return of Latent Prediction* (brief)

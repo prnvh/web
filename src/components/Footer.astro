@@ -1,0 +1,127 @@
+---
+import { site, navItems, footerLinks } from '../config/site';
+import NewsletterSignup from './NewsletterSignup.astro';
+
+const links = footerLinks ?? navItems;
+const subscribeHref = site.subscribePath ?? '/subscribe';
+const rssHref = site.rssPath ?? '/rss.xml';
+const contactHref = site.contactPath ?? '/contact';
+---
+
+<footer class="site-footer">
+  <div class="site-container">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <p class="footer-name">{site.name}</p>
+        <p class="footer-desc">{site.description}</p>
+      </div>
+
+      <div class="footer-newsletter">
+        <NewsletterSignup compact />
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer">
+        <ul>
+          {links.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+          <li>
+            <a href={rssHref}>RSS</a>
+          </li>
+          <li>
+            <a href={contactHref}>Contact</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <p class="footer-meta">
+      <a href={subscribeHref}>Subscribe</a>
+      <span aria-hidden="true">·</span>
+      <span>&copy; {new Date().getFullYear()} {site.name}</span>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 3rem;
+    padding: 2rem 0 2.5rem;
+    border-top: 1px solid var(--rule);
+    background: var(--bg);
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .footer-name {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+    color: var(--text);
+  }
+
+  .footer-desc {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0;
+    max-width: 32ch;
+  }
+
+  .footer-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+
+  .footer-nav li {
+    margin-bottom: 0.35rem;
+  }
+
+  .footer-nav a {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .footer-nav a:hover {
+    color: var(--accent);
+  }
+
+  .footer-meta {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 1.5rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-meta a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

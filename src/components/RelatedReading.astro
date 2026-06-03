@@ -1,0 +1,46 @@
+---
+import ArticleRow from './ArticleRow.astro';
+import type { ArticleListItem } from '../utils/articles';
+
+interface Props {
+  articles: ArticleListItem[];
+  heading?: string;
+  max?: number;
+}
+
+const { articles, heading = 'Read Next', max = 3 } = Astro.props;
+const items = articles.slice(0, max);
+---
+
+{items.length > 0 && (
+  <section class="related-reading" aria-labelledby="related-reading-heading">
+    <h2 class="related-heading" id="related-reading-heading">{heading}</h2>
+    <div class="related-list">
+      {items.map((article) => (
+        <ArticleRow article={article} />
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .related-reading {
+    margin: 0;
+  }
+
+  .related-heading {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .related-list :global(.article-row:last-child) {
+    border-bottom: none;
+  }
+</style>

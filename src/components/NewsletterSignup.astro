@@ -1,0 +1,134 @@
+---
+import { site } from '../config/site';
+
+interface Props {
+  compact?: boolean;
+  action?: string;
+}
+
+const { compact = false, action = '#' } = Astro.props;
+---
+
+<aside class:list={['newsletter', { 'newsletter--compact': compact }]} aria-labelledby="newsletter-heading">
+  <h2 class="newsletter-heading" id="newsletter-heading">Get the frontier briefing.</h2>
+  <p class="newsletter-text">
+    One clear briefing on frontier AI, research, and technology every week or two.
+  </p>
+
+  <slot name="embed">
+    <form class="newsletter-form" action={action} method="post">
+      <label class="visually-hidden" for="newsletter-email">Email address</label>
+      <input
+        id="newsletter-email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      <button type="submit">Subscribe</button>
+    </form>
+  </slot>
+
+  <p class="newsletter-privacy">
+    No spam. Unsubscribe anytime. <a href={site.subscribePath ?? '/subscribe'}>Privacy note</a>.
+  </p>
+</aside>
+
+<style>
+  .newsletter {
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 1.15rem 1.2rem;
+  }
+
+  .newsletter--compact .newsletter-heading {
+    font-size: 1rem;
+  }
+
+  .newsletter-heading {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    color: var(--text);
+  }
+
+  .newsletter-text {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 0 0 0.85rem;
+  }
+
+  .newsletter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .newsletter-form input {
+    flex: 1 1 12rem;
+    min-width: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 0;
+  }
+
+  .newsletter-form input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .newsletter-form button {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--rule);
+    background: var(--text);
+    color: var(--paper);
+    cursor: pointer;
+    border-radius: 0;
+  }
+
+  .newsletter-form button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .newsletter-privacy {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--faint);
+    margin: 0.65rem 0 0;
+    line-height: 1.4;
+  }
+
+  .newsletter-privacy a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

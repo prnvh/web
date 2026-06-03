@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleRow from '../../components/ArticleRow.astro';
+import { getByType, toListItem } from '../../utils/articles';
+
+const briefs = (await getByType('brief')).map(toListItem);
+---
+
+<BaseLayout
+  title="Briefs"
+  description="Short analysis of recent developments in frontier AI and technology."
+>
+  <div class="listing site-container">
+    <header class="listing-header">
+      <h1 class="listing-title">Briefs</h1>
+      <p class="listing-dek">
+        Short analysis of recent developments in frontier AI and technology.
+      </p>
+    </header>
+    <div class="listing-rows">
+      {briefs.map((article) => (
+        <ArticleRow article={article} showTopics />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .listing {
+    padding: 2rem 0 3rem;
+  }
+
+  .listing-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    margin: 0;
+  }
+
+  .listing-dek {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 48ch;
+    margin: 0.75rem 0 1.5rem;
+    line-height: 1.5;
+  }
+
+  .listing-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.5rem;
+  }
+</style>

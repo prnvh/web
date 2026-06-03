@@ -1,0 +1,29 @@
+---
+import { slugifyTopic } from '../utils/articles';
+
+interface Props {
+  topic: string;
+  href?: string;
+}
+
+const { topic, href } = Astro.props;
+const link = href ?? `/topics/${slugifyTopic(topic)}`;
+---
+
+<a class="topic-pill" href={link}>{topic}</a>
+
+<style>
+  .topic-pill {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .topic-pill:hover {
+    color: var(--accent);
+  }
+</style>

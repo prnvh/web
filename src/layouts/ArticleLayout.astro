@@ -1,0 +1,203 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ArticleTypeLabel from '../components/ArticleTypeLabel.astro';
+import MetadataLine from '../components/MetadataLine.astro';
+import SummaryBox from '../components/SummaryBox.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import RelatedReading from '../components/RelatedReading.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import type { TocHeading } from '../components/TableOfContents.astro';
+import type { ArticleListItem, ArticleType } from '../utils/articles';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  type: ArticleType;
+  date: string | Date;
+  updated?: string | Date;
+  author?: string;
+  readingTime?: string | number;
+  topics?: string[];
+  summary?: string[];
+  toc?: TocHeading[];
+  related?: ArticleListItem[];
+  canonical?: string;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  type,
+  date,
+  author,
+  readingTime,
+  topics = [],
+  summary = [],
+  toc = [],
+  related = [],
+  canonical,
+} = Astro.props;
+
+const metadata = { type, date, readingTime, author, topics };
+---
+
+<BaseLayout
+  title={title}
+  description={description ?? subtitle}
+  canonical={canonical}
+  ogTitle={title}
+  ogDescription={description ?? subtitle}
+>
+  <article class="article-page site-container">
+    <div class="article-grid">
+      <aside class="article-rail article-rail--left" aria-label="Article navigation">
+        <MetadataLine {...metadata} />
+        {toc.length > 0 && <TableOfContents headings={toc} />}
+        <slot name="left" />
+      </aside>
+
+      <div class="article-main">
+        <header class="article-header">
+          <ArticleTypeLabel type={type} />
+          <h1 class="article-title">{title}</h1>
+          {subtitle && <p class="article-subtitle">{subtitle}</p>}
+          <div class="article-header-meta">
+            <MetadataLine {...metadata} />
+          </div>
+        </header>
+
+        {summary.length > 0 && <SummaryBox items={summary} />}
+
+        <slot name="before-body" />
+
+        <div class="article-body prose">
+          <slot />
+        </div>
+
+        <slot name="after-body" />
+      </div>
+
+      <aside class="article-rail article-rail--right" aria-label="Related reading">
+        <RelatedReading articles={related} />
+        <NewsletterSignup compact />
+        <slot name="right" />
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-page {
+    padding: 2rem 0 3rem;
+  }
+
+  .article-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .article-header {
+    margin-bottom: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .article-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 2.65rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    margin: 0.5rem 0 0.35rem;
+    color: var(--text);
+    max-width: 20ch;
+  }
+
+  .article-subtitle {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.45;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    max-width: 42ch;
+  }
+
+  .article-body {
+    max-width: 680px;
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .article-body :global(h2) {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 2.25rem 0 0.75rem;
+    line-height: 1.15;
+  }
+
+  .article-body :global(h3) {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 1.75rem 0 0.5rem;
+  }
+
+  .article-body :global(p) {
+    margin: 0 0 1.1rem;
+  }
+
+  .article-body :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .article-body :global(a:hover) {
+    color: var(--accent);
+  }
+
+  .article-rail--left {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .article-grid {
+      grid-template-columns: minmax(160px, 200px) minmax(0, 1fr) minmax(200px, 240px);
+      align-items: start;
+      gap: 2.5rem;
+    }
+
+    .article-rail--left {
+      display: block;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .article-header-meta {
+      display: none;
+    }
+
+    .article-rail--right {
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .article-main {
+      min-width: 0;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .article-rail--right {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+  }
+</style>

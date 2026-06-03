@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+---
+
+<BaseLayout
+  title="Subscribe"
+  description="Get the frontier briefing — essays, research notes, briefs, and reading paths."
+>
+  <div class="subscribe-page site-container">
+    <h1 class="page-title">Subscribe</h1>
+    <p class="page-lead">
+      One clear briefing on frontier AI, research, and technology every week or two.
+    </p>
+
+    <NewsletterSignup />
+
+    <section class="subscribe-benefits">
+      <h2 class="section-label">What readers get</h2>
+      <ul>
+        <li>New essays and research notes</li>
+        <li>Brief explanations of important papers and announcements</li>
+        <li>Reading paths and field maps</li>
+        <li>Notes on what seems overhyped or underrated</li>
+      </ul>
+    </section>
+
+    <p class="archive-note">
+      <a href="/articles">Browse the archive</a> before subscribing if you want a sense of tone and depth.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .subscribe-page {
+    padding: 2rem 0 3rem;
+    max-width: 32rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .page-lead {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0.75rem 0 1.5rem;
+  }
+
+  .section-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2rem 0 0.75rem;
+  }
+
+  .subscribe-benefits ul {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.55;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .archive-note {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 2rem;
+  }
+
+  .archive-note a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>

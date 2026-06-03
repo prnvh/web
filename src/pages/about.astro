@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout title="About" description={`About ${site.name}`}>
+  <div class="static-page site-container article-body">
+    <h1>About</h1>
+
+    <h2>What this is</h2>
+    <p>
+      {site.name} is a text-first publication on frontier AI, research analysis, and deep technology. It publishes briefs, research notes, long essays, and field maps — structured so you can read one piece or follow a topic for months.
+    </p>
+
+    <h2>Who it is for</h2>
+    <p>
+      Engineers, researchers, policy readers, and technically curious people who want primary-source context and clear argument — not press-release summaries or product marketing dressed as analysis.
+    </p>
+
+    <h2>What it covers</h2>
+    <p>
+      AGI directions, world models, evaluation, compute, interpretability, safety, open-source systems, data-efficient learning, and regional context (including India & AI). Coverage follows what is actually moving in research — not whatever is trending on social feeds.
+    </p>
+
+    <h2>Editorial principles</h2>
+    <ul>
+      <li>Clarity over hype.</li>
+      <li>Sources over vibes.</li>
+      <li>Accessible, not shallow.</li>
+      <li>Opinion is labeled as opinion.</li>
+      <li>Corrections are welcome.</li>
+    </ul>
+
+    <h2>About the author</h2>
+    <p>
+      Written and edited by a single author. Replace this paragraph with your background — institution, focus areas, and why you publish — in plain language.
+    </p>
+
+    <h2 id="contact">Contact</h2>
+    <p>
+      Email: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    padding: 2rem 0 3rem;
+  }
+
+  .static-page h1 {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .static-page h2 {
+    font-size: 1.35rem;
+    margin-top: 2rem;
+  }
+</style>

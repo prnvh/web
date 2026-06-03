@@ -1,0 +1,114 @@
+---
+import { render } from 'astro:content';
+import ArticleLayout from '../layouts/ArticleLayout.astro';
+import PaperInfoBox from './PaperInfoBox.astro';
+import SourceList from './SourceList.astro';
+import { normalizeSummary } from '../lib/summary';
+import {
+  formatDate,
+  getArticlePath,
+  getArticleSlug,
+  getRelated,
+  toListItem,
+  type ArticleEntry,
+} from '../utils/articles';
+
+interface Props {
+  entry: ArticleEntry;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const data = entry.data;
+const slug = getArticleSlug(entry);
+const summary = normalizeSummary(data.summary);
+const relatedEntries = await getRelated(entry);
+const related = relatedEntries.map(toListItem);
+const toc = headings
+  .filter((h) => h.depth >= 2 && h.depth <= 3)
+  .map((h) => ({ slug: h.slug, text: h.text, depth: h.depth }));
+const canonical = new URL(getArticlePath(entry), Astro.site).toString();
+---
+
+<ArticleLayout
+  title={data.title}
+  subtitle={data.subtitle}
+  description={data.description}
+  type={data.type}
+  date={data.date}
+  updated={data.updated}
+  author={data.author}
+  readingTime={data.readingTime}
+  topics={data.topics}
+  summary={summary}
+  toc={toc}
+  related={related}
+  canonical={canonical}
+>
+  {data.paperInfo && (
+    <Fragment slot="before-body">
+      <PaperInfoBox
+        title={data.paperInfo.paperTitle}
+        authors={
+          Array.isArray(data.paperInfo.authors)
+            ? data.paperInfo.authors.join(', ')
+            : data.paperInfo.authors
+        }
+        institution={data.paperInfo.institution}
+        year={data.paperInfo.year}
+        link={data.paperInfo.link}
+        status={data.paperInfo.status}
+      />
+    </Fragment>
+  )}
+  {data.orientation && (
+    <Fragment slot="before-body">
+      <div class="orientation-box">
+        <p class="orientation-label">Orientation</p>
+        <p><strong>Covers:</strong> {data.orientation.covers}</p>
+        <p><strong>For:</strong> {data.orientation.audience}</p>
+        <p><strong>Read first:</strong>{' '}
+          {Array.isArray(data.orientation.readFirst)
+            ? data.orientation.readFirst.join(' · ')
+            : data.orientation.readFirst}
+        </p>
+      </div>
+    </Fragment>
+  )}
+  <Content />
+  {data.sources && data.sources.length > 0 && (
+    <Fragment slot="after-body">
+      <SourceList
+        sources={data.sources.map((s) =>
+          typeof s === 'string'
+            ? { title: s, url: '#' }
+            : { title: s.title, url: s.url ?? '#', note: s.note },
+        )}
+      />
+    </Fragment>
+  )}
+</ArticleLayout>
+
+<style>
+  .orientation-box {
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.5rem;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .orientation-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.65rem;
+  }
+
+  .orientation-box p {
+    margin: 0.35rem 0;
+  }
+</style>

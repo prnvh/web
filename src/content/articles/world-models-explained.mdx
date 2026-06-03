@@ -1,0 +1,47 @@
+---
+title: "World Models, Explained"
+subtitle: "Internal simulators, latent dynamics, and the case against token-only training"
+description: "A research note on what world models are, how they differ from LLMs, and where the field is stuck."
+date: 2026-05-20
+type: research-note
+author: "Editorial"
+topics: ["world-models", "agi"]
+readingTime: 12
+paperInfo:
+  paperTitle: "World Models (Ha & Schmidhuber, 2018)"
+  authors: "David Ha, Jürgen Schmidhuber"
+  year: 2018
+  status: paper
+  link: "https://worldmodels.github.io/"
+summary:
+  - A world model is a learned simulator of environment dynamics.
+  - Classic demos used compact latents for planning in games; modern work scales latents and combines with LLMs.
+  - The open problem is evaluation — we lack standard tests for planning-grade simulation.
+related:
+  - jepa-latent-prediction-brief
+  - why-next-token-prediction-may-not-be-enough
+---
+
+## The result
+
+World models learn to predict how an environment evolves — often in a compressed latent space — so an agent can plan actions without rolling out full physics in pixel space.
+
+## The core idea
+
+Separate **representation**, **dynamics**, and **policy**:
+
+- Encode observations.
+- Predict next latents (or energies) conditioned on actions.
+- Plan in latent space, decode actions.
+
+## Why it matters
+
+Large language models excel at symbolic manipulation but do not inherently maintain grounded state about the physical or interactive world. World-model research asks whether **predictive learning in latent space** is a missing ingredient for agency.
+
+## Limitations
+
+Many demos remain in narrow simulators. Scaling to open-ended environments raises questions about **stochasticity**, partial observability, and whether latent predictors inherit the same data hunger as LLMs.
+
+## My take
+
+World models are best understood as a **research program**, not a single architecture. The useful question is which prediction target (pixels, latents, tokens, energies) buys the most planning power per flop — not whether one paper “solved” AGI.

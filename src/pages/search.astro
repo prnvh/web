@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Search" description="Search articles, topics, and summaries.">
+  <link slot="head" rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <div class="search-page site-container">
+    <header>
+      <h1 class="page-title">Search</h1>
+      <p class="page-lead">Full-text search across the publication. Indexed at build time via Pagefind.</p>
+    </header>
+    <div id="search" class="pagefind-ui"></div>
+    <p class="search-note">
+      Run <code>npm run build</code> locally to generate the search index. On Vercel, this happens automatically in <code>postbuild</code>.
+    </p>
+  </div>
+  <script is:inline src="/pagefind/pagefind-ui.js"></script>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (typeof PagefindUI !== 'undefined') {
+        new PagefindUI({ element: '#search', showImages: false });
+      }
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .search-page {
+    padding: 2rem 0 3rem;
+    max-width: 640px;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .page-lead {
+    font-family: var(--font-serif);
+    color: var(--muted);
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .search-note {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--faint);
+    margin-top: 2rem;
+  }
+
+  .search-note code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+</style>

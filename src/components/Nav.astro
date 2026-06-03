@@ -1,0 +1,140 @@
+---
+import { navItems } from '../config/site';
+import SearchBox from './SearchBox.astro';
+
+interface Props {
+  showSearch?: boolean;
+}
+
+const { showSearch = true } = Astro.props;
+---
+
+<nav class="site-nav" aria-label="Primary">
+  <details class="nav-mobile">
+    <summary class="nav-toggle">Menu</summary>
+    <ul class="nav-list">
+      {navItems.map((item) => (
+        <li>
+          <a href={item.href} aria-current={Astro.url.pathname === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </details>
+
+  <ul class="nav-list nav-list--desktop">
+    {navItems.map((item) => (
+      <li>
+        <a
+          href={item.href}
+          aria-current={
+            Astro.url.pathname === item.href ||
+            (item.href !== '/' && Astro.url.pathname.startsWith(`${item.href}/`))
+              ? 'page'
+              : undefined
+          }
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {showSearch && (
+    <div class="nav-search">
+      <SearchBox />
+    </div>
+  )}
+</nav>
+
+<style>
+  .site-nav {
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 0 0.75rem;
+  }
+
+  .nav-mobile {
+    display: block;
+  }
+
+  .nav-toggle {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+    color: var(--text);
+  }
+
+  .nav-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-list {
+    list-style: none;
+    margin: 0.65rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .nav-list a {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .nav-list a:hover,
+  .nav-list a[aria-current='page'] {
+    color: var(--accent);
+  }
+
+  .nav-list--desktop {
+    display: none;
+  }
+
+  .nav-search {
+    margin-top: 0.75rem;
+    max-width: 16rem;
+  }
+
+  @media (min-width: 900px) {
+    .nav-mobile {
+      display: none;
+    }
+
+    .nav-list--desktop {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.1rem;
+      margin: 0;
+      justify-content: center;
+    }
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem 2rem;
+    }
+
+    .nav-search {
+      margin-top: 0;
+      position: absolute;
+      right: 24px;
+    }
+
+    .site-nav {
+      position: relative;
+    }
+  }
+</style>

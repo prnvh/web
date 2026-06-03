@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FeaturedStory from '../../components/FeaturedStory.astro';
+import ArticleRow from '../../components/ArticleRow.astro';
+import { getByType, toListItem } from '../../utils/articles';
+
+const essays = (await getByType('essay')).map(toListItem);
+const featured = essays.find((e) => e.featured) ?? essays[0];
+const rest = essays.filter((e) => e.slug !== featured?.slug);
+---
+
+<BaseLayout
+  title="Essays"
+  description="Long-form analysis on frontier AI, research directions, and technical systems."
+>
+  <div class="listing site-container">
+    <header class="listing-header">
+      <h1 class="listing-title">Essays</h1>
+      <p class="listing-dek">
+        Long-form analysis for readers who want argument, context, and technical depth.
+      </p>
+    </header>
+    {featured && (
+      <div class="listing-featured">
+        <FeaturedStory article={featured} label="Featured essay" />
+      </div>
+    )}
+    <div class="listing-rows">
+      {rest.map((article) => (
+        <ArticleRow article={article} showTopics />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .listing {
+    padding: 2rem 0 3rem;
+  }
+
+  .listing-title {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    margin: 0;
+  }
+
+  .listing-dek {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 48ch;
+    margin: 0.75rem 0 1.5rem;
+    line-height: 1.5;
+  }
+
+  .listing-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.25rem;
+  }
+
+  .listing-featured {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+</style>

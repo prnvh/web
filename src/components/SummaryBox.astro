@@ -1,0 +1,50 @@
+---
+interface Props {
+  items: string[];
+  label?: string;
+}
+
+const { items, label = 'In Short' } = Astro.props;
+---
+
+{items.length > 0 && (
+  <aside class="summary-box" aria-labelledby="summary-box-heading">
+    <p class="summary-label" id="summary-box-heading">{label}</p>
+    <ul class="summary-list">
+      {items.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </aside>
+)}
+
+<style>
+  .summary-box {
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 1rem 1.15rem;
+    margin: 1.5rem 0;
+  }
+
+  .summary-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.65rem;
+  }
+
+  .summary-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+
+  .summary-list li + li {
+    margin-top: 0.35rem;
+  }
+</style>

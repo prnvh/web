@@ -1,0 +1,75 @@
+---
+import ArticleTypeLabel from './ArticleTypeLabel.astro';
+import TopicPill from './TopicPill.astro';
+import { formatDate, type ArticleType } from '../utils/articles';
+
+interface Props {
+  type: ArticleType;
+  date: string | Date;
+  readingTime?: string | number;
+  topics?: string[];
+  author?: string;
+  separator?: string;
+}
+
+const { type, date, readingTime, topics = [], author, separator = '·' } = Astro.props;
+const dateLabel = formatDate(date);
+const timeLabel =
+  readingTime !== undefined
+    ? typeof readingTime === 'number'
+      ? `${readingTime} min read`
+      : readingTime
+    : null;
+---
+
+<p class="metadata-line">
+  <ArticleTypeLabel type={type} />
+  <span class="sep" aria-hidden="true">{separator}</span>
+  <time datetime={typeof date === 'string' ? date : date.toISOString()}>{dateLabel}</time>
+  {timeLabel && (
+    <>
+      <span class="sep" aria-hidden="true">{separator}</span>
+      <span>{timeLabel}</span>
+    </>
+  )}
+  {author && (
+    <>
+      <span class="sep" aria-hidden="true">{separator}</span>
+      <span>{author}</span>
+    </>
+  )}
+  {topics.length > 0 && (
+    <span class="topics">
+      {topics.map((topic) => (
+        <TopicPill topic={topic} />
+      ))}
+    </span>
+  )}
+</p>
+
+<style>
+  .metadata-line {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    line-height: 1.4;
+  }
+
+  .sep {
+    color: var(--faint);
+  }
+
+  .topics {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-left: 0.15rem;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+title: "JEPA and the Return of Latent Prediction"
+subtitle: "Why several labs are betting on embedding-space forecasting again"
+description: "A brief on Joint Embedding Predictive Architectures and what they change about world-model training."
+date: 2026-05-28
+type: brief
+author: "Editorial"
+topics: ["world-models", "agi"]
+tags: ["JEPA", "LeCun", "representation learning"]
+readingTime: 7
+featured: true
+summary:
+  - JEPA predicts in representation space, not raw pixels or tokens.
+  - The bet is that abstract latents are easier to scale and plan over.
+  - Open questions remain around grounding, evaluation, and hybrid LLM stacks.
+related:
+  - world-models-explained
+  - why-next-token-prediction-may-not-be-enough
+sources:
+  - title: "A Path Towards Autonomous Machine Intelligence (LeCun, 2022)"
+    url: "https://openreview.net/pdf?id=BZ5a1r-kVsf"
+---
+
+## What happened
+
+Several research groups have renewed interest in **latent prediction** — training models to forecast future states in an embedding space rather than reconstructing pixels or generating the next token in a sequence. Joint Embedding Predictive Architectures (JEPA) are the clearest articulation of this bet.
+
+## Why it matters
+
+If the bottleneck in world modeling is **representation quality**, not decoder fidelity, then training can focus compute on learning stable abstract states. That shifts evaluation: you care whether latents support planning and counterfactual reasoning, not whether generated frames look crisp.
+
+## Technical context
+
+A JEPA-style stack typically has:
+
+1. An encoder that maps observations to embeddings.
+2. A predictor that forecasts future embeddings from context.
+3. A loss that pulls predicted and target embeddings together while avoiding collapse (often via masking, negative pairs, or architectural asymmetry).
+
+The contrast with autoregressive LLMs is structural: language models optimize next-token likelihood over a discrete channel; JEPA-style models optimize **compatibility** between context and plausible futures in a continuous latent space.
+
+## What to watch next
+
+Whether latent predictors **compose with language models** (tool use, instruction following) or remain siloed perception modules. Also whether benchmarks emerge that measure planning-relevant latent quality — not just reconstruction proxies.
