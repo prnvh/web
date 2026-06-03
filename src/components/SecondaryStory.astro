@@ -1,34 +1,33 @@
 ---
-import MetadataLine from './MetadataLine.astro';
-import { getArticleHref, type ArticleListItem } from '../utils/articles';
+import { formatDate, formatArticleType, getArticleHref, getReadingTimeLabel, type ArticleListItem } from '../utils/articles';
 
 interface Props {
   article: ArticleListItem;
   dek?: string;
-  label?: string;
 }
 
-const { article, dek, label = 'Also' } = Astro.props;
+const { article, dek } = Astro.props;
 const href = getArticleHref(article);
 const description = dek ?? article.subtitle ?? article.description ?? '';
+const typeLabel = formatArticleType(article.type).toUpperCase();
+const timeLabel = getReadingTimeLabel(article.readingTime);
 ---
 
 <article class="secondary-story">
-  <p class="label secondary-label">{label}</p>
+  <p class="label secondary-type">{typeLabel}</p>
   <a class="secondary-link" href={href}>
     <h3 class="story-title">{article.title}</h3>
     {description && <p class="secondary-dek">{description}</p>}
   </a>
-  <MetadataLine
-    type={article.type}
-    date={article.date}
-    readingTime={article.readingTime}
-  />
+  <p class="secondary-meta">
+    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+    {timeLabel && <span> · {timeLabel}</span>}
+  </p>
 </article>
 
 <style>
   .secondary-story {
-    padding: 1rem 0 0;
+    padding: 0.85rem 0 0;
     border-top: 1px solid var(--border);
   }
 
@@ -37,8 +36,9 @@ const description = dek ?? article.subtitle ?? article.description ?? '';
     padding-top: 0;
   }
 
-  .secondary-label {
-    margin: 0 0 0.4rem;
+  .secondary-type {
+    margin: 0 0 0.35rem;
+    color: var(--faint);
   }
 
   .secondary-link {
@@ -53,20 +53,21 @@ const description = dek ?? article.subtitle ?? article.description ?? '';
     text-underline-offset: 3px;
   }
 
-  .story-title {
-    max-width: 22ch;
-  }
-
   .secondary-dek {
     font-family: var(--font-body);
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.45;
     color: var(--muted);
-    margin: 0.45rem 0 0.5rem;
-    max-width: 38ch;
+    margin: 0.35rem 0 0;
+    max-width: 36ch;
   }
 
-  .secondary-story :global(.metadata-line) {
-    margin-top: 0.4rem;
+  .secondary-meta {
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0.4rem 0 0;
   }
 </style>

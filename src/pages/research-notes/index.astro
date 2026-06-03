@@ -1,74 +1,36 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SecondaryStory from '../../components/SecondaryStory.astro';
-import ArticleRow from '../../components/ArticleRow.astro';
+import NoteRow from '../../components/NoteRow.astro';
 import { getByType, toListItem } from '../../utils/articles';
 
 const notes = (await getByType('research-note')).map(toListItem);
-const featured = notes.find((n) => n.featured) ?? notes[0];
-const rest = notes.filter((n) => n.slug !== featured?.slug);
+const [featured, ...rest] = notes;
 ---
 
-<BaseLayout
-  title="Research Notes"
-  description="Annotated breakdowns of papers, benchmarks, and technical claims."
->
+<BaseLayout title="Research Notes" description="Paper breakdowns, benchmark notes, and technical observations.">
   <div class="listing site-container">
     <header class="page-header">
       <h1 class="page-title">Research Notes</h1>
       <p class="page-dek">Paper breakdowns, benchmark notes, and technical observations.</p>
     </header>
-
     {featured && (
-      <div class="listing-featured">
-        <SecondaryStory article={featured} label="Featured" />
+      <div class="listing-lead">
+        <NoteRow article={featured} />
       </div>
     )}
-
-    <div class="research-grid">
+    <div class="notes-grid">
       {rest.map((article) => (
-        <div class="research-item">
-          <ArticleRow article={article} showTopics />
-        </div>
+        <NoteRow article={article} />
       ))}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .listing {
-    padding: 1.75rem 0 3rem;
-  }
-
-  .listing-featured {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .research-grid {
-    display: grid;
-    gap: 0;
-  }
-
-  @media (min-width: 720px) {
-    .research-grid {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 2rem;
-    }
-  }
-
-  .research-item :global(.article-row:first-child) {
-    border-top: 2px solid var(--rule);
-  }
-
-  @media (min-width: 720px) {
-    .research-item:nth-child(2) :global(.article-row:first-child) {
-      border-top: 2px solid var(--rule);
-    }
-  }
-
-  .research-item :global(.article-row-title) {
-    font-size: 1.15rem;
+  .listing { padding: 1.5rem 0 2.5rem; }
+  .listing-lead { margin-bottom: 0.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--rule); }
+  .notes-grid { border-top: 1px solid var(--border); }
+  @media (min-width: 768px) {
+    .notes-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 2.5rem; }
   }
 </style>

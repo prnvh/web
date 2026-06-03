@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { title, href, linkLabel = 'View all' } = Astro.props;
+---
+
+<div class="section-header">
+  <h2 class="label">{title}</h2>
+  {href && <a class="section-header-link" href={href}>{linkLabel}</a>}
+</div>
+
+<style>
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  .section-header-link {
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    flex-shrink: 0;
+  }
+</style>

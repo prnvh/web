@@ -2,62 +2,49 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LeadStory from '../components/LeadStory.astro';
 import SecondaryStory from '../components/SecondaryStory.astro';
-import ArticleRow from '../components/ArticleRow.astro';
-import ArticleCard from '../components/ArticleCard.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
+import BriefRow from '../components/BriefRow.astro';
+import NoteRow from '../components/NoteRow.astro';
+import MapRow from '../components/MapRow.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import NewsletterBlock from '../components/NewsletterBlock.astro';
 import { site } from '../config/site';
-import { topics } from '../data/topics';
-import { getArticles, getByType, countArticlesByTopic, toListItem } from '../utils/articles';
+import { getByType, toListItem } from '../utils/articles';
 
-const briefItems = (await getByType('brief')).map(toListItem);
-const essayItems = (await getByType('essay')).map(toListItem);
-const researchItems = (await getByType('research-note')).map(toListItem);
-const mapItems = (await getByType('field-map')).map(toListItem);
+const briefs = (await getByType('brief')).map(toListItem);
+const notes = (await getByType('research-note')).map(toListItem);
+const maps = (await getByType('field-map')).map(toListItem);
 
-const lead =
-  briefItems.find((a) => a.featured) ??
-  essayItems.find((a) => a.featured) ??
-  briefItems[0] ??
-  essayItems[0];
-
+const lead = briefs.find((a) => a.featured) ?? briefs[0];
 const leadSlug = lead?.slug;
-const secondary = briefItems.filter((a) => a.slug !== leadSlug).slice(0, 2);
-const shownSlugs = new Set([leadSlug, ...secondary.map((a) => a.slug)].filter(Boolean));
-const briefWire = briefItems.filter((a) => !shownSlugs.has(a.slug)).slice(0, 5);
-const researchNotes = researchItems.slice(0, 4);
-const essays = essayItems.slice(0, 3);
-const fieldMaps = mapItems.slice(0, 2);
-
-const topicCounts = await Promise.all(
-  topics.slice(0, 8).map(async (topic) => ({
-    ...topic,
-    count: await countArticlesByTopic(topic.slug),
-  })),
+const secondary = briefs.filter((a) => a.slug !== leadSlug).slice(0, 2);
+const excludeSlugs = new Set(
+  [leadSlug, ...secondary.map((a) => a.slug)].filter(Boolean) as string[],
 );
+const otherBriefs = briefs.filter((a) => !excludeSlugs.has(a.slug));
+const railBriefs = otherBriefs.slice(0, 4);
+const sectionBriefs = otherBriefs.slice(4);
+const homeNotes = notes.slice(0, 4);
+const homeMaps = maps.slice(0, 2);
 ---
 
 <BaseLayout title={site.name} description={site.description}>
-  <div class="front-page site-container">
+  <div class="front site-container">
     {lead && (
-      <section class="front-lead" aria-label="Lead stories">
-        <div class="front-grid">
-          <div class="front-main">
+      <section class="front-hero" aria-label="Front page">
+        <div class="front-hero-grid">
+          <div class="front-hero-main">
             <LeadStory article={lead} />
           </div>
-          <aside class="front-aside">
-            <div class="front-secondary">
-              {secondary.map((article) => (
-                <SecondaryStory article={article} />
-              ))}
-            </div>
-            {briefWire.length > 0 && (
-              <div class="front-briefs">
-                <h2 class="label front-section-title">Latest briefs</h2>
-                <div class="brief-wire">
-                  {briefWire.map((article) => (
-                    <ArticleRow article={article} showTopics />
-                  ))}
-                </div>
+          <aside class="front-hero-side">
+            {secondary.map((article) => (
+              <SecondaryStory article={article} />
+            ))}
+            {railBriefs.length > 0 && (
+              <div class="front-rail-briefs">
+                <p class="label rail-label">Latest briefs</p>
+                {railBriefs.map((article) => (
+                  <BriefRow article={article} showDek={false} />
+                ))}
               </div>
             )}
           </aside>
@@ -65,263 +52,106 @@ const topicCounts = await Promise.all(
       </section>
     )}
 
-    {researchNotes.length > 0 && (
-      <section class="front-section" aria-labelledby="research-heading">
-        <h2 class="label front-section-title" id="research-heading">Research notes</h2>
-        <div class="research-grid">
-          {researchNotes.map((article) => (
-            <div class="research-item">
-              <ArticleRow article={article} showTopics />
-            </div>
-          ))}
-        </div>
-        <p class="front-more"><a href="/research-notes">All research notes</a></p>
-      </section>
-    )}
-
-    {essays.length > 0 && (
-      <section class="front-section" aria-labelledby="essays-heading">
-        <h2 class="label front-section-title" id="essays-heading">Essays</h2>
-        <div class="essay-list">
-          {essays.map((article) => (
-            <div class="essay-item">
-              <ArticleRow article={article} showTopics />
-            </div>
-          ))}
-        </div>
-        <p class="front-more"><a href="/essays">All essays</a></p>
-      </section>
-    )}
-
-    {fieldMaps.length > 0 && (
-      <section class="front-section" aria-labelledby="maps-heading">
-        <h2 class="label front-section-title" id="maps-heading">Field maps</h2>
-        <div class="maps-row">
-          {fieldMaps.map((article) => (
-            <div class="field-map-block">
-              <ArticleCard article={article} />
-            </div>
-          ))}
-        </div>
-        <p class="front-more"><a href="/field-maps">All field maps</a></p>
-      </section>
-    )}
-
-    <section class="front-section" aria-labelledby="topics-heading">
-      <h2 class="label front-section-title" id="topics-heading">Topics</h2>
-      <ul class="topic-index">
-        {topicCounts.map((topic) => (
-          <li>
-            <a href={`/topics/${topic.slug}`}>
-              <span class="topic-name">{topic.title}</span>
-              {topic.count > 0 && (
-                <span class="topic-count">{topic.count} {topic.count === 1 ? 'piece' : 'pieces'}</span>
-              )}
-            </a>
-          </li>
+    {sectionBriefs.length > 0 && (
+      <section class="front-block">
+        <SectionHeader title="Latest Briefs" href="/briefs" linkLabel="All briefs" />
+        {sectionBriefs.map((article) => (
+          <BriefRow article={article} />
         ))}
-      </ul>
-      <p class="front-more"><a href="/topics">All topics</a></p>
-    </section>
+      </section>
+    )}
 
-    <section class="front-section front-start" aria-labelledby="start-heading">
-      <h2 class="label front-section-title" id="start-heading">Start here</h2>
-      <p class="start-copy">
-        Reading paths for technical readers — foundations, AGI, evaluation, compute, safety, and India & AI.
+    {homeNotes.length > 0 && (
+      <section class="front-block">
+        <SectionHeader title="Research Notes" href="/research-notes" linkLabel="All notes" />
+        <div class="notes-grid">
+          {homeNotes.map((article) => (
+            <NoteRow article={article} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {homeMaps.length > 0 && (
+      <section class="front-block">
+        <SectionHeader title="Field Maps" href="/field-maps" linkLabel="All maps" />
+        {homeMaps.map((article, i) => (
+          <MapRow article={article} index={i + 1} />
+        ))}
+      </section>
+    )}
+
+    <section class="front-block front-block--newsletter">
+      <SectionHeader title="Newsletter" />
+      <NewsletterBlock />
+      <p class="front-start label">
+        New here? <a href="/start-here">Start here</a>
       </p>
-      <a class="front-more" href="/start-here">Open reading paths</a>
-    </section>
-
-    <section class="front-section front-newsletter" aria-label="Newsletter">
-      <NewsletterSignup compact />
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .front-page {
-    padding: 1.25rem 0 2.5rem;
+  .front {
+    padding: 0.5rem 0 2rem;
   }
 
-  .front-lead {
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
+  .front-hero {
+    padding-bottom: 1.75rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 2px solid var(--rule);
   }
 
-  .front-grid {
+  .front-hero-grid {
     display: grid;
-    gap: 2rem;
+    gap: 1.75rem;
   }
 
-  @media (min-width: 960px) {
-    .front-grid {
-      grid-template-columns: 1.55fr 1fr;
+  @media (min-width: 900px) {
+    .front-hero-grid {
+      grid-template-columns: 3fr 2fr;
       gap: 2.5rem;
       align-items: start;
     }
   }
 
-  .front-briefs {
-    margin-top: 1.25rem;
+  .front-rail-briefs {
+    margin-top: 1rem;
     padding-top: 1rem;
     border-top: 2px solid var(--rule);
   }
 
-  .brief-wire :global(.article-row-title) {
-    font-size: 1.05rem;
-    line-height: 1.25;
+  .rail-label {
+    margin: 0 0 0.5rem;
   }
 
-  .brief-wire :global(.article-row-dek) {
-    font-size: 15px;
-    margin-top: 0.2rem;
+  .front-block {
+    padding: 1.75rem 0;
+    border-top: 1px solid var(--border);
   }
 
-  .brief-wire :global(.article-row) {
-    padding: 0.6rem 0;
-  }
-
-  .front-section-title {
-    margin: 0 0 1rem;
-    display: block;
-  }
-
-  .research-grid {
+  .notes-grid {
     display: grid;
     gap: 0;
   }
 
-  @media (min-width: 720px) {
-    .research-grid {
+  @media (min-width: 768px) {
+    .notes-grid {
       grid-template-columns: 1fr 1fr;
-      column-gap: 2rem;
+      column-gap: 2.5rem;
     }
   }
 
-  .research-item :global(.article-row-title) {
-    font-size: 1.15rem;
+  .front-block--newsletter {
+    padding-bottom: 0;
   }
 
-  .essay-list {
-    display: grid;
-    gap: 0;
-  }
-
-  .essay-item {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .essay-item:first-child {
-    border-top: 2px solid var(--rule);
-  }
-
-  .essay-item :global(.article-row) {
-    border-bottom: none;
-    padding: 0.75rem 0;
-  }
-
-  .essay-item :global(.article-row-title) {
-    font-family: var(--font-display);
-    font-size: clamp(1.35rem, 2.5vw, 1.65rem);
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-  }
-
-  .essay-item :global(.article-row-dek) {
-    font-size: 17px;
-    font-style: italic;
-    color: var(--muted);
-  }
-
-  .maps-row {
-    display: grid;
-    gap: 0;
-  }
-
-  @media (min-width: 720px) {
-    .maps-row {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 2rem;
-    }
-  }
-
-  .field-map-block :global(.article-card) {
-    padding: 1rem 0 1.25rem;
-    border-bottom: none;
-  }
-
-  .field-map-block :global(.article-card-title) {
-    font-size: 1.35rem;
-    letter-spacing: -0.03em;
-  }
-
-  .topic-index {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    columns: 2;
-    column-gap: 2rem;
-  }
-
-  @media (min-width: 640px) {
-    .topic-index {
-      columns: 3;
-    }
-  }
-
-  .topic-index li {
-    margin-bottom: 0.55rem;
-    break-inside: avoid;
-  }
-
-  .topic-index a {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.35rem 0.65rem;
-    font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    color: var(--text);
-  }
-
-  .topic-index a:hover {
-    color: var(--accent);
-  }
-
-  .topic-count {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .front-start {
+    margin: 1.25rem 0 0;
     color: var(--faint);
-    text-decoration: none;
   }
 
-  .front-more {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin: 1rem 0 0;
-    display: inline-block;
-  }
-
-  .start-copy {
-    font-family: var(--font-body);
-    font-size: 17px;
-    line-height: 1.55;
-    color: var(--muted);
-    margin: 0 0 0.75rem;
-    max-width: 42ch;
-  }
-
-  .front-newsletter {
-    max-width: 28rem;
+  .front-start a {
+    color: var(--text);
   }
 </style>

@@ -1,73 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
+import NewsletterBlock from '../components/NewsletterBlock.astro';
 ---
 
-<BaseLayout
-  title="Subscribe"
-  description="Get the frontier briefing — essays, research notes, briefs, and reading paths."
->
+<BaseLayout title="Subscribe" description="Get the weekly note.">
   <div class="subscribe-page site-container">
     <header class="page-header">
       <h1 class="page-title">Subscribe</h1>
-      <p class="page-dek">
-        One clear briefing on frontier AI, research, and technology every week or two.
-      </p>
+      <p class="page-dek">One clear briefing every week or two.</p>
     </header>
-
-    <NewsletterSignup />
-
-    <section class="subscribe-benefits">
-      <h2 class="label">What readers get</h2>
-      <ul>
-        <li>New essays and research notes</li>
-        <li>Brief explanations of important papers and announcements</li>
-        <li>Reading paths and field maps</li>
-        <li>Notes on what seems overhyped or underrated</li>
-      </ul>
-    </section>
-
-    <p class="archive-note">
-      <a href="/articles">Browse the archive</a> before subscribing if you want a sense of tone and depth.
-    </p>
+    <NewsletterBlock />
   </div>
 </BaseLayout>
 
 <style>
-  .subscribe-page {
-    padding: 1.75rem 0 3rem;
-    max-width: 32rem;
-  }
-
-  .subscribe-benefits {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .subscribe-benefits h2 {
-    margin: 0 0 0.75rem;
-  }
-
-  .subscribe-benefits ul {
-    font-family: var(--font-body);
-    font-size: 17px;
-    line-height: 1.55;
-    padding-left: 1.25rem;
-    margin: 0;
-    color: var(--muted);
-  }
-
-  .archive-note {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 2rem;
-  }
-
-  .archive-note a {
-    color: var(--accent);
-    text-decoration: underline;
-  }
+  .subscribe-page { padding: 1.5rem 0 2.5rem; max-width: 32rem; }
 </style>

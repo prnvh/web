@@ -1,70 +1,26 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
+import MapRow from '../../components/MapRow.astro';
 import { getByType, toListItem } from '../../utils/articles';
 
 const maps = (await getByType('field-map')).map(toListItem);
 ---
 
-<BaseLayout
-  title="Field Maps"
-  description="Evergreen guides to important research areas."
->
+<BaseLayout title="Field Maps" description="Durable maps of research areas.">
   <div class="listing site-container">
     <header class="page-header">
       <h1 class="page-title">Field Maps</h1>
-      <p class="page-dek">Evergreen guides to important research areas — structured like manual chapters.</p>
+      <p class="page-dek">Durable maps of research areas — evergreen guides with reading paths and open questions.</p>
     </header>
-
-    <div class="maps-grid">
-      {maps.map((article) => (
-        <div class="field-map-block">
-          <ArticleCard article={article} />
-        </div>
+    <div class="maps-list">
+      {maps.map((article, i) => (
+        <MapRow article={article} index={i + 1} />
       ))}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .listing {
-    padding: 1.75rem 0 3rem;
-  }
-
-  .maps-grid {
-    display: grid;
-    gap: 0;
-  }
-
-  @media (min-width: 720px) {
-    .maps-grid {
-      grid-template-columns: 1fr 1fr;
-      column-gap: 2rem;
-    }
-  }
-
-  .field-map-block :global(.article-card:first-child) {
-    border-top: 2px solid var(--rule);
-  }
-
-  @media (min-width: 720px) {
-    .field-map-block:nth-child(2) :global(.article-card) {
-      border-top: 2px solid var(--rule);
-    }
-  }
-
-  .field-map-block :global(.article-card) {
-    padding: 1.15rem 0 1.35rem;
-  }
-
-  .field-map-block :global(.article-card-title) {
-    font-size: 1.35rem;
-    letter-spacing: -0.03em;
-    line-height: 1.12;
-  }
-
-  .field-map-block :global(.article-card-dek) {
-    font-size: 16px;
-    line-height: 1.55;
-  }
+  .listing { padding: 1.5rem 0 2.5rem; }
+  .maps-list { border-top: 2px solid var(--rule); }
 </style>

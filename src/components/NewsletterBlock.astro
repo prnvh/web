@@ -1,0 +1,19 @@
+---
+import NewsletterSignup from './NewsletterSignup.astro';
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<div class="newsletter-block">
+  <NewsletterSignup compact={compact} />
+</div>
+
+<style>
+  .newsletter-block {
+    max-width: 32rem;
+  }
+</style>

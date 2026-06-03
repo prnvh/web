@@ -1,42 +1,26 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ArticleRow from '../../components/ArticleRow.astro';
+import BriefRow from '../../components/BriefRow.astro';
 import { getByType, toListItem } from '../../utils/articles';
 
 const briefs = (await getByType('brief')).map(toListItem);
 ---
 
-<BaseLayout
-  title="Briefs"
-  description="Short analysis of recent developments in frontier AI and technology."
->
+<BaseLayout title="Briefs" description="Short analysis of recent developments in frontier AI and technology.">
   <div class="listing site-container">
     <header class="page-header">
       <h1 class="page-title">Briefs</h1>
       <p class="page-dek">Short analysis of recent papers, benchmarks, model releases, and technical shifts.</p>
     </header>
-    <div class="brief-wire">
+    <div class="wire-list">
       {briefs.map((article) => (
-        <ArticleRow article={article} showTopics />
+        <BriefRow article={article} />
       ))}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .listing {
-    padding: 1.75rem 0 3rem;
-  }
-
-  .brief-wire :global(.article-row:first-child) {
-    border-top: 2px solid var(--rule);
-  }
-
-  .brief-wire :global(.article-row-title) {
-    font-size: 1.15rem;
-  }
-
-  .brief-wire :global(.article-row) {
-    padding: 0.75rem 0;
-  }
+  .listing { padding: 1.5rem 0 2.5rem; }
+  .wire-list { border-top: 2px solid var(--rule); }
 </style>

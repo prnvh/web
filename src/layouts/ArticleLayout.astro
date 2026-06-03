@@ -5,7 +5,7 @@ import MetadataLine from '../components/MetadataLine.astro';
 import SummaryBox from '../components/SummaryBox.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import RelatedReading from '../components/RelatedReading.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
+import NewsletterBlock from '../components/NewsletterBlock.astro';
 import type { TocHeading } from '../components/TableOfContents.astro';
 import type { ArticleListItem, ArticleType } from '../utils/articles';
 
@@ -63,8 +63,11 @@ const metadata = { type, date, readingTime, author, topics };
           <h1 class="article-title lead-title">{title}</h1>
           {subtitle && <p class="article-subtitle">{subtitle}</p>}
           <div class="article-header-meta">
-            <MetadataLine {...metadata} />
+            <MetadataLine type={type} date={date} readingTime={readingTime} author={author} />
           </div>
+          {topics.length > 0 && (
+            <p class="article-topics">{topics.join(' / ')}</p>
+          )}
         </header>
 
         {summary.length > 0 && <SummaryBox items={summary} />}
@@ -90,7 +93,7 @@ const metadata = { type, date, readingTime, author, topics };
     </div>
 
     <div class="article-footer-cta">
-      <NewsletterSignup compact />
+      <NewsletterBlock />
     </div>
   </article>
 </BaseLayout>
@@ -129,6 +132,15 @@ const metadata = { type, date, readingTime, author, topics };
     color: var(--muted);
     margin: 0 0 0.85rem;
     max-width: 44ch;
+  }
+
+  .article-topics {
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0.65rem 0 0;
   }
 
   .article-main :global(.summary-box) {

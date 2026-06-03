@@ -46,9 +46,9 @@ video {
 
 .label {
   font-family: var(--font-ui);
-  font-size: var(--text-label-size);
+  font-size: 10.5px;
   line-height: 1;
-  letter-spacing: var(--text-label-tracking);
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 500;
@@ -57,19 +57,19 @@ video {
 .masthead-title {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(52px, 10vw, 120px);
-  line-height: var(--masthead-line);
-  letter-spacing: var(--masthead-tracking);
+  font-size: clamp(56px, 11vw, 136px);
+  line-height: 0.8;
+  letter-spacing: -0.075em;
   font-weight: 700;
   color: var(--text);
 }
 
 .lead-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-size: clamp(44px, 6.5vw, 88px);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
   font-weight: 700;
-  line-height: var(--headline-line);
-  letter-spacing: -0.04em;
   margin: 0;
   color: var(--text);
 }
@@ -97,8 +97,8 @@ video {
 .article-body {
   max-width: 680px;
   font-family: var(--font-body);
-  font-size: var(--text-body-size);
-  line-height: var(--text-body-line);
+  font-size: 19px;
+  line-height: 1.68;
 }
 
 .article-body :where(h1, h2, h3, h4) {

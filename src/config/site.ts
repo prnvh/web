@@ -1,8 +1,9 @@
 export const siteConfig = {
   name: 'Frontier Manual',
-  tagline: 'Briefs, notes, and field maps on frontier AI and deep technology.',
+  tagline:
+    'A publication on frontier AI, research culture, and the systems behind technical progress.',
   description:
-    'A text-first publication: daily briefs on papers and releases, research notes on benchmarks and claims, essays on systems and policy, and field maps for readers entering a new area.',
+    'Essays, briefs, and notes on AI research, compute, evaluation, and the people building the field.',
   url: import.meta.env.SITE_URL ?? 'https://example.com',
   subscribePath: '/subscribe',
   searchPath: '/search',
@@ -29,22 +30,30 @@ export type SiteTopicSlug = (typeof siteConfig.topics)[number];
 
 export const site = siteConfig;
 
+/** Primary nav — one row, short labels */
 export const navItems = [
   { label: 'Briefs', href: '/briefs' },
-  { label: 'Research Notes', href: '/research-notes' },
+  { label: 'Notes', href: '/research-notes' },
   { label: 'Essays', href: '/essays' },
-  { label: 'Field Maps', href: '/field-maps' },
+  { label: 'Maps', href: '/field-maps' },
   { label: 'Topics', href: '/topics' },
   { label: 'Start Here', href: '/start-here' },
   { label: 'About', href: '/about' },
-  { label: 'Search', href: '/search' },
 ] as const;
 
+/** Footer: each link once */
 export const footerLinks = [
-  ...navItems,
-  { label: 'Subscribe', href: siteConfig.subscribePath },
-  { label: 'RSS', href: siteConfig.rssPath },
-  { label: 'Contact', href: siteConfig.contactPath },
+  { label: 'Briefs', href: '/briefs' },
+  { label: 'Notes', href: '/research-notes' },
+  { label: 'Essays', href: '/essays' },
+  { label: 'Maps', href: '/field-maps' },
+  { label: 'Topics', href: '/topics' },
+  { label: 'Start Here', href: '/start-here' },
+  { label: 'About', href: '/about' },
+  { label: 'Subscribe', href: '/subscribe' },
+  { label: 'Search', href: '/search' },
+  { label: 'RSS', href: '/rss.xml' },
+  { label: 'Contact', href: '/about#contact' },
 ] as const;
 
 export function getAnalyticsScript(domain: string = siteConfig.analyticsDomain): string {
