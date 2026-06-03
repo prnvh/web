@@ -1,13 +1,31 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import ArticleTypeLabel from '../components/ArticleTypeLabel.astro';
-import MetadataLine from '../components/MetadataLine.astro';
 import SummaryBox from '../components/SummaryBox.astro';
-import TableOfContents from '../components/TableOfContents.astro';
-import RelatedReading from '../components/RelatedReading.astro';
-import NewsletterBlock from '../components/NewsletterBlock.astro';
-import type { TocHeading } from '../components/TableOfContents.astro';
-import type { ArticleListItem, ArticleType } from '../utils/articles';
+import PaperMetaTable from '../components/PaperMetaTable.astro';
+import ShareBar from '../components/ShareBar.astro';
+import NewsletterBand from '../components/NewsletterBand.astro';
+import ReadNextGrid from '../components/ReadNextGrid.astro';
+import ArticleRail from '../components/ArticleRail.astro';
+import {
+  formatArticleType,
+  formatDate,
+  getReadingTimeLabel,
+  slugifyTopic,
+  type ArticleListItem,
+  type ArticleType,
+} from '../utils/articles';
+import { topicsBySlug } from '../data/topics';
+
+interface TocHeading {
+  slug: string;
+  text: string;
+  depth: number;
+}
+
+interface PullQuote {
+  text: string;
+  attribution?: string;
+}
 
 interface Props {
   title: string;
@@ -15,7 +33,6 @@ interface Props {
   description?: string;
   type: ArticleType;
   date: string | Date;
-  updated?: string | Date;
   author?: string;
   readingTime?: string | number;
   topics?: string[];
@@ -23,6 +40,12 @@ interface Props {
   toc?: TocHeading[];
   related?: ArticleListItem[];
   canonical?: string;
+  heroImage?: string;
+  pullQuote?: PullQuote;
+  headerMode?: 'masthead' | 'compact';
+  railBriefs?: ArticleListItem[];
+  railNotes?: ArticleListItem[];
+  furtherReading?: { label: string; title: string; href: string }[];
 }
 
 const {
@@ -38,170 +61,192 @@ const {
   toc = [],
   related = [],
   canonical,
+  heroImage,
+  pullQuote,
+  headerMode = type === 'essay' ? 'compact' : 'masthead',
+  railBriefs = [],
+  railNotes = [],
+  furtherReading = [],
 } = Astro.props;
 
-const metadata = { type, date, readingTime, author, topics };
+const pageClass = `page-article page-${type.replace(/-/g, '-')}`;
+const kicker = formatArticleType(type).toUpperCase();
+const dateStr = formatDate(date);
+const timeStr = getReadingTimeLabel(readingTime);
+const topicLinks = topics.map((slug) => ({
+  slug,
+  label: topicsBySlug[slug]?.title ?? slug.replace(/-/g, ' '),
+}));
+
+const h2Sections = toc.filter((h) => h.depth === 2);
+const defaultHero =
+  type === 'brief'
+    ? '/images/brief-hero.jpg'
+    : type === 'essay'
+      ? '/images/essay-hero.jpg'
+      : type === 'field-map'
+        ? '/images/field-map-hero.jpg'
+        : undefined;
+const heroSrc = type === 'research-note' ? undefined : (heroImage ?? defaultHero);
 ---
 
 <BaseLayout
   title={title}
   description={description ?? subtitle}
   canonical={canonical}
-  ogTitle={title}
-  ogDescription={description ?? subtitle}
+  bodyClass={pageClass}
+  headerMode={headerMode}
 >
-  <article class="article-page site-container">
-    <div class="article-grid">
-      <aside class="article-rail article-rail--left" aria-label="On this page">
-        {toc.length > 0 && <TableOfContents headings={toc} />}
-        <slot name="left" />
-      </aside>
-
-      <div class="article-main">
-        <header class="article-header">
-          <ArticleTypeLabel type={type} />
-          <h1 class="article-title lead-title">{title}</h1>
-          {subtitle && <p class="article-subtitle">{subtitle}</p>}
-          <div class="article-header-meta">
-            <MetadataLine type={type} date={date} readingTime={readingTime} author={author} />
-          </div>
-          {topics.length > 0 && (
-            <p class="article-topics">{topics.join(' / ')}</p>
-          )}
-        </header>
-
-        {summary.length > 0 && <SummaryBox items={summary} />}
-
-        <slot name="before-body" />
-
-        <div class="article-body prose">
-          <slot />
-        </div>
-
-        <slot name="after-body" />
-
-        {related.length > 0 && (
-          <div class="article-read-next">
-            <RelatedReading articles={related} />
-          </div>
+  <article class="article-shell site-container">
+    <header class="article-hero-split">
+      <div class="article-hero-text">
+        <p class="article-kicker">{kicker}</p>
+        <h1 class="article-title">{title}</h1>
+        {subtitle && <p class="article-subtitle">{subtitle}</p>}
+        <p class="article-meta">
+          {dateStr}
+          {timeStr && <> · {timeStr}</>}
+          {author && <> · {author}</>}
+        </p>
+        {topicLinks.length > 0 && (
+          <p class="article-tags">
+            {topicLinks.map((t, i) => (
+              <>
+                {i > 0 && ', '}
+                <a href={`/topics/${t.slug}`}>{t.label}</a>
+              </>
+            ))}
+          </p>
         )}
       </div>
+      {heroSrc && (
+        <figure class="article-hero-media">
+          <img src={heroSrc} alt="" width="400" height="500" loading="eager" decoding="async" />
+        </figure>
+      )}
+    </header>
 
-      <aside class="article-rail article-rail--right" aria-label="Supplementary">
-        <slot name="right" />
-      </aside>
-    </div>
+    {type === 'research-note' && (
+      <slot name="paper-meta" />
+    )}
 
-    <div class="article-footer-cta">
-      <NewsletterBlock />
-    </div>
+    {type === 'field-map' && (
+      <slot name="orientation" />
+    )}
+
+    {summary.length > 0 && (
+      <SummaryBox items={summary} variant={type === 'essay' ? 'icon' : 'list'} />
+    )}
+
+    {type === 'field-map' ? (
+      <div class="fieldmap-body-grid">
+        <div>
+          {h2Sections.length > 0 && (
+            <ol class="fieldmap-sections">
+              {h2Sections.map((section, i) => (
+                <li class="fieldmap-section">
+                  <span class="fieldmap-section__num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h2 class="fieldmap-section__title">
+                      <a href={`#${section.slug}`}>{section.text}</a>
+                    </h2>
+                  </div>
+                  <span class="fieldmap-section__time">{timeStr || ''}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+          <div class="article-body">
+            <slot />
+          </div>
+        </div>
+        <aside class="article-rail" aria-label="Supplementary">
+          {h2Sections.length > 0 && (
+            <section class="rail-block">
+              <h2 class="rail-block__heading">On this page</h2>
+              <ul class="rail-toc">
+                {h2Sections.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {related.length > 0 && (
+            <ArticleRail
+              heading="Related reading"
+              articles={related}
+              moreHref="/essays"
+              moreLabel="Browse all essays →"
+            />
+          )}
+        </aside>
+      </div>
+    ) : type === 'essay' ? (
+      <>
+        <div class="essay-body-grid">
+          <div class="article-body">
+            <slot />
+          </div>
+          {pullQuote && (
+            <aside class="essay-pull-quote" aria-label="Pull quote">
+              <blockquote class="pull-quote">
+                {pullQuote.text}
+                {pullQuote.attribution && <cite>{pullQuote.attribution}</cite>}
+              </blockquote>
+            </aside>
+          )}
+        </div>
+        {related.length > 0 && <ReadNextGrid articles={related} />}
+      </>
+    ) : (
+      <div class="article-columns">
+        <div class="article-main">
+          <div class="article-body">
+            <slot />
+          </div>
+          {type === 'brief' && <ShareBar />}
+        </div>
+        <aside class="article-rail" aria-label="Supplementary">
+          {type === 'brief' && railBriefs.length > 0 && (
+            <ArticleRail
+              heading="Latest briefs"
+              articles={railBriefs}
+              moreHref="/briefs"
+              moreLabel="View all briefs →"
+            />
+          )}
+          {type === 'research-note' && (
+            <>
+              {railNotes.length > 0 && (
+                <ArticleRail
+                  heading="Related notes"
+                  articles={railNotes}
+                  moreHref="/research-notes"
+                  moreLabel="View all notes →"
+                />
+              )}
+              {furtherReading.length > 0 && (
+                <section class="rail-block">
+                  <h2 class="rail-block__heading">Further reading</h2>
+                  {furtherReading.map((item) => (
+                    <article class="rail-item">
+                      <a href={item.href}>
+                        <p class="rail-item__meta">{item.label}</p>
+                        <span class="rail-item__title">{item.title}</span>
+                      </a>
+                    </article>
+                  ))}
+                  <a class="rail-more" href="/research-notes">View all notes →</a>
+                </section>
+              )}
+            </>
+          )}
+        </aside>
+      </div>
+    )}
+
+    <NewsletterBand />
   </article>
 </BaseLayout>
-
-<style>
-  .article-page {
-    padding: 1.75rem 0 3rem;
-  }
-
-  .article-grid {
-    display: grid;
-    gap: 2rem;
-  }
-
-  .article-header {
-    margin-bottom: 32px;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .article-title {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 6vw, 82px);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
-    font-weight: 700;
-    margin: 0.5rem 0 0.35rem;
-    color: var(--text);
-    max-width: 14ch;
-  }
-
-  .article-subtitle {
-    font-family: var(--font-body);
-    font-size: 1.25rem;
-    line-height: 1.5;
-    color: var(--muted);
-    margin: 0 0 0.85rem;
-    max-width: 44ch;
-  }
-
-  .article-topics {
-    font-family: var(--font-ui);
-    font-size: 10.5px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0.65rem 0 0;
-  }
-
-  .article-main :global(.summary-box) {
-    margin: 32px 0;
-  }
-
-  .article-read-next {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--rule);
-    max-width: 680px;
-  }
-
-  .article-rail--left {
-    display: none;
-  }
-
-  .article-rail--right {
-    display: none;
-  }
-
-  .article-footer-cta {
-    margin-top: 2.5rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-    max-width: 28rem;
-  }
-
-  @media (min-width: 1100px) {
-    .article-grid {
-      grid-template-columns: 180px minmax(0, 1fr);
-      gap: 3rem;
-    }
-
-    .article-rail--left {
-      display: block;
-      position: sticky;
-      top: 1.5rem;
-      align-self: start;
-    }
-
-    .article-header :global(.type-label),
-    .article-header-meta {
-      display: block;
-    }
-
-    .article-main {
-      max-width: 720px;
-    }
-  }
-
-  @media (min-width: 1400px) {
-    .article-grid {
-      grid-template-columns: 180px minmax(0, 680px) 220px;
-    }
-
-    .article-rail--right {
-      display: block;
-      position: sticky;
-      top: 1.5rem;
-      align-self: start;
-    }
-  }
-</style>

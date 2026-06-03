@@ -34,31 +34,29 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     margin-top: 1.5rem;
-    padding: 1.5rem 0 2rem;
+    padding: 1.75rem 0 2.25rem;
     border-top: 1px solid var(--border);
   }
 
   .footer-layout {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 1024px) {
     .footer-layout {
-      grid-template-columns: minmax(200px, 1.2fr) 1fr 1fr minmax(180px, auto);
+      grid-template-columns: minmax(200px, 1.15fr) 2.2fr minmax(200px, auto);
+      gap: 2.5rem 3rem;
       align-items: start;
-      gap: 2rem 2.5rem;
     }
 
     .footer-cols {
-      grid-column: 2 / 4;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
     }
 
     .footer-copy {
-      grid-column: 4;
       justify-self: end;
       align-self: end;
       text-align: right;
@@ -67,19 +65,19 @@ const year = new Date().getFullYear();
 
   .footer-name {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.35rem;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.4rem;
   }
 
   .footer-desc {
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.45;
     color: var(--muted);
     margin: 0;
-    max-width: 36ch;
+    max-width: 34ch;
   }
 
   .footer-cols ul {
@@ -89,30 +87,25 @@ const year = new Date().getFullYear();
   }
 
   .footer-cols li {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
   }
 
   .footer-cols a {
-    font-family: var(--font-ui);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: 14px;
     color: var(--text);
     text-decoration: none;
   }
 
   .footer-cols a:hover {
     color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
 
   .footer-copy {
     margin: 0;
-    font-family: var(--font-ui);
-    font-size: 10px;
-    letter-spacing: 0.06em;
+    font-family: var(--font-body);
+    font-size: 12px;
     color: var(--faint);
-    white-space: nowrap;
   }
+
 </style>

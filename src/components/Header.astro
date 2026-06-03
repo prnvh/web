@@ -1,14 +1,20 @@
 ---
-import { site } from '../config/site';
+import { site, navItems } from '../config/site';
 import { formatDate } from '../utils/articles';
 import Masthead from './Masthead.astro';
 import Nav from './Nav.astro';
 
+interface Props {
+  mode?: 'masthead' | 'compact';
+}
+
+const { mode = 'masthead' } = Astro.props;
 const today = formatDate(new Date());
 const subscribeHref = site.subscribePath;
+const isCompact = mode === 'compact';
 ---
 
-<header class="site-header">
+<header class:list={['site-header', isCompact && 'site-header--compact']}>
   <div class="site-container">
     <input
       type="checkbox"
@@ -17,23 +23,26 @@ const subscribeHref = site.subscribePath;
       aria-hidden="true"
       tabindex="-1"
     />
-    <div class="header-strip">
-      <time class="label header-date" datetime={new Date().toISOString().slice(0, 10)}>
-        {today}
-      </time>
-      <label class="label header-menu" for="nav-open">Menu</label>
-      <p class="header-tagline">{site.tagline}</p>
-      <a class="header-subscribe label" href={subscribeHref}>Subscribe</a>
-    </div>
-    <Masthead />
-    <Nav />
+    {!isCompact && (
+      <>
+        <div class="header-strip">
+          <time class="header-date" datetime={new Date().toISOString().slice(0, 10)}>
+            {today}
+          </time>
+          <label class="header-menu" for="nav-open">Menu</label>
+          <p class="header-tagline">{site.tagline}</p>
+          <a class="header-subscribe" href={subscribeHref}>Subscribe</a>
+        </div>
+        <Masthead />
+      </>
+    )}
+    <Nav showBrand={isCompact} />
   </div>
 </header>
 
 <style>
   .site-header {
     background: var(--bg);
-    border-bottom: none;
   }
 
   .nav-check {
@@ -48,64 +57,20 @@ const subscribeHref = site.subscribePath;
     border: 0;
   }
 
-  .header-strip {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .header-date {
-    justify-self: start;
-  }
-
   .header-menu {
     display: none;
     justify-self: start;
     cursor: pointer;
-    color: var(--text);
-  }
-
-  .header-tagline {
     font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: var(--muted);
-    text-align: center;
-    margin: 0;
-    justify-self: center;
-    line-height: 1.35;
-    max-width: 52ch;
-  }
-
-  .header-subscribe {
-    justify-self: end;
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .header-subscribe:hover {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--text);
-  }
-
-  @media (min-width: 900px) {
-    .header-menu {
-      display: none !important;
-    }
-
-    .header-date,
-    .header-tagline {
-      display: block;
-    }
   }
 
   @media (max-width: 899px) {
     .header-strip {
-      grid-template-columns: auto 1fr auto;
+      grid-template-columns: auto 1fr auto !important;
     }
 
     .header-date,

@@ -2,41 +2,35 @@
 interface Props {
   items: string[];
   label?: string;
+  variant?: 'list' | 'icon';
 }
 
-const { items, label = 'In Short' } = Astro.props;
+const { items, label = 'In Short', variant = 'list' } = Astro.props;
+const isIcon = variant === 'icon';
 ---
 
 {items.length > 0 && (
-  <aside class="summary-box" aria-labelledby="summary-box-heading">
-    <p class="label" id="summary-box-heading">{label}</p>
-    <ul class="summary-list">
-      {items.map((item) => (
-        <li>{item}</li>
-      ))}
-    </ul>
+  <aside
+    class:list={['summary-box', isIcon && 'summary-box--icon']}
+    aria-labelledby="summary-box-heading"
+  >
+    {isIcon ? (
+      <>
+        <span class="summary-box__icon" aria-hidden="true">i</span>
+        <div>
+          <p class="summary-box__label" id="summary-box-heading">{label}</p>
+          <p class="summary-box__text">{items.join(' ')}</p>
+        </div>
+      </>
+    ) : (
+      <>
+        <p class="summary-box__label" id="summary-box-heading">{label}</p>
+        <ul class="summary-box__list">
+          {items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </>
+    )}
   </aside>
 )}
-
-<style>
-  .summary-box {
-    border-top: 2px solid var(--rule);
-    border-bottom: 1px solid var(--border);
-    background: var(--accent-soft);
-    padding: 1rem 1rem 1.15rem;
-    margin: 1.5rem 0;
-  }
-
-  .summary-list {
-    margin: 0.65rem 0 0;
-    padding-left: 1.2rem;
-    font-family: var(--font-body);
-    font-size: var(--text-body-size);
-    line-height: var(--text-body-line);
-    color: var(--text);
-  }
-
-  .summary-list li + li {
-    margin-top: 0.35rem;
-  }
-</style>

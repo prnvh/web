@@ -13,6 +13,7 @@ interface Props {
   ogImage?: string;
   noindex?: boolean;
   bodyClass?: string;
+  headerMode?: 'masthead' | 'compact';
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   ogImage,
   noindex = false,
   bodyClass = '',
+  headerMode = 'masthead',
 } = Astro.props;
 
 const pageTitle = title === site.name ? title : `${title} · ${site.name}`;
@@ -53,39 +55,13 @@ const openGraphDescription = ogDescription ?? metaDescription;
     <meta name="twitter:title" content={openGraphTitle} />
     <meta name="twitter:description" content={openGraphDescription} />
     <slot name="head" />
-    <!-- Analytics: add Plausible/Umami script here when configured -->
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <Header />
+    <Header mode={headerMode} />
     <main id="main-content" data-pagefind-body>
       <slot />
     </main>
     <Footer />
   </body>
 </html>
-
-<style is:global>
-  .skip-link {
-    position: absolute;
-    left: -9999px;
-    top: 0;
-    z-index: 100;
-    padding: 0.5rem 1rem;
-    background: var(--paper);
-    color: var(--text);
-    font-family: var(--font-sans);
-    font-size: 12px;
-    text-decoration: underline;
-  }
-
-  .skip-link:focus {
-    left: 0.5rem;
-    top: 0.5rem;
-    outline: 2px solid var(--accent);
-  }
-
-  #main-content {
-    min-height: 50vh;
-  }
-</style>

@@ -1,13 +1,12 @@
 ---
 import { render } from 'astro:content';
 import ArticleLayout from '../layouts/ArticleLayout.astro';
-import PaperInfoBox from './PaperInfoBox.astro';
-import SourceList from './SourceList.astro';
+import PaperMetaTable from './PaperMetaTable.astro';
 import { normalizeSummary } from '../lib/summary';
 import {
-  formatDate,
   getArticlePath,
   getArticleSlug,
+  getByType,
   getRelated,
   toListItem,
   type ArticleEntry,
@@ -28,6 +27,41 @@ const toc = headings
   .filter((h) => h.depth >= 2 && h.depth <= 3)
   .map((h) => ({ slug: h.slug, text: h.text, depth: h.depth }));
 const canonical = new URL(getArticlePath(entry), Astro.site).toString();
+
+const allBriefs = (await getByType('brief')).map(toListItem);
+const railBriefs = allBriefs.filter((b) => b.slug !== slug).slice(0, 3);
+
+const allNotes = (await getByType('research-note')).map(toListItem);
+const railNotes = allNotes.filter((n) => n.slug !== slug).slice(0, 3);
+
+const furtherReading =
+  data.sources?.map((s) => {
+    if (typeof s === 'string') {
+      return { label: 'Source', title: s, href: '#' };
+    }
+    const label =
+      s.note ??
+      (s.url?.includes('arxiv') ? 'Paper' : s.url?.includes('youtube') ? 'Video' : 'Blog');
+    return { label, title: s.title, href: s.url ?? '#' };
+  }) ?? [];
+
+const paperAuthors = data.paperInfo?.authors
+  ? Array.isArray(data.paperInfo.authors)
+    ? data.paperInfo.authors.join(', ')
+    : data.paperInfo.authors
+  : undefined;
+
+const pullQuote = data.pullQuote
+  ? {
+      text: data.pullQuote.text,
+      attribution: data.pullQuote.attribution,
+    }
+  : data.type === 'essay'
+    ? {
+        text: 'Progress is no longer about how much we can scale, but how precisely we can steer.',
+        attribution: '— Frontier Manual',
+      }
+    : undefined;
 ---
 
 <ArticleLayout
@@ -36,7 +70,6 @@ const canonical = new URL(getArticlePath(entry), Astro.site).toString();
   description={data.description}
   type={data.type}
   date={data.date}
-  updated={data.updated}
   author={data.author}
   readingTime={data.readingTime}
   topics={data.topics}
@@ -44,71 +77,34 @@ const canonical = new URL(getArticlePath(entry), Astro.site).toString();
   toc={toc}
   related={related}
   canonical={canonical}
+  heroImage={data.heroImage}
+  pullQuote={pullQuote}
+  railBriefs={railBriefs}
+  railNotes={railNotes}
+  furtherReading={furtherReading}
 >
-  {data.paperInfo && (
-    <Fragment slot="before-body">
-      <PaperInfoBox
-        title={data.paperInfo.paperTitle}
-        authors={
-          Array.isArray(data.paperInfo.authors)
-            ? data.paperInfo.authors.join(', ')
-            : data.paperInfo.authors
-        }
-        institution={data.paperInfo.institution}
-        year={data.paperInfo.year}
-        link={data.paperInfo.link}
-        status={data.paperInfo.status}
-      />
-    </Fragment>
+  {data.paperInfo && data.type === 'research-note' && (
+    <PaperMetaTable
+      slot="paper-meta"
+      paper={data.paperInfo.paperTitle}
+      year={data.paperInfo.year}
+      authors={paperAuthors}
+      source="Paper"
+      sourceUrl={data.paperInfo.link}
+    />
   )}
   {data.orientation && (
-    <Fragment slot="before-body">
-      <div class="orientation-box">
-        <p class="orientation-label">Orientation</p>
-        <p><strong>Covers:</strong> {data.orientation.covers}</p>
-        <p><strong>For:</strong> {data.orientation.audience}</p>
-        <p><strong>Read first:</strong>{' '}
-          {Array.isArray(data.orientation.readFirst)
-            ? data.orientation.readFirst.join(' · ')
-            : data.orientation.readFirst}
-        </p>
-      </div>
-    </Fragment>
+    <div slot="orientation" class="orientation-box">
+      <p class="orientation-box__label">Orientation</p>
+      <p><strong>Covers:</strong> {data.orientation.covers}</p>
+      <p><strong>For:</strong> {data.orientation.audience}</p>
+      <p>
+        <strong>Read first:</strong>{' '}
+        {Array.isArray(data.orientation.readFirst)
+          ? data.orientation.readFirst.join(' · ')
+          : data.orientation.readFirst}
+      </p>
+    </div>
   )}
   <Content />
-  {data.sources && data.sources.length > 0 && (
-    <Fragment slot="after-body">
-      <SourceList
-        sources={data.sources.map((s) =>
-          typeof s === 'string'
-            ? { title: s, url: '#' }
-            : { title: s.title, url: s.url ?? '#', note: s.note },
-        )}
-      />
-    </Fragment>
-  )}
 </ArticleLayout>
-
-<style>
-  .orientation-box {
-    border: 1px solid var(--border);
-    background: var(--paper);
-    padding: 1rem 1.15rem;
-    margin-bottom: 1.5rem;
-    font-size: 16px;
-    line-height: 1.55;
-  }
-
-  .orientation-label {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 0.65rem;
-  }
-
-  .orientation-box p {
-    margin: 0.35rem 0;
-  }
-</style>

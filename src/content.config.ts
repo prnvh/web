@@ -65,6 +65,13 @@ const articles = defineCollection({
     paperInfo: paperInfoSchema.optional(),
     orientation: orientationSchema.optional(),
     sections: z.array(sectionSchema).optional(),
+    heroImage: z.string().optional(),
+    pullQuote: z
+      .object({
+        text: z.string(),
+        attribution: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 

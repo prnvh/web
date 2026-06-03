@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LeadStory from '../components/LeadStory.astro';
-import HomeBriefRail from '../components/HomeBriefRail.astro';
-import HomeColumnStory from '../components/HomeColumnStory.astro';
-import HomeMapItem from '../components/HomeMapItem.astro';
-import HomeNewsletter from '../components/HomeNewsletter.astro';
 import '../styles/home.css';
 import { site } from '../config/site';
-import { getByType, toListItem } from '../utils/articles';
+import {
+  formatDate,
+  getArticleHref,
+  getReadingTimeLabel,
+  getByType,
+  toListItem,
+} from '../utils/articles';
 
 const briefs = (await getByType('brief')).map(toListItem);
 const notes = (await getByType('research-note')).map(toListItem);
@@ -16,13 +17,12 @@ const maps = (await getByType('field-map')).map(toListItem);
 
 const lead = briefs.find((a) => a.featured) ?? briefs[0];
 const leadSlug = lead?.slug;
-const railBriefs = briefs.filter((a) => a.slug !== leadSlug).slice(0, 4);
+const railBriefs = briefs.filter((a) => a.slug !== leadSlug).slice(0, 3);
 
 const homeNotes = notes.slice(0, 2);
 const homeEssays = essays.slice(0, 2);
 const homeMaps = maps.slice(0, 2);
 
-/** Topic strip labels aligned with reference mockup */
 const homeTopics = [
   { label: 'AGI', href: '/topics/agi' },
   { label: 'World Models', href: '/topics/world-models' },
@@ -31,8 +31,12 @@ const homeTopics = [
   { label: 'Interpretability', href: '/topics/interpretability' },
   { label: 'AI Safety', href: '/topics/ai-safety' },
   { label: 'Open Source AI', href: '/topics/open-source-ai' },
-  { label: 'Data-Efficient AI', href: '/topics/data-efficient-ai' },
+  { label: 'India & AI', href: '/topics/india-ai' },
 ];
+
+const leadHref = lead ? getArticleHref(lead) : '#';
+const leadDek = lead?.subtitle ?? lead?.description ?? '';
+const leadTime = lead ? getReadingTimeLabel(lead.readingTime) : '';
 ---
 
 <BaseLayout title={site.name} description={site.description} bodyClass="page-home">
@@ -41,26 +45,51 @@ const homeTopics = [
       <section class="home-hero" aria-label="Front page">
         <div class="home-hero-grid">
           <div class="home-hero-lead">
-            <LeadStory
-              article={lead}
-              topicLinks={[
-                { label: 'World Models', href: '/topics/world-models' },
-                { label: 'Representation Learning', href: '/topics/world-models' },
-              ]}
-            />
+            <p class="kicker">Brief</p>
+            <a href={leadHref}>
+              <h2 class="lead-title">{lead.title}</h2>
+              {leadDek && <p class="lead-dek">{leadDek}</p>}
+            </a>
+            <p class="lead-meta meta">
+              <time datetime={lead.date.toISOString()}>{formatDate(lead.date)}</time>
+              {leadTime && <> · {leadTime}</>}
+            </p>
+            <p class="lead-topics">
+              <a href="/topics/world-models">World Models</a><span aria-hidden="true">, </span>
+              <a href="/topics/world-models">Representation Learning</a>
+            </p>
           </div>
+
           <figure class="home-hero-media">
             <img
               src={site.heroImage}
               alt=""
-              width="400"
-              height="560"
+              width="188"
+              height="533"
               loading="eager"
               decoding="async"
             />
           </figure>
+
           <aside class="home-hero-rail">
-            <HomeBriefRail articles={railBriefs} />
+            <h2 class="section-label">Latest Briefs</h2>
+            <ul class="brief-rail-list">
+              {railBriefs.map((article) => {
+                const dek = article.subtitle ?? article.description ?? '';
+                return (
+                  <li class="brief-rail-item">
+                    <a href={getArticleHref(article)}>
+                      <p class="brief-rail-meta meta">
+                        <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+                      </p>
+                      <span class="brief-rail-title">{article.title}</span>
+                      {dek && <span class="brief-rail-dek">{dek}</span>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+            <a class="link-accent brief-rail-more" href="/briefs">View all briefs →</a>
           </aside>
         </div>
       </section>
@@ -69,45 +98,101 @@ const homeTopics = [
     <section class="home-trio" aria-label="Research, essays, and maps">
       <div class="home-trio-grid">
         <div class="home-trio-col">
-          <h2 class="label home-trio-heading">Research Notes</h2>
-          {homeNotes.map((article) => (
-            <HomeColumnStory article={article} showDate />
-          ))}
-          <a class="col-more" href="/research-notes">View all notes →</a>
+          <h2 class="section-label">Research Notes</h2>
+          {homeNotes.map((article) => {
+            const dek = article.subtitle ?? article.description ?? '';
+            return (
+              <article class="entry">
+                <a href={getArticleHref(article)}>
+                  <p class="entry-meta meta">
+                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+                  </p>
+                  <h3 class="entry-title">{article.title}</h3>
+                  {dek && <p class="entry-dek">{dek}</p>}
+                </a>
+              </article>
+            );
+          })}
+          <a class="link-accent col-more" href="/research-notes">View all notes →</a>
         </div>
+
         <div class="home-trio-col">
-          <h2 class="label home-trio-heading">Essays</h2>
-          {homeEssays.map((article) => (
-            <HomeColumnStory article={article} showDate />
-          ))}
-          <a class="col-more" href="/essays">View all essays →</a>
+          <h2 class="section-label">Essays</h2>
+          {homeEssays.map((article) => {
+            const dek = article.subtitle ?? article.description ?? '';
+            return (
+              <article class="entry">
+                <a href={getArticleHref(article)}>
+                  <p class="entry-meta meta">
+                    <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+                  </p>
+                  <h3 class="entry-title">{article.title}</h3>
+                  {dek && <p class="entry-dek">{dek}</p>}
+                </a>
+              </article>
+            );
+          })}
+          <a class="link-accent col-more" href="/essays">View all essays →</a>
         </div>
+
         <div class="home-trio-col">
-          <h2 class="label home-trio-heading">Field Maps</h2>
-          {homeMaps.map((article, i) => (
-            <HomeMapItem article={article} index={i + 1} />
-          ))}
-          <a class="col-more" href="/field-maps">View all maps →</a>
+          <h2 class="section-label">Field Maps</h2>
+          {homeMaps.map((article, i) => {
+            const dek = article.subtitle ?? article.description ?? '';
+            const num = String(i + 1).padStart(2, '0');
+            return (
+              <article class="entry">
+                <a href={getArticleHref(article)}>
+                  <p class="map-label">Field Map {num}</p>
+                  <h3 class="entry-title">{article.title}</h3>
+                  {dek && <p class="entry-dek">{dek}</p>}
+                  <p class="map-updated meta">Updated {formatDate(article.date)}</p>
+                </a>
+              </article>
+            );
+          })}
+          <a class="link-accent col-more" href="/field-maps">View all maps →</a>
         </div>
       </div>
     </section>
 
     <section class="home-topics-strip" aria-label="Explore topics">
-      <div class="home-topics-inner">
-        <h2 class="label home-topics-heading">Explore topics</h2>
-        <div class="home-topics-row">
-          {homeTopics.map((topic, i) => (
-            <>
-              {i > 0 && <span class="topics-divider" aria-hidden="true" />}
-              <a href={topic.href}>{topic.label}</a>
-            </>
-          ))}
-          <span class="topics-divider" aria-hidden="true" />
-          <a class="topics-all" href="/topics">All topics →</a>
-        </div>
+      <h2 class="section-label home-topics-label">Explore topics</h2>
+      <div class="home-topics-row">
+        {homeTopics.map((topic, i) => (
+          <>
+            {i > 0 && <span class="pipe" aria-hidden="true">|</span>}
+            <a href={topic.href}>{topic.label}</a>
+          </>
+        ))}
+        <a class="topics-all link-accent" href="/topics">All topics →</a>
       </div>
     </section>
 
-    <HomeNewsletter />
+    <section class="home-newsletter" aria-labelledby="home-newsletter-heading">
+      <div class="home-newsletter-inner">
+        <div>
+          <h2 class="home-newsletter-title" id="home-newsletter-heading">The weekly note.</h2>
+          <p class="home-newsletter-dek">
+            One thoughtful email on frontier AI research, culture, and the systems behind technical progress.
+          </p>
+        </div>
+        <form class="home-newsletter-form" action="#" method="post">
+          <label class="visually-hidden" for="home-email">Email</label>
+          <input id="home-email" name="email" type="email" required placeholder="Your email address" />
+          <button type="submit" class="button">Subscribe</button>
+        </form>
+      </div>
+    </section>
   </div>
 </BaseLayout>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+</style>

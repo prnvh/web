@@ -1,12 +1,22 @@
 ---
 import { navItems, site } from '../config/site';
 
+interface Props {
+  showBrand?: boolean;
+}
+
+const { showBrand = false } = Astro.props;
 const path = Astro.url.pathname;
 const isCurrent = (href: string) =>
   path === href || (href !== '/' && path.startsWith(`${href}/`));
 ---
 
 <nav class="site-nav" aria-label="Primary">
+  {showBrand && (
+    <a class="nav-brand" href="/">
+      {site.name}
+    </a>
+  )}
   <ul class="nav-list">
     {navItems.map((item) => (
       <li>

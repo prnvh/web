@@ -1,0 +1,45 @@
+---
+import {
+  formatDate,
+  formatArticleType,
+  getArticleHref,
+  getReadingTimeLabel,
+  type ArticleListItem,
+} from '../utils/articles';
+
+interface Props {
+  articles: ArticleListItem[];
+  heading?: string;
+}
+
+const { articles, heading = 'Read next' } = Astro.props;
+const items = articles.slice(0, 3);
+---
+
+{items.length > 0 && (
+  <section class="read-next" aria-labelledby="read-next-heading">
+    <h2 class="read-next__title" id="read-next-heading">{heading}</h2>
+    <div class="read-next__grid">
+      {items.map((article) => {
+        const dek = article.subtitle ?? article.description ?? '';
+        const time = getReadingTimeLabel(article.readingTime);
+        return (
+          <article class="read-next__card">
+            <p class="read-next__kicker">{formatArticleType(article.type)}</p>
+            <h3 class="read-next__headline">
+              <a href={getArticleHref(article)}>{article.title}</a>
+            </h3>
+            {dek && <p class="read-next__dek">{dek}</p>}
+            <p class="read-next__meta">
+              <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
+              {time && <> · {time}</>}
+            </p>
+            <a class="read-next__arrow" href={getArticleHref(article)} aria-hidden="true">
+              →
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+)}

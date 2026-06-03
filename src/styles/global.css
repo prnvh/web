@@ -1,13 +1,12 @@
 @import "./tokens.css";
+@import "./editorial.css";
 
-@import "@fontsource/newsreader/400.css";
-@import "@fontsource/newsreader/500.css";
-@import "@fontsource/newsreader/700.css";
 @import "@fontsource/source-serif-4/400.css";
 @import "@fontsource/source-serif-4/600.css";
 @import "@fontsource/source-serif-4/700.css";
-@import "@fontsource/ibm-plex-sans/400.css";
-@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 
 *,
@@ -39,36 +38,27 @@ video {
 }
 
 .site-container {
-  max-width: 1240px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 0 var(--page-gutter);
 }
 
 .label {
   font-family: var(--font-ui);
-  font-size: 10.5px;
+  font-size: 11px;
   line-height: 1;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .masthead-title {
   display: block;
-  font-family: var(--font-display);
-  font-size: clamp(56px, 11vw, 136px);
-  line-height: 0.8;
-  letter-spacing: -0.075em;
-  font-weight: 700;
-  color: var(--text);
 }
 
 .lead-title {
   font-family: var(--font-display);
-  font-size: clamp(44px, 6.5vw, 88px);
-  line-height: 0.9;
-  letter-spacing: -0.055em;
   font-weight: 700;
   margin: 0;
   color: var(--text);
@@ -244,10 +234,6 @@ select:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 0.6rem 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   position: relative;
 }
 
@@ -265,20 +251,6 @@ select:focus-visible {
   display: flex;
 }
 
-.site-nav .nav-list a {
-  font-family: var(--font-ui);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.site-nav .nav-list a:hover,
-.site-nav .nav-list a[aria-current='page'] {
-  color: var(--accent);
-}
-
 .nav-search {
   position: absolute;
   right: 0;
@@ -294,24 +266,13 @@ select:focus-visible {
   color: var(--accent);
 }
 
-.nav-search svg {
-  width: 15px;
-  height: 15px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.75;
-  display: block;
-}
-
 @media (min-width: 900px) {
   .site-nav .nav-list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.2rem 1.25rem;
     width: auto;
-    padding-right: 2rem;
   }
 
   .nav-check:checked ~ .site-nav .nav-list {

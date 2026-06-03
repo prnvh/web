@@ -1,18 +1,32 @@
 :root {
-  --bg: #f9f8f6;
-  --paper: #fffdf9;
+  --bg: #fafaf9;
+  --paper: #f9f7f2;
   --text: #111111;
-  --muted: #5a534c;
-  --faint: #8a837a;
-  --border: #ddd8d0;
-  --rule: #1a1a1a;
-  --accent: #8b2e2e;
+  --muted: #666666;
+  --faint: #8a8278;
+  --border: #e5e5e5;
+  --rule: #111111;
+  --accent: #b91c1c;
+  --accent-soft: #f9f7f2;
 
-  --font-display: "Newsreader", Georgia, "Times New Roman", Times, serif;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", Times, serif;
   --font-body: "Source Serif 4", Georgia, "Times New Roman", Times, serif;
-  --font-ui: "IBM Plex Sans", Arial, sans-serif;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", "Courier New", monospace;
 
   --font-serif: var(--font-display);
   --font-sans: var(--font-ui);
+
+  --page-width: 1160px;
+  --page-gutter: 40px;
+  --article-width: 680px;
+  --rail-width: 300px;
+  --col-gap: 48px;
+
+  --text-body-size: 18px;
+  --text-body-line: 1.65;
+  --text-meta-size: 12px;
+  --text-meta-tracking: 0.06em;
+  --headline-tracking: -0.025em;
+  --headline-line: 1.05;
 }
