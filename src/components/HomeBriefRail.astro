@@ -1,5 +1,5 @@
 ---
-import { formatDate, formatArticleType, getArticleHref, type ArticleListItem } from '../utils/articles';
+import { formatDate, getArticleHref, type ArticleListItem } from '../utils/articles';
 
 interface Props {
   articles: ArticleListItem[];
@@ -9,7 +9,7 @@ const { articles } = Astro.props;
 ---
 
 <div class="brief-rail">
-  <h2 class="label brief-rail-heading">Latest briefs</h2>
+  <h2 class="label brief-rail-heading">Latest Briefs</h2>
   <ul class="brief-rail-list">
     {articles.map((article) => {
       const dek = article.subtitle ?? article.description ?? '';
@@ -18,8 +18,6 @@ const { articles } = Astro.props;
           <a href={getArticleHref(article)}>
             <p class="label brief-rail-meta">
               <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
-              <span aria-hidden="true"> · </span>
-              {formatArticleType(article.type)}
             </p>
             <span class="brief-rail-title">{article.title}</span>
             {dek && <span class="brief-rail-dek">{dek}</span>}

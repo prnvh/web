@@ -1,12 +1,12 @@
 :root {
-  --bg: #f3eee4;
-  --paper: #fffaf1;
-  --text: #101010;
-  --muted: #5e574c;
-  --faint: #8b8276;
-  --border: #d1c4b2;
-  --rule: #111111;
-  --accent: #7b1d1d;
+  --bg: #f9f8f6;
+  --paper: #fffdf9;
+  --text: #111111;
+  --muted: #5a534c;
+  --faint: #8a837a;
+  --border: #ddd8d0;
+  --rule: #1a1a1a;
+  --accent: #8b2e2e;
 
   --font-display: "Newsreader", Georgia, "Times New Roman", Times, serif;
   --font-body: "Source Serif 4", Georgia, "Times New Roman", Times, serif;

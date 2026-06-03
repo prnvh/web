@@ -4,7 +4,7 @@ export const siteConfig = {
     'A publication on frontier AI, research culture, and the systems behind technical progress.',
   description:
     'Essays, briefs, and notes on AI research, compute, evaluation, and the people building the field.',
-  heroImage: '/images/hero-editorial.svg',
+  heroImage: '/images/hero-editorial.jpg',
   url: import.meta.env.SITE_URL ?? 'https://example.com',
   subscribePath: '/subscribe',
   searchPath: '/search',
@@ -56,13 +56,6 @@ export const footerColumns = [
       { label: 'Start Here', href: '/start-here' },
       { label: 'About', href: '/about' },
       { label: 'Subscribe', href: '/subscribe' },
-    ],
-  },
-  {
-    links: [
-      { label: 'Search', href: '/search' },
-      { label: 'RSS', href: '/rss.xml' },
-      { label: 'Contact', href: '/about#contact' },
     ],
   },
 ] as const;

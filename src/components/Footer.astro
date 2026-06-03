@@ -1,5 +1,7 @@
 ---
 import { site, footerColumns } from '../config/site';
+
+const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
@@ -23,8 +25,8 @@ import { site, footerColumns } from '../config/site';
       ))}
     </div>
 
-    <p class="footer-copy label">
-      &copy; {new Date().getFullYear()} {site.name}
+    <p class="footer-copy">
+      &copy; {year} {site.name}. All rights reserved.
     </p>
   </div>
 </footer>
@@ -33,7 +35,7 @@ import { site, footerColumns } from '../config/site';
   .site-footer {
     margin-top: 1.5rem;
     padding: 1.5rem 0 2rem;
-    border-top: 2px solid var(--rule);
+    border-top: 1px solid var(--border);
   }
 
   .footer-layout {
@@ -43,12 +45,20 @@ import { site, footerColumns } from '../config/site';
 
   @media (min-width: 900px) {
     .footer-layout {
-      grid-template-columns: minmax(200px, 1.2fr) 2fr auto;
+      grid-template-columns: minmax(200px, 1.2fr) 1fr 1fr minmax(180px, auto);
       align-items: start;
-      gap: 2rem 3rem;
+      gap: 2rem 2.5rem;
+    }
+
+    .footer-cols {
+      grid-column: 2 / 4;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
     }
 
     .footer-copy {
+      grid-column: 4;
       justify-self: end;
       align-self: end;
       text-align: right;
@@ -57,7 +67,7 @@ import { site, footerColumns } from '../config/site';
 
   .footer-name {
     font-family: var(--font-display);
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.03em;
     margin: 0 0 0.35rem;
@@ -65,17 +75,11 @@ import { site, footerColumns } from '../config/site';
 
   .footer-desc {
     font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.45;
     color: var(--muted);
     margin: 0;
     max-width: 36ch;
-  }
-
-  .footer-cols {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem 2rem;
   }
 
   .footer-cols ul {
@@ -90,20 +94,24 @@ import { site, footerColumns } from '../config/site';
 
   .footer-cols a {
     font-family: var(--font-ui);
-    font-size: 10.5px;
-    letter-spacing: 0.11em;
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration: none;
   }
 
   .footer-cols a:hover {
     color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .footer-copy {
     margin: 0;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.06em;
     color: var(--faint);
     white-space: nowrap;
   }

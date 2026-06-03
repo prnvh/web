@@ -1,16 +1,38 @@
 ---
-import { formatDate, formatArticleType, getArticleHref, getReadingTimeLabel, slugifyTopic, type ArticleListItem } from '../utils/articles';
+import { formatDate, formatArticleType, getArticleHref, getReadingTimeLabel, type ArticleListItem } from '../utils/articles';
+import { topicsBySlug } from '../data/topics';
+
+function topicLabel(slug: string): string {
+  const meta = topicsBySlug[slug.toLowerCase()];
+  if (meta) return meta.title;
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+interface TopicLink {
+  label: string;
+  href: string;
+}
 
 interface Props {
   article: ArticleListItem;
   dek?: string;
+  topicLinks?: TopicLink[];
 }
 
-const { article, dek } = Astro.props;
+const { article, dek, topicLinks } = Astro.props;
 const href = getArticleHref(article);
 const description = dek ?? article.subtitle ?? article.description ?? '';
 const typeLabel = formatArticleType(article.type).toUpperCase();
 const topics = article.topics?.slice(0, 3) ?? [];
+const links =
+  topicLinks ??
+  topics.map((topic) => ({
+    label: topicLabel(topic),
+    href: `/topics/${topic}`,
+  }));
 const timeLabel = getReadingTimeLabel(article.readingTime);
 ---
 
@@ -24,12 +46,12 @@ const timeLabel = getReadingTimeLabel(article.readingTime);
     <time datetime={article.date.toISOString()}>{formatDate(article.date)}</time>
     {timeLabel && <span> · {timeLabel}</span>}
   </p>
-  {topics.length > 0 && (
+  {links.length > 0 && (
     <p class="lead-topics">
-      {topics.map((topic, i) => (
+      {links.map((link, i) => (
         <>
-          {i > 0 && <span aria-hidden="true"> / </span>}
-          <a href={`/topics/${slugifyTopic(topic)}`}>{topic}</a>
+          {i > 0 && <span aria-hidden="true">, </span>}
+          <a href={link.href}>{link.label}</a>
         </>
       ))}
     </p>

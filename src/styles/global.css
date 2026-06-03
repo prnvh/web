@@ -39,9 +39,9 @@ video {
 }
 
 .site-container {
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
 .label {
@@ -267,12 +267,11 @@ select:focus-visible {
 
 .site-nav .nav-list a {
   font-family: var(--font-ui);
-  font-size: 10.5px;
-  letter-spacing: 0.11em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration: none;
 }
 
 .site-nav .nav-list a:hover,
@@ -295,9 +294,13 @@ select:focus-visible {
   color: var(--accent);
 }
 
-.nav-search-icon {
-  font-size: 1.15rem;
-  font-weight: 400;
+.nav-search svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.75;
+  display: block;
 }
 
 @media (min-width: 900px) {

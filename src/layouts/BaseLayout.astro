@@ -12,6 +12,7 @@ interface Props {
   ogDescription?: string;
   ogImage?: string;
   noindex?: boolean;
+  bodyClass?: string;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   ogDescription,
   ogImage,
   noindex = false,
+  bodyClass = '',
 } = Astro.props;
 
 const pageTitle = title === site.name ? title : `${title} · ${site.name}`;
@@ -53,7 +55,7 @@ const openGraphDescription = ogDescription ?? metaDescription;
     <slot name="head" />
     <!-- Analytics: add Plausible/Umami script here when configured -->
   </head>
-  <body>
+  <body class={bodyClass}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <Header />
     <main id="main-content" data-pagefind-body>
