@@ -1,8 +1,12 @@
 ---
-import { site, navLinks } from '@/config/site';
-import { formatDate } from '@/lib/articles';
+import { site, navLinks, mockupDates } from '@/config/site';
 
-const today = formatDate(new Date());
+interface Props {
+  variant?: 'masthead' | 'bar';
+  displayDate?: string;
+}
+
+const { variant = 'masthead', displayDate = mockupDates.default } = Astro.props;
 const path = Astro.url.pathname;
 
 function isActive(href: string): boolean {
@@ -11,34 +15,60 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="site-header">
+<header class:list={['site-header', `site-header--${variant}`]}>
   <div class="site-container">
     <div class="top-strip">
-      <span class="top-strip__date">{today}</span>
+      <span class="top-strip__date">{displayDate}</span>
       <p class="top-strip__tagline">{site.tagline}</p>
       <a class="top-strip__subscribe" href="/subscribe">Subscribe</a>
     </div>
-    <div class="masthead">
-      <h1 class="masthead__title">
-        <a href="/">{site.name}</a>
-      </h1>
-    </div>
-    <nav class="site-nav" aria-label="Primary">
-      <ul class="site-nav__links">
-        {navLinks.map((link) => (
-          <li>
-            <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
-              {link.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-      <a class="site-nav__search" href="/search" aria-label="Search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="M20 20l-4-4"></path>
-        </svg>
-      </a>
-    </nav>
+
+    {variant === 'masthead' ? (
+      <>
+        <div class="masthead">
+          <p class="masthead__title">
+            <a href="/">{site.name}</a>
+          </p>
+        </div>
+        <nav class="site-nav site-nav--ruled" aria-label="Primary">
+          <ul class="site-nav__links">
+            {navLinks.map((link) => (
+              <li>
+                <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="site-nav__search" href="/search" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M20 20l-4-4"></path>
+            </svg>
+          </a>
+        </nav>
+      </>
+    ) : (
+      <nav class="site-nav site-nav--bar site-nav--ruled" aria-label="Primary">
+        <p class="site-nav__logo">
+          <a href="/">{site.name}</a>
+        </p>
+        <ul class="site-nav__links">
+          {navLinks.map((link) => (
+            <li>
+              <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a class="site-nav__search" href="/search" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-4-4"></path>
+          </svg>
+        </a>
+      </nav>
+    )}
   </div>
 </header>

@@ -1,16 +1,30 @@
 ---
 import { site } from '@/config/site';
+
+interface Props {
+  tone?: 'home' | 'article';
+}
+
+const { tone = 'article' } = Astro.props;
+const copy = tone === 'home' ? site.newsletter.home : site.newsletter.article;
 ---
 
 <section class="newsletter-band" aria-labelledby="newsletter-heading">
   <div class="site-container newsletter-band__inner">
     <div>
-      <h2 id="newsletter-heading">{site.newsletter.headline}</h2>
-      <p>{site.newsletter.subtext}</p>
+      <h2 id="newsletter-heading">{copy.headline}</h2>
+      <p>{copy.subtext}</p>
     </div>
     <form class="newsletter-form" action="/subscribe" method="get">
       <label class="sr-only" for="email-band">Email</label>
-      <input id="email-band" type="email" name="email" placeholder="Your email address" required autocomplete="email" />
+      <input
+        id="email-band"
+        type="email"
+        name="email"
+        placeholder="Your email address"
+        required
+        autocomplete="email"
+      />
       <button type="submit">Subscribe</button>
     </form>
   </div>

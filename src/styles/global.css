@@ -1,3 +1,6 @@
+@import '@fontsource/newsreader/400.css';
+@import '@fontsource/newsreader/600.css';
+@import '@fontsource/newsreader/700.css';
 @import '@fontsource/source-serif-4/400.css';
 @import '@fontsource/source-serif-4/600.css';
 @import '@fontsource/source-serif-4/700.css';
@@ -81,9 +84,14 @@ a:hover {
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
+  margin: 0 0 0.5rem;
+}
+
+.meta-label--neutral {
+  color: var(--text);
 }
 
 .meta-line {
@@ -131,13 +139,48 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Summary box */
+/* Summary box — mockup variants */
 .summary-box {
+  padding: 1.15rem 1.35rem;
+  margin: 1.75rem 0 2rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.summary-box--brief {
+  background: var(--paper-muted);
+  border: 1px solid var(--border);
+}
+
+.summary-box--note {
+  background: #efeeea;
+  border: 1px solid var(--border);
+}
+
+.summary-box--essay {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem 1.25rem;
+  align-items: start;
   background: var(--paper);
   border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  padding: 1.25rem 1.5rem;
-  margin: 1.5rem 0 2rem;
+  max-width: none;
+}
+
+.summary-box__icon {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  font-style: italic;
+  color: var(--muted);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
 }
 
 .summary-box__label {
@@ -146,17 +189,21 @@ a:hover {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.65rem;
   color: var(--text);
+}
+
+.summary-box__body p {
+  margin: 0;
 }
 
 .summary-box ul {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 1.15rem;
 }
 
 .summary-box li {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
 .summary-box li:last-child {
@@ -201,10 +248,14 @@ a:hover {
 /* Newsletter band */
 .newsletter-band {
   border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: var(--paper);
-  padding: 1.75rem 0;
-  margin-top: 3rem;
+  background: var(--bg);
+  padding: 1.75rem 0 2rem;
+  margin-top: 0;
+}
+
+.page-research .newsletter-band,
+.page-brief .newsletter-band {
+  border-top: 3px solid var(--rule);
 }
 
 .newsletter-band__inner {

@@ -2,26 +2,34 @@
 import { site, navLinks } from '@/config/site';
 
 interface Props {
-  variant?: 'default' | 'essay' | 'compact';
+  variant?: 'home' | 'essay' | 'compact';
 }
 
-const { variant = 'default' } = Astro.props;
+const { variant = 'home' } = Astro.props;
+const year = 2026;
 ---
 
-<footer class:list={['site-footer', { 'site-footer--essay': variant === 'essay', 'site-footer--compact': variant === 'compact' }]}>
+<footer
+  class:list={[
+    'site-footer',
+    { 'site-footer--essay': variant === 'essay', 'site-footer--compact': variant === 'compact' },
+  ]}
+>
   <div class="site-container">
     {variant === 'compact' ? (
-      <div class="site-footer__grid site-footer--compact">
+      <div class="site-footer__inner site-footer--compact">
         <div class="site-footer__brand">
           <strong>{site.name}</strong>
           <p>{site.tagline}</p>
         </div>
         <nav class="site-footer__links-row" aria-label="Footer">
-          {navLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+          {navLinks.map((l) => (
+            <a href={l.href}>{l.label}</a>
+          ))}
           <a href="/subscribe">Subscribe</a>
           <a href="/rss.xml">RSS</a>
         </nav>
-        <p class="site-footer__copy">© {new Date().getFullYear()} {site.name}</p>
+        <p class="site-footer__copy">© {year} {site.name}</p>
       </div>
     ) : (
       <div class="site-footer__grid">
@@ -48,11 +56,11 @@ const { variant = 'default' } = Astro.props;
             <li><a href="/about">About</a></li>
             <li><a href="/subscribe">Subscribe</a></li>
             <li><a href="/rss.xml">RSS</a></li>
+            {variant === 'home' && <li><a href="/about#contact">Contact</a></li>}
           </ul>
         </div>
         <p class="site-footer__copy">
-          © {new Date().getFullYear()} {site.name}
-          {variant === 'essay' && ' All rights reserved.'}
+          © {year} {site.name}{variant === 'essay' ? ' All rights reserved.' : '. All rights reserved.'}
         </p>
       </div>
     )}

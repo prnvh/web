@@ -4,17 +4,30 @@ import { summaryList } from '@/lib/articles';
 interface Props {
   summary: string | string[];
   label?: string;
+  variant?: 'brief' | 'note' | 'essay';
 }
 
-const { summary, label = 'In Short' } = Astro.props;
+const { summary, label = 'In Short', variant = 'brief' } = Astro.props;
 const items = summaryList(summary);
+const isEssay = variant === 'essay';
+const isSingleParagraph = isEssay && items.length === 1;
 ---
 
-<aside class="summary-box" aria-label="Summary">
-  <p class="summary-box__label">{label}</p>
-  {items.length === 1 ? <p>{items[0]}</p> : (
-    <ul>
-      {items.map((item) => <li>{item}</li>)}
-    </ul>
-  )}
+<aside
+  class:list={['summary-box', `summary-box--${variant}`]}
+  aria-label="Summary"
+>
+  {isEssay && <span class="summary-box__icon" aria-hidden="true">i</span>}
+  <div class="summary-box__body">
+    <p class="summary-box__label">{label}</p>
+    {isSingleParagraph ? (
+      <p>{items[0]}</p>
+    ) : (
+      <ul>
+        {items.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )}
+  </div>
 </aside>

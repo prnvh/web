@@ -1,21 +1,27 @@
 ---
 import SiteHeader from '@/components/SiteHeader.astro';
 import SiteFooter from '@/components/SiteFooter.astro';
-import { site } from '@/config/site';
+import { site, mockupDates } from '@/config/site';
 import '@/styles/global.css';
 import '@/styles/layout.css';
 
 interface Props {
   title?: string;
   description?: string;
-  footerVariant?: 'default' | 'essay' | 'compact';
+  headerVariant?: 'masthead' | 'bar';
+  displayDate?: string;
+  footerVariant?: 'home' | 'essay' | 'compact';
+  pageClass?: string;
   noFooter?: boolean;
 }
 
 const {
   title,
   description = site.description,
-  footerVariant = 'default',
+  headerVariant = 'masthead',
+  displayDate = mockupDates.default,
+  footerVariant = 'home',
+  pageClass = '',
   noFooter = false,
 } = Astro.props;
 
@@ -34,13 +40,10 @@ const pageTitle = title ? `${title} · ${site.name}` : site.name;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <title>{pageTitle}</title>
-    {import.meta.env.PROD && (
-      <script defer data-domain="frontiermanual.com" src="https://plausible.io/js/script.js"></script>
-    )}
   </head>
-  <body>
+  <body class={pageClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <SiteHeader />
+    <SiteHeader variant={headerVariant} displayDate={displayDate} />
     <main id="main" data-pagefind-body>
       <slot />
     </main>

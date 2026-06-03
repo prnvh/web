@@ -9,6 +9,7 @@ import {
   getRelated,
   getByType,
 } from '@/lib/articles';
+import { mockupDates } from '@/config/site';
 import '@/styles/article.css';
 
 export async function getStaticPaths() {
@@ -27,9 +28,21 @@ const heroImage = article.data.heroImage ?? '/images/field-map-hero.jpg';
 const essays = (await getByType('essay')).slice(0, 3);
 const related = await getRelated(article.data.related);
 const readList = related.length ? related : essays;
+
+function railKicker(item: (typeof readList)[0]) {
+  const type = item.data.type === 'essay' ? 'Essay' : 'Field Map';
+  const d = item.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return `${type} · ${d.toUpperCase()}`;
+}
 ---
 
-<BaseLayout title={title} description={article.data.description} footerVariant="compact">
+<BaseLayout
+  title={title}
+  description={article.data.description}
+  footerVariant="compact"
+  displayDate={mockupDates.fieldMap}
+  pageClass="page-field-map"
+>
   <article class="article-page">
     <div class="site-container">
       <header class="field-map-hero">
@@ -37,12 +50,14 @@ const readList = related.length ? related : essays;
           <p class="meta-label">{typeLabelUpper(article.data.type)}</p>
           <h1 class="article-hero__title">{title}</h1>
           {subtitle && <p class="article-hero__subtitle">{subtitle}</p>}
-          <p class="meta-line">
+          <p class="article-hero__meta">
             {formatDate(date)} · {readingTime} · By {author}
           </p>
-          {topics.length > 0 && <p class="topic-tags">{topics.join(', ')}</p>}
+          {topics.length > 0 && (
+            <p class="article-hero__topics">{topics.join(', ')}</p>
+          )}
         </div>
-        <img class="field-map-hero__image" src={heroImage} alt="" width={380} height={280} />
+        <img class="field-map-hero__image" src={heroImage} alt="" width={420} height={280} />
       </header>
 
       <div class="article-layout">
@@ -50,7 +65,9 @@ const readList = related.length ? related : essays;
           {orientation && (
             <div class="orientation-box">
               <p class="orientation-box__label">Orientation</p>
-              <p style="margin:0">{orientation}</p>
+              <p style="margin:0;font-family:var(--font-serif);font-size:15px;line-height:1.55;color:var(--text)">
+                {orientation}
+              </p>
             </div>
           )}
           {mapSections.map((section) => (
@@ -69,7 +86,9 @@ const readList = related.length ? related : essays;
             <h2 class="article-rail__heading">On this page</h2>
             <nav class="on-page-nav" aria-label="On this page">
               {mapSections.map((s) => (
-                <a href={`#${s.id}`}>{s.number}. {s.title}</a>
+                <a href={`#${s.id}`}>
+                  {s.number}. {s.title}
+                </a>
               ))}
             </nav>
           </div>
@@ -77,15 +96,12 @@ const readList = related.length ? related : essays;
             <h2 class="article-rail__heading">Related Reading</h2>
             {readList.map((item) => (
               <article class="rail-item">
-                <p class="meta-label" style="font-size:10px;margin-bottom:0.25rem">
-                  {item.data.type === 'essay' ? 'Essay' : 'Field Map'}
-                </p>
-                <p class="rail-item__date">{formatDate(item.data.date)}</p>
+                <p class="rail-item__kicker">{railKicker(item)}</p>
                 <h3 class="rail-item__title">
                   <a href={articlePath(item)}>{item.data.title}</a>
                 </h3>
                 <p class="rail-item__sum">{item.data.description}</p>
-                <p class="meta-line">{item.data.readingTime}</p>
+                <p class="rail-item__date">{item.data.readingTime}</p>
               </article>
             ))}
             <p style="margin-top:0.75rem">
@@ -96,5 +112,5 @@ const readList = related.length ? related : essays;
       </div>
     </div>
   </article>
-  <NewsletterBand />
+  <NewsletterBand tone="article" />
 </BaseLayout>

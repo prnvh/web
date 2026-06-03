@@ -7,9 +7,16 @@ export const site = {
   url: 'https://frontiermanual.com',
   author: 'Frontier Manual',
   newsletter: {
-    headline: 'Get the weekly note.',
-    subtext:
-      'One clear briefing on frontier AI, research, and technology every week or two.',
+    home: {
+      headline: 'Get the weekly note.',
+      subtext:
+        'One clear briefing on frontier AI, research, and technology every week or two.',
+    },
+    article: {
+      headline: 'The weekly note.',
+      subtext:
+        'One thoughtful email on frontier AI research, technical ideas, and the people building it.',
+    },
     privacy: 'No spam. Unsubscribe anytime.',
   },
 } as const;
@@ -23,3 +30,9 @@ export const navLinks = [
   { href: '/start-here', label: 'Start Here' },
   { href: '/about', label: 'About' },
 ] as const;
+
+/** Masthead dates shown in mockups (per page). */
+export const mockupDates = {
+  default: 'May 28, 2026',
+  fieldMap: 'June 2, 2026',
+} as const;

@@ -1,52 +1,40 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import {
-  getFeatured,
-  getByType,
-  articlePath,
-  formatDate,
-  formatShortDate,
-} from '@/lib/articles';
+import { getFeatured, getByType, articlePath, formatDate, formatShortDate } from '@/lib/articles';
+import { mockupDates } from '@/config/site';
 import '@/styles/home.css';
 
 const featured = await getFeatured();
-const briefs = await getByType('brief');
 const notes = await getByType('research-note');
 const essays = await getByType('essay');
 const maps = await getByType('field-map');
+const briefs = await getByType('brief');
 
 const latestBriefs = briefs.filter((b) => b.id !== featured?.id).slice(0, 4);
-const heroImage = featured?.data.heroImage ?? '/images/home-featured.jpg';
+
+const heroImage = '/images/home-featured.jpg';
 ---
 
-<BaseLayout footerVariant="essay">
+<BaseLayout footerVariant="home" pageClass="page-home" displayDate={mockupDates.default}>
   <div class="site-container">
     {featured && (
       <section class="home-lead" aria-label="Featured story">
         <div class="home-lead__main">
-          <p class="meta-label">Brief</p>
+          <p class="home-lead__kicker">Brief</p>
           <h2 class="home-lead__headline">
             <a href={articlePath(featured)}>{featured.data.title}</a>
           </h2>
-          <p class="home-lead__dek">{featured.data.subtitle ?? featured.data.description}</p>
+          <p class="home-lead__dek">{featured.data.subtitle}</p>
           <p class="home-lead__meta">
             {formatDate(featured.data.date)} · {featured.data.readingTime}
           </p>
-          <p class="topic-tags">
-            {featured.data.topics.join(' / ')}
-          </p>
+          <p class="home-lead__tags">{featured.data.topics.join(' / ')}</p>
         </div>
         <div class="home-lead__image-wrap">
-          <img
-            class="home-lead__image"
-            src={heroImage}
-            alt=""
-            width={220}
-            height={330}
-          />
+          <img class="home-lead__image" src={heroImage} alt="" width={340} height={453} />
         </div>
-        <aside class="home-lead__rail home-brief-rail">
-          <h3 class="home-lead__label">Latest Briefs</h3>
+        <aside class="home-lead__rail">
+          <h3 class="home-rail__title">Latest Briefs</h3>
           {latestBriefs.map((item) => (
             <article class="home-brief-item">
               <p class="home-brief-item__date">{formatShortDate(item.data.date)}</p>
@@ -56,7 +44,7 @@ const heroImage = featured?.data.heroImage ?? '/images/home-featured.jpg';
               <p class="home-brief-item__sum">{item.data.description}</p>
             </article>
           ))}
-          <p class="home-brief-rail__footer">
+          <p class="home-rail__more">
             <a class="link-arrow" href="/briefs">View all briefs →</a>
           </p>
         </aside>
@@ -100,7 +88,7 @@ const heroImage = featured?.data.heroImage ?? '/images/home-featured.jpg';
         <h3 class="home-column__title">Field Maps</h3>
         {maps.slice(0, 2).map((item, i) => (
           <article class="home-story">
-            <p class="home-story__type home-story__type--accent">
+            <p class="home-story__type home-story__type--map">
               Field Map {String(i + 1).padStart(2, '0')}
             </p>
             <h4 class="home-story__title">

@@ -3,64 +3,110 @@ import BaseLayout from './BaseLayout.astro';
 import SummaryBox from '@/components/SummaryBox.astro';
 import NewsletterBand from '@/components/NewsletterBand.astro';
 import { render } from 'astro:content';
-import {
-  formatDate,
-  typeLabelUpper,
-  type Article,
-} from '@/lib/articles';
+import { formatDate, typeLabelUpper, type Article } from '@/lib/articles';
+import { mockupDates } from '@/config/site';
 import '@/styles/article.css';
 
 interface Props {
   article: Article;
   variant: 'brief' | 'research-note' | 'essay' | 'field-map';
   heroImage?: string;
-  footerVariant?: 'default' | 'essay' | 'compact';
+  headerVariant?: 'masthead' | 'bar';
+  displayDate?: string;
+  footerVariant?: 'home' | 'essay' | 'compact';
+  pageClass?: string;
 }
 
-const { article, variant, heroImage, footerVariant = 'default' } = Astro.props;
+const {
+  article,
+  variant,
+  heroImage,
+  headerVariant = variant === 'essay' ? 'bar' : 'masthead',
+  displayDate = mockupDates.default,
+  footerVariant = variant === 'essay' ? 'essay' : 'compact',
+  pageClass = variant === 'brief' ? 'page-brief' : variant === 'research-note' ? 'page-research' : '',
+} = Astro.props;
+
 const { title, subtitle, date, readingTime, topics, summary, author } = article.data;
 const { Content } = await render(article);
+const summaryVariant = variant === 'essay' ? 'essay' : variant === 'research-note' ? 'note' : 'brief';
 ---
 
-<BaseLayout title={title} description={article.data.description} footerVariant={footerVariant}>
+<BaseLayout
+  title={title}
+  description={article.data.description}
+  headerVariant={headerVariant}
+  displayDate={displayDate}
+  footerVariant={footerVariant}
+  pageClass={pageClass}
+>
   <article class="article-page">
     <div class="site-container">
-      <header class:list={['article-hero', { 'article-hero--no-image': !heroImage }]}>
-        <div>
-          <p class="meta-label">{typeLabelUpper(article.data.type)}</p>
-          <h1 class="article-hero__title">{title}</h1>
-          {subtitle && <p class="article-hero__subtitle">{subtitle}</p>}
-          <p class="meta-line">
-            {formatDate(date)} · {readingTime}
-            {variant === 'field-map' && ` · By ${author}`}
-          </p>
-          {topics.length > 0 && (
-            <p class="topic-tags">
-              {variant === 'essay' ? <>Topics: </> : null}
-              {topics.map((t, i) => (
-                <>
-                  {i > 0 && (variant === 'essay' ? ' ' : ', ')}
-                  <a href={`/topics/${t.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '')}`}>{t}</a>
-                </>
-              ))}
+      {variant === 'brief' && heroImage ? (
+        <header class="brief-hero">
+          <div class="brief-hero__text">
+            <p class="meta-label">{typeLabelUpper(article.data.type)}</p>
+            <h1 class="article-hero__title">{title}</h1>
+            {subtitle && <p class="article-hero__subtitle">{subtitle}</p>}
+            <p class="article-hero__meta">{formatDate(date)} · {readingTime}</p>
+            {topics.length > 0 && (
+              <p class="article-hero__topics">{topics.join(', ')}</p>
+            )}
+          </div>
+          <img class="brief-hero__image" src={heroImage} alt="" width={200} height={200} />
+        </header>
+      ) : (
+        <header class:list={['article-hero', { 'article-hero--split': heroImage }]}>
+          <div>
+            <p class="meta-label">{typeLabelUpper(article.data.type)}</p>
+            <h1 class="article-hero__title">{title}</h1>
+            {subtitle && <p class="article-hero__subtitle">{subtitle}</p>}
+            <p class="article-hero__meta">
+              {formatDate(date)} · {readingTime}
+              {variant === 'field-map' && ` · By ${author}`}
             </p>
+            {topics.length > 0 && (
+              <p
+                class:list={[
+                  'article-hero__topics',
+                  { 'article-hero__topics--essay': variant === 'essay' },
+                ]}
+              >
+                {variant === 'essay' && <span class="article-hero__topics-label">Topics: </span>}
+                {topics.map((t, i) => (
+                  <>
+                    {i > 0 && (variant === 'essay' ? ' ' : ', ')}
+                    <a href={`/topics/${t.toLowerCase().replace(/\s+/g, '-').replace(/&/g, '')}`}>
+                      {t}
+                    </a>
+                  </>
+                ))}
+              </p>
+            )}
+          </div>
+          {heroImage && (
+            <img
+              class:list={['article-hero__image', { 'article-hero__image--essay': variant === 'essay' }]}
+              src={heroImage}
+              alt=""
+              width={280}
+              height={280}
+            />
           )}
-        </div>
-        {heroImage && (
-          <img
-            class:list={['article-hero__image', { 'article-hero__image--tall': variant === 'essay' }]}
-            src={heroImage}
-            alt=""
-            width={220}
-            height={variant === 'essay' ? 280 : 200}
-          />
-        )}
-      </header>
+        </header>
+      )}
 
-      <div class="article-layout">
+      <div
+        class:list={[
+          'article-layout',
+          { 'article-layout--essay-body': variant === 'essay' },
+        ]}
+      >
         <div class="article-main">
           <slot name="before-body" />
-          {summary && variant !== 'field-map' && <SummaryBox summary={summary} />}
+          {summary && variant !== 'field-map' && (
+            <SummaryBox summary={summary} variant={summaryVariant} />
+          )}
           <div class="prose">
             <Content />
           </div>
@@ -73,5 +119,5 @@ const { Content } = await render(article);
     </div>
   </article>
   <slot name="after-article" />
-  <NewsletterBand />
+  <NewsletterBand tone="article" />
 </BaseLayout>
