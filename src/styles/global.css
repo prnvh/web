@@ -25,8 +25,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-body);
-  font-size: 19px;
-  line-height: 1.68;
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line);
   color: var(--text);
   background-color: var(--bg);
 }
@@ -46,17 +46,42 @@ video {
 
 .label {
   font-family: var(--font-ui);
-  font-size: 11px;
+  font-size: var(--text-label-size);
   line-height: 1;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--text-label-tracking);
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 500;
 }
 
-.section {
-  padding: 40px 0;
-  border-top: 1px solid var(--border);
+.masthead-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(52px, 10vw, 120px);
+  line-height: var(--masthead-line);
+  letter-spacing: var(--masthead-tracking);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lead-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 700;
+  line-height: var(--headline-line);
+  letter-spacing: -0.04em;
+  margin: 0;
+  color: var(--text);
+}
+
+.story-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2.125rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: var(--text);
 }
 
 .front-section {
@@ -72,15 +97,15 @@ video {
 .article-body {
   max-width: 680px;
   font-family: var(--font-body);
-  font-size: 19px;
-  line-height: 1.68;
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line);
 }
 
 .article-body :where(h1, h2, h3, h4) {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  letter-spacing: var(--headline-tracking);
+  line-height: var(--headline-line);
   color: var(--text);
 }
 
@@ -116,9 +141,9 @@ video {
 
 .button {
   font-family: var(--font-ui);
-  font-size: 12px;
+  font-size: var(--text-meta-size);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--text-meta-tracking);
   border: 1px solid var(--rule);
   background: var(--text);
   color: var(--paper);
@@ -215,13 +240,54 @@ select:focus-visible {
   border-bottom: 2px solid var(--rule);
 }
 
-/* Legacy alias */
-.meta-label {
+.site-nav {
+  padding: 0.65rem 0 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-nav .nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-check:checked ~ .site-nav .nav-list {
+  display: flex;
+  margin-top: 0.25rem;
+}
+
+.site-nav .nav-list a {
   font-family: var(--font-ui);
-  font-size: 11px;
-  line-height: 1;
-  letter-spacing: 0.08em;
+  font-size: var(--text-label-size);
+  letter-spacing: var(--text-label-tracking);
   text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site-nav .nav-list a:hover,
+.site-nav .nav-list a[aria-current='page'] {
+  color: var(--accent);
+}
+
+@media (min-width: 900px) {
+  .site-nav {
+    padding: 0.5rem 0 0.7rem;
+  }
+
+  .site-nav .nav-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem 1.35rem;
+  }
+
+  .nav-check:checked ~ .site-nav .nav-list {
+    margin-top: 0;
+  }
 }

@@ -52,9 +52,7 @@ const metadata = { type, date, readingTime, author, topics };
 >
   <article class="article-page site-container">
     <div class="article-grid">
-      <aside class="article-rail article-rail--left" aria-label="Article metadata">
-        <ArticleTypeLabel type={type} />
-        <MetadataLine {...metadata} />
+      <aside class="article-rail article-rail--left" aria-label="On this page">
         {toc.length > 0 && <TableOfContents headings={toc} />}
         <slot name="left" />
       </aside>
@@ -62,7 +60,7 @@ const metadata = { type, date, readingTime, author, topics };
       <div class="article-main">
         <header class="article-header">
           <ArticleTypeLabel type={type} />
-          <h1 class="article-title">{title}</h1>
+          <h1 class="article-title lead-title">{title}</h1>
           {subtitle && <p class="article-subtitle">{subtitle}</p>}
           <div class="article-header-meta">
             <MetadataLine {...metadata} />
@@ -78,10 +76,15 @@ const metadata = { type, date, readingTime, author, topics };
         </div>
 
         <slot name="after-body" />
+
+        {related.length > 0 && (
+          <div class="article-read-next">
+            <RelatedReading articles={related} />
+          </div>
+        )}
       </div>
 
-      <aside class="article-rail article-rail--right" aria-label="Related reading">
-        <RelatedReading articles={related} />
+      <aside class="article-rail article-rail--right" aria-label="Supplementary">
         <slot name="right" />
       </aside>
     </div>
@@ -110,13 +113,13 @@ const metadata = { type, date, readingTime, author, topics };
 
   .article-title {
     font-family: var(--font-display);
-    font-size: clamp(40px, 6vw, 76px);
-    line-height: 0.95;
-    letter-spacing: -0.045em;
+    font-size: clamp(40px, 6vw, 82px);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
     font-weight: 700;
     margin: 0.5rem 0 0.35rem;
     color: var(--text);
-    max-width: 16ch;
+    max-width: 14ch;
   }
 
   .article-subtitle {
@@ -128,13 +131,23 @@ const metadata = { type, date, readingTime, author, topics };
     max-width: 44ch;
   }
 
+  .article-main :global(.summary-box) {
+    margin: 32px 0;
+  }
+
+  .article-read-next {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--rule);
+    max-width: 680px;
+  }
+
   .article-rail--left {
     display: none;
   }
 
-  .article-rail--left :global(.type-label) {
-    margin-bottom: 0.65rem;
-    display: block;
+  .article-rail--right {
+    display: none;
   }
 
   .article-footer-cta {
@@ -159,11 +172,7 @@ const metadata = { type, date, readingTime, author, topics };
 
     .article-header :global(.type-label),
     .article-header-meta {
-      display: none;
-    }
-
-    .article-rail--right {
-      display: none;
+      display: block;
     }
 
     .article-main {
@@ -181,18 +190,6 @@ const metadata = { type, date, readingTime, author, topics };
       position: sticky;
       top: 1.5rem;
       align-self: start;
-    }
-
-    .article-footer-cta {
-      display: none;
-    }
-  }
-
-  @media (max-width: 1099px) {
-    .article-rail--right {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 2px solid var(--rule);
     }
   }
 </style>

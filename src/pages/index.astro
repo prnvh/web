@@ -1,42 +1,63 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FeaturedStory from '../components/FeaturedStory.astro';
+import LeadStory from '../components/LeadStory.astro';
+import SecondaryStory from '../components/SecondaryStory.astro';
 import ArticleRow from '../components/ArticleRow.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { site } from '../config/site';
 import { topics } from '../data/topics';
-import { getByType, toListItem } from '../utils/articles';
+import { getArticles, getByType, countArticlesByTopic, toListItem } from '../utils/articles';
 
-const featured = (await getByType('brief')).map(toListItem).find((a) => a.featured)
-  ?? (await getByType('essay')).map(toListItem).find((a) => a.featured);
-const allBriefs = (await getByType('brief')).map(toListItem);
-const secondary = allBriefs.filter((a) => a.slug !== featured?.slug).slice(0, 2);
-const latestBriefs = allBriefs.slice(0, 5);
-const researchNotes = (await getByType('research-note')).map(toListItem).slice(0, 4);
-const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
+const briefItems = (await getByType('brief')).map(toListItem);
+const essayItems = (await getByType('essay')).map(toListItem);
+const researchItems = (await getByType('research-note')).map(toListItem);
+const mapItems = (await getByType('field-map')).map(toListItem);
+
+const lead =
+  briefItems.find((a) => a.featured) ??
+  essayItems.find((a) => a.featured) ??
+  briefItems[0] ??
+  essayItems[0];
+
+const leadSlug = lead?.slug;
+const secondary = briefItems.filter((a) => a.slug !== leadSlug).slice(0, 2);
+const shownSlugs = new Set([leadSlug, ...secondary.map((a) => a.slug)].filter(Boolean));
+const briefWire = briefItems.filter((a) => !shownSlugs.has(a.slug)).slice(0, 5);
+const researchNotes = researchItems.slice(0, 4);
+const essays = essayItems.slice(0, 3);
+const fieldMaps = mapItems.slice(0, 2);
+
+const topicCounts = await Promise.all(
+  topics.slice(0, 8).map(async (topic) => ({
+    ...topic,
+    count: await countArticlesByTopic(topic.slug),
+  })),
+);
 ---
 
 <BaseLayout title={site.name} description={site.description}>
   <div class="front-page site-container">
-    {featured && (
-      <section class="front-lead" aria-label="Front page">
+    {lead && (
+      <section class="front-lead" aria-label="Lead stories">
         <div class="front-grid">
           <div class="front-main">
-            <FeaturedStory article={featured} size="lead" label="Lead" />
+            <LeadStory article={lead} />
           </div>
           <aside class="front-aside">
             <div class="front-secondary">
               {secondary.map((article) => (
-                <FeaturedStory article={article} size="secondary" label="Also" />
+                <SecondaryStory article={article} />
               ))}
             </div>
-            {latestBriefs.length > 0 && (
+            {briefWire.length > 0 && (
               <div class="front-briefs">
                 <h2 class="label front-section-title">Latest briefs</h2>
-                {latestBriefs.slice(0, 4).map((article) => (
-                  <ArticleRow article={article} compact />
-                ))}
+                <div class="brief-wire">
+                  {briefWire.map((article) => (
+                    <ArticleRow article={article} showTopics />
+                  ))}
+                </div>
               </div>
             )}
           </aside>
@@ -47,12 +68,28 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     {researchNotes.length > 0 && (
       <section class="front-section" aria-labelledby="research-heading">
         <h2 class="label front-section-title" id="research-heading">Research notes</h2>
-        <div class="notes-columns">
+        <div class="research-grid">
           {researchNotes.map((article) => (
-            <ArticleRow article={article} />
+            <div class="research-item">
+              <ArticleRow article={article} showTopics />
+            </div>
           ))}
         </div>
         <p class="front-more"><a href="/research-notes">All research notes</a></p>
+      </section>
+    )}
+
+    {essays.length > 0 && (
+      <section class="front-section" aria-labelledby="essays-heading">
+        <h2 class="label front-section-title" id="essays-heading">Essays</h2>
+        <div class="essay-list">
+          {essays.map((article) => (
+            <div class="essay-item">
+              <ArticleRow article={article} showTopics />
+            </div>
+          ))}
+        </div>
+        <p class="front-more"><a href="/essays">All essays</a></p>
       </section>
     )}
 
@@ -61,7 +98,9 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
         <h2 class="label front-section-title" id="maps-heading">Field maps</h2>
         <div class="maps-row">
           {fieldMaps.map((article) => (
-            <ArticleCard article={article} />
+            <div class="field-map-block">
+              <ArticleCard article={article} />
+            </div>
           ))}
         </div>
         <p class="front-more"><a href="/field-maps">All field maps</a></p>
@@ -71,28 +110,30 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     <section class="front-section" aria-labelledby="topics-heading">
       <h2 class="label front-section-title" id="topics-heading">Topics</h2>
       <ul class="topic-index">
-        {topics.slice(0, 8).map((topic) => (
+        {topicCounts.map((topic) => (
           <li>
-            <a href={`/topics/${topic.slug}`}>{topic.title}</a>
+            <a href={`/topics/${topic.slug}`}>
+              <span class="topic-name">{topic.title}</span>
+              {topic.count > 0 && (
+                <span class="topic-count">{topic.count} {topic.count === 1 ? 'piece' : 'pieces'}</span>
+              )}
+            </a>
           </li>
         ))}
       </ul>
       <p class="front-more"><a href="/topics">All topics</a></p>
     </section>
 
-    <section class="front-section front-bottom">
-      <div class="bottom-grid">
-        <div class="bottom-start">
-          <h2 class="label front-section-title">Start here</h2>
-          <p class="bottom-copy">
-            Reading paths for technical readers — foundations, AGI, evaluation, compute, safety, and India & AI.
-          </p>
-          <a class="front-more" href="/start-here">Open reading paths</a>
-        </div>
-        <div class="bottom-newsletter">
-          <NewsletterSignup compact />
-        </div>
-      </div>
+    <section class="front-section front-start" aria-labelledby="start-heading">
+      <h2 class="label front-section-title" id="start-heading">Start here</h2>
+      <p class="start-copy">
+        Reading paths for technical readers — foundations, AGI, evaluation, compute, safety, and India & AI.
+      </p>
+      <a class="front-more" href="/start-here">Open reading paths</a>
+    </section>
+
+    <section class="front-section front-newsletter" aria-label="Newsletter">
+      <NewsletterSignup compact />
     </section>
   </div>
 </BaseLayout>
@@ -120,14 +161,24 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     }
   }
 
-  .front-secondary :global(.featured-story) {
-    margin-bottom: 1rem;
-  }
-
   .front-briefs {
     margin-top: 1.25rem;
     padding-top: 1rem;
     border-top: 2px solid var(--rule);
+  }
+
+  .brief-wire :global(.article-row-title) {
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+
+  .brief-wire :global(.article-row-dek) {
+    font-size: 15px;
+    margin-top: 0.2rem;
+  }
+
+  .brief-wire :global(.article-row) {
+    padding: 0.6rem 0;
   }
 
   .front-section-title {
@@ -135,36 +186,74 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     display: block;
   }
 
-  .front-section {
-    padding: 32px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .notes-columns {
+  .research-grid {
     display: grid;
     gap: 0;
   }
 
   @media (min-width: 720px) {
-    .notes-columns {
+    .research-grid {
       grid-template-columns: 1fr 1fr;
       column-gap: 2rem;
     }
+  }
 
-    .notes-columns :global(.article-row:nth-child(odd)) {
-      border-right: none;
-    }
+  .research-item :global(.article-row-title) {
+    font-size: 1.15rem;
+  }
+
+  .essay-list {
+    display: grid;
+    gap: 0;
+  }
+
+  .essay-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .essay-item:first-child {
+    border-top: 2px solid var(--rule);
+  }
+
+  .essay-item :global(.article-row) {
+    border-bottom: none;
+    padding: 0.75rem 0;
+  }
+
+  .essay-item :global(.article-row-title) {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .essay-item :global(.article-row-dek) {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
   }
 
   .maps-row {
     display: grid;
-    gap: 1rem;
+    gap: 0;
   }
 
   @media (min-width: 720px) {
     .maps-row {
       grid-template-columns: 1fr 1fr;
+      column-gap: 2rem;
     }
+  }
+
+  .field-map-block :global(.article-card) {
+    padding: 1rem 0 1.25rem;
+    border-bottom: none;
+  }
+
+  .field-map-block :global(.article-card-title) {
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
   }
 
   .topic-index {
@@ -182,11 +271,15 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
   }
 
   .topic-index li {
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.55rem;
     break-inside: avoid;
   }
 
   .topic-index a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.65rem;
     font-family: var(--font-display);
     font-size: 1.05rem;
     font-weight: 700;
@@ -200,6 +293,16 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     color: var(--accent);
   }
 
+  .topic-count {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-decoration: none;
+  }
+
   .front-more {
     font-family: var(--font-ui);
     font-size: 11px;
@@ -209,24 +312,16 @@ const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
     display: inline-block;
   }
 
-  .bottom-grid {
-    display: grid;
-    gap: 2rem;
-  }
-
-  @media (min-width: 720px) {
-    .bottom-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 2.5rem;
-    }
-  }
-
-  .bottom-copy {
+  .start-copy {
     font-family: var(--font-body);
     font-size: 17px;
     line-height: 1.55;
     color: var(--muted);
     margin: 0 0 0.75rem;
     max-width: 42ch;
+  }
+
+  .front-newsletter {
+    max-width: 28rem;
   }
 </style>

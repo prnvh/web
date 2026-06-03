@@ -1,75 +1,20 @@
 ---
-import MetadataLine from './MetadataLine.astro';
-import { getArticleHref, type ArticleListItem } from '../utils/articles';
+import LeadStory from './LeadStory.astro';
+import SecondaryStory from './SecondaryStory.astro';
+import type { ArticleListItem } from '../utils/articles';
 
 interface Props {
   article: ArticleListItem;
   dek?: string;
   label?: string;
+  size?: 'lead' | 'secondary';
 }
 
-const { article, dek, label = 'Featured' } = Astro.props;
-const href = getArticleHref(article);
-const description = dek ?? article.subtitle ?? article.description ?? '';
+const { article, dek, label, size = 'lead' } = Astro.props;
 ---
 
-<article class="featured-story">
-  <p class="label featured-label">{label}</p>
-  <a class="featured-link" href={href}>
-    <h2 class="featured-title">{article.title}</h2>
-    {description && <p class="featured-dek">{description}</p>}
-  </a>
-  <MetadataLine
-    type={article.type}
-    date={article.date}
-    readingTime={article.readingTime}
-    topics={article.topics}
-  />
-</article>
-
-<style>
-  .featured-story {
-    padding-bottom: 1.25rem;
-    border-bottom: 2px solid var(--rule);
-  }
-
-  .featured-label {
-    margin: 0 0 0.65rem;
-  }
-
-  .featured-link {
-    color: inherit;
-    text-decoration: none;
-    display: block;
-  }
-
-  .featured-link:hover .featured-title {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-
-  .featured-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 0.98;
-    margin: 0;
-    color: var(--text);
-    max-width: 20ch;
-  }
-
-  .featured-dek {
-    font-family: var(--font-body);
-    font-size: 1.1rem;
-    line-height: 1.55;
-    color: var(--muted);
-    margin: 0.75rem 0 0.65rem;
-    max-width: 44ch;
-  }
-
-  .featured-story :global(.metadata-line) {
-    margin-top: 0.65rem;
-  }
-</style>
+{size === 'lead' ? (
+  <LeadStory article={article} dek={dek} label={label ?? 'Lead'} />
+) : (
+  <SecondaryStory article={article} dek={dek} label={label ?? 'Also'} />
+)}

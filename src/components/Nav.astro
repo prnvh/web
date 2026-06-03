@@ -7,8 +7,7 @@ const isCurrent = (href: string) =>
 ---
 
 <nav class="site-nav" aria-label="Primary">
-  <input type="checkbox" id="nav-open" class="nav-check" aria-hidden="true" tabindex="-1" />
-  <ul class="nav-list" id="primary-nav">
+  <ul class="nav-list">
     {navItems.map((item) => (
       <li>
         <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
@@ -18,69 +17,3 @@ const isCurrent = (href: string) =>
     ))}
   </ul>
 </nav>
-
-<style>
-  .nav-check {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .site-nav {
-    padding: 0.65rem 0 0.75rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: none;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .nav-check:checked ~ .nav-list {
-    display: flex;
-    margin-top: 0.75rem;
-  }
-
-  .nav-list a {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .nav-list a:hover,
-  .nav-list a[aria-current='page'] {
-    color: var(--accent);
-  }
-
-  @media (min-width: 900px) {
-    .site-nav {
-      padding: 0.5rem 0 0.7rem;
-    }
-
-    .nav-list {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.25rem 1.35rem;
-    }
-
-    .nav-check:checked ~ .nav-list {
-      margin-top: 0;
-    }
-  }
-</style>

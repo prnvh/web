@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleRow from '../../components/ArticleRow.astro';
-import NewsletterSignup from '../../components/NewsletterSignup.astro';
 import { topics, getTopicBySlug } from '../../data/topics';
 import {
+  countArticlesByTopic,
   getArticles,
   getArticleSlug,
   getArticlePath,
+  topicMatchesSlug,
   toListItem,
 } from '../../utils/articles';
 
@@ -18,6 +19,7 @@ const { slug } = Astro.params;
 const topic = getTopicBySlug(slug!);
 if (!topic) return Astro.redirect('/topics');
 
+const pieceCount = await countArticlesByTopic(topic.slug);
 const all = await getArticles();
 const bySlug = new Map(all.map((a) => [getArticleSlug(a), a]));
 const startHere = topic.startHere
@@ -25,12 +27,7 @@ const startHere = topic.startHere
   .filter((e): e is NonNullable<typeof e> => Boolean(e))
   .map(toListItem);
 const latest = all
-  .filter((e) =>
-    e.data.topics.some((t) => {
-      const n = t.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      return n === topic.slug || n.includes(topic.slug);
-    }),
-  )
+  .filter((e) => e.data.topics.some((t) => topicMatchesSlug(t, topic.slug)))
   .slice(0, 6)
   .map(toListItem);
 ---
@@ -41,6 +38,9 @@ const latest = all
       <p class="label">Topic</p>
       <h1 class="topic-chapter-title">{topic.title}</h1>
       <p class="topic-chapter-dek">{topic.description}</p>
+      {pieceCount > 0 && (
+        <p class="topic-piece-count label">{pieceCount} {pieceCount === 1 ? 'piece' : 'pieces'} in archive</p>
+      )}
     </header>
 
     {startHere.length > 0 && (
@@ -62,9 +62,11 @@ const latest = all
     {latest.length > 0 && (
       <section class="topic-section">
         <h2 class="label topic-section-title">Latest</h2>
-        {latest.map((article) => (
-          <ArticleRow article={article} compact />
-        ))}
+        <div class="topic-latest">
+          {latest.map((article) => (
+            <ArticleRow article={article} />
+          ))}
+        </div>
       </section>
     )}
 
@@ -88,26 +90,100 @@ const latest = all
         ))}
       </dl>
     </section>
-
-    <section class="topic-section topic-newsletter">
-      <NewsletterSignup compact />
-    </section>
   </article>
 </BaseLayout>
 
 <style>
-  .topic-page { padding: 1.75rem 0 3rem; max-width: 720px; }
-  .topic-chapter-header { padding-bottom: 1.5rem; margin-bottom: 0.5rem; border-bottom: 2px solid var(--rule); }
-  .topic-chapter-title { font-family: var(--font-display); font-size: clamp(2.25rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.05em; line-height: 0.95; margin: 0.35rem 0; }
-  .topic-chapter-dek { font-family: var(--font-body); font-size: 1.15rem; line-height: 1.55; color: var(--muted); margin: 0; }
-  .topic-section { padding: 28px 0; border-top: 1px solid var(--border); }
-  .topic-section-title { margin: 0 0 1rem; display: block; }
-  .start-list { margin: 0; padding-left: 1.35rem; font-family: var(--font-body); font-size: 18px; }
-  .start-list li { margin-bottom: 0.85rem; }
-  .start-list a { font-weight: 700; color: var(--text); }
-  .start-desc { display: block; font-size: 16px; color: var(--muted); font-weight: 400; margin-top: 0.2rem; }
-  .topic-prose-list { font-family: var(--font-body); font-size: 18px; line-height: 1.6; padding-left: 1.25rem; margin: 0; }
-  .glossary dt { font-family: var(--font-display); font-weight: 700; margin-top: 1rem; }
-  .glossary dd { font-family: var(--font-body); font-size: 16px; color: var(--muted); margin: 0.25rem 0 0; line-height: 1.55; }
-  .topic-newsletter { max-width: 26rem; }
+  .topic-page {
+    padding: 1.75rem 0 3rem;
+    max-width: 720px;
+  }
+
+  .topic-chapter-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  .topic-chapter-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+    margin: 0.35rem 0;
+  }
+
+  .topic-chapter-dek {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .topic-piece-count {
+    margin: 0.75rem 0 0;
+    color: var(--faint);
+  }
+
+  .topic-section {
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .topic-section-title {
+    margin: 0 0 1rem;
+    display: block;
+  }
+
+  .topic-latest :global(.article-row:first-child) {
+    border-top: 2px solid var(--rule);
+  }
+
+  .start-list {
+    margin: 0;
+    padding-left: 1.35rem;
+    font-family: var(--font-body);
+    font-size: 18px;
+  }
+
+  .start-list li {
+    margin-bottom: 0.85rem;
+  }
+
+  .start-list a {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .start-desc {
+    display: block;
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 0.2rem;
+  }
+
+  .topic-prose-list {
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  .glossary dt {
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin-top: 1rem;
+  }
+
+  .glossary dd {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+    line-height: 1.55;
+  }
 </style>

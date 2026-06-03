@@ -15,7 +15,7 @@ const briefs = (await getByType('brief')).map(toListItem);
       <h1 class="page-title">Briefs</h1>
       <p class="page-dek">Short analysis of recent papers, benchmarks, model releases, and technical shifts.</p>
     </header>
-    <div class="listing-feed">
+    <div class="brief-wire">
       {briefs.map((article) => (
         <ArticleRow article={article} showTopics />
       ))}
@@ -24,6 +24,19 @@ const briefs = (await getByType('brief')).map(toListItem);
 </BaseLayout>
 
 <style>
-  .listing { padding: 1.75rem 0 3rem; }
-  .listing-feed :global(.article-row:first-child) { border-top: 2px solid var(--rule); }
+  .listing {
+    padding: 1.75rem 0 3rem;
+  }
+
+  .brief-wire :global(.article-row:first-child) {
+    border-top: 2px solid var(--rule);
+  }
+
+  .brief-wire :global(.article-row-title) {
+    font-size: 1.15rem;
+  }
+
+  .brief-wire :global(.article-row) {
+    padding: 0.75rem 0;
+  }
 </style>

@@ -42,8 +42,9 @@ export const navItems = [
 
 export const footerLinks = [
   ...navItems,
-  { label: 'RSS', href: '/rss.xml' },
-  { label: 'Contact', href: '/about#contact' },
+  { label: 'Subscribe', href: siteConfig.subscribePath },
+  { label: 'RSS', href: siteConfig.rssPath },
+  { label: 'Contact', href: siteConfig.contactPath },
 ] as const;
 
 export function getAnalyticsScript(domain: string = siteConfig.analyticsDomain): string {

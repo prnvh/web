@@ -72,12 +72,24 @@ export async function getByType(type: ArticleType): Promise<ArticleEntry[]> {
   return entries.filter((entry) => entry.data.type === type);
 }
 
+export function topicMatchesSlug(topic: string, slug: string): boolean {
+  const normalized = slug.toLowerCase();
+  const slugified = slugifyTopic(topic);
+  return slugified === normalized || slugified.includes(normalized);
+}
+
 export async function getByTopic(topicSlug: string): Promise<ArticleEntry[]> {
-  const normalized = topicSlug.toLowerCase();
   const entries = await getArticles();
   return entries.filter((entry) =>
-    entry.data.topics.some((t) => t.toLowerCase() === normalized),
+    entry.data.topics.some((t) => topicMatchesSlug(t, topicSlug)),
   );
+}
+
+export async function countArticlesByTopic(slug: string): Promise<number> {
+  const entries = await getArticles();
+  return entries.filter((entry) =>
+    entry.data.topics.some((t) => topicMatchesSlug(t, slug)),
+  ).length;
 }
 
 export async function getFeatured(): Promise<ArticleEntry[]> {

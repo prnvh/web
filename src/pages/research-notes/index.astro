@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FeaturedStory from '../../components/FeaturedStory.astro';
+import SecondaryStory from '../../components/SecondaryStory.astro';
 import ArticleRow from '../../components/ArticleRow.astro';
 import { getByType, toListItem } from '../../utils/articles';
 
 const notes = (await getByType('research-note')).map(toListItem);
-const featured = notes[0];
-const rest = notes.slice(1);
+const featured = notes.find((n) => n.featured) ?? notes[0];
+const rest = notes.filter((n) => n.slug !== featured?.slug);
 ---
 
 <BaseLayout
@@ -18,21 +18,57 @@ const rest = notes.slice(1);
       <h1 class="page-title">Research Notes</h1>
       <p class="page-dek">Paper breakdowns, benchmark notes, and technical observations.</p>
     </header>
+
     {featured && (
       <div class="listing-featured">
-        <FeaturedStory article={featured} label="Featured" size="secondary" />
+        <SecondaryStory article={featured} label="Featured" />
       </div>
     )}
-    <div class="listing-feed">
+
+    <div class="research-grid">
       {rest.map((article) => (
-        <ArticleRow article={article} showTopics />
+        <div class="research-item">
+          <ArticleRow article={article} showTopics />
+        </div>
       ))}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .listing { padding: 1.75rem 0 3rem; }
-  .listing-featured { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-  .listing-feed :global(.article-row:first-child) { border-top: 2px solid var(--rule); }
+  .listing {
+    padding: 1.75rem 0 3rem;
+  }
+
+  .listing-featured {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .research-grid {
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 720px) {
+    .research-grid {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 2rem;
+    }
+  }
+
+  .research-item :global(.article-row:first-child) {
+    border-top: 2px solid var(--rule);
+  }
+
+  @media (min-width: 720px) {
+    .research-item:nth-child(2) :global(.article-row:first-child) {
+      border-top: 2px solid var(--rule);
+    }
+  }
+
+  .research-item :global(.article-row-title) {
+    font-size: 1.15rem;
+  }
 </style>

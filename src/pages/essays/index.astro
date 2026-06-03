@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FeaturedStory from '../../components/FeaturedStory.astro';
+import LeadStory from '../../components/LeadStory.astro';
 import ArticleRow from '../../components/ArticleRow.astro';
 import { getByType, toListItem } from '../../utils/articles';
 
@@ -18,21 +18,57 @@ const rest = essays.filter((e) => e.slug !== featured?.slug);
       <h1 class="page-title">Essays</h1>
       <p class="page-dek">Long-form analysis on frontier AI, research directions, and technical change.</p>
     </header>
+
     {featured && (
       <div class="listing-featured">
-        <FeaturedStory article={featured} label="Featured essay" size="lead" />
+        <LeadStory article={featured} />
       </div>
     )}
-    <div class="listing-feed">
+
+    <div class="essay-archive">
       {rest.map((article) => (
-        <ArticleRow article={article} showTopics />
+        <div class="essay-item">
+          <ArticleRow article={article} showTopics />
+        </div>
       ))}
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .listing { padding: 1.75rem 0 3rem; }
-  .listing-featured { margin-bottom: 2rem; }
-  .listing-feed :global(.article-row:first-child) { border-top: 2px solid var(--rule); }
+  .listing {
+    padding: 1.75rem 0 3rem;
+  }
+
+  .listing-featured {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .essay-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .essay-item:first-child {
+    border-top: 2px solid var(--rule);
+  }
+
+  .essay-item :global(.article-row) {
+    border-bottom: none;
+    padding: 1rem 0;
+  }
+
+  .essay-item :global(.article-row-title) {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .essay-item :global(.article-row-dek) {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
+  }
 </style>

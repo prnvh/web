@@ -2,19 +2,29 @@
   --bg: #f4efe6;
   --paper: #fffaf1;
   --text: #111111;
-  --muted: #5f5a52;
+  --muted: #5d574e;
   --faint: #8b8378;
-  --border: #d4c8b8;
-  --rule: #181818;
-  --accent: #8a1f1f;
-  --accent-soft: #eaded2;
+  --border: #d2c6b6;
+  --rule: #161616;
+  --accent: #7f1d1d;
+  --accent-soft: #eadfd3;
 
   --font-display: "Newsreader", "Source Serif 4", Georgia, "Times New Roman", Times, serif;
   --font-body: "Source Serif 4", Georgia, "Times New Roman", Times, serif;
   --font-ui: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 
-  /* Legacy aliases */
   --font-serif: var(--font-display);
   --font-sans: var(--font-ui);
+
+  --text-body-size: 18px;
+  --text-body-line: 1.65;
+  --text-meta-size: 12px;
+  --text-meta-tracking: 0.04em;
+  --text-label-size: 11px;
+  --text-label-tracking: 0.09em;
+  --headline-tracking: -0.025em;
+  --headline-line: 0.98;
+  --masthead-tracking: -0.065em;
+  --masthead-line: 0.82;
 }
