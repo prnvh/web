@@ -5,15 +5,16 @@ import Masthead from './Masthead.astro';
 import Nav from './Nav.astro';
 
 const today = formatDate(new Date());
-const subscribeHref = site.subscribePath ?? '/subscribe';
+const subscribeHref = site.subscribePath;
 ---
 
 <header class="site-header">
   <div class="site-container">
     <div class="header-strip">
-      <time class="header-date" datetime={new Date().toISOString().slice(0, 10)}>{today}</time>
+      <time class="label header-date" datetime={new Date().toISOString().slice(0, 10)}>{today}</time>
+      <label class="label header-menu" for="nav-open">Menu</label>
       <span class="header-tagline">{site.tagline}</span>
-      <a class="header-subscribe" href={subscribeHref}>Subscribe</a>
+      <a class="header-subscribe label" href={subscribeHref}>Subscribe</a>
     </div>
     <Masthead />
     <Nav />
@@ -22,32 +23,43 @@ const subscribeHref = site.subscribePath ?? '/subscribe';
 
 <style>
   .site-header {
-    background: var(--paper);
-    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    border-bottom: 2px solid var(--rule);
   }
 
   .header-strip {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1rem;
-    padding: 0.5rem 0;
+    gap: 1rem;
+    padding: 0.55rem 0;
     border-bottom: 1px solid var(--border);
-    font-family: var(--font-sans);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--faint);
+  }
+
+  .header-date {
+    justify-self: start;
+  }
+
+  .header-menu {
+    display: none;
+    justify-self: start;
+    cursor: pointer;
+    color: var(--text);
   }
 
   .header-tagline {
-    flex: 1;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--faint);
     text-align: center;
+    margin: 0;
     display: none;
   }
 
   .header-subscribe {
+    justify-self: end;
     color: var(--accent);
     text-decoration: underline;
     text-underline-offset: 2px;
@@ -57,9 +69,27 @@ const subscribeHref = site.subscribePath ?? '/subscribe';
     color: var(--text);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 720px) {
     .header-tagline {
       display: block;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .header-strip {
+      grid-template-columns: auto 1fr auto;
+    }
+
+    .header-date {
+      display: none;
+    }
+
+    .header-menu {
+      display: block;
+    }
+
+    .header-tagline {
+      display: none;
     }
   }
 </style>

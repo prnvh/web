@@ -10,9 +10,9 @@ const { compact = false, action = '#' } = Astro.props;
 ---
 
 <aside class:list={['newsletter', { 'newsletter--compact': compact }]} aria-labelledby="newsletter-heading">
-  <h2 class="newsletter-heading" id="newsletter-heading">Get the frontier briefing.</h2>
+  <h2 class="newsletter-heading" id="newsletter-heading">Weekly briefing</h2>
   <p class="newsletter-text">
-    One clear briefing on frontier AI, research, and technology every week or two.
+    Briefs and research notes in your inbox — no hype, no daily noise.
   </p>
 
   <slot name="embed">
@@ -26,42 +26,41 @@ const { compact = false, action = '#' } = Astro.props;
         autocomplete="email"
         placeholder="you@example.com"
       />
-      <button type="submit">Subscribe</button>
+      <button class="button" type="submit">Subscribe</button>
     </form>
   </slot>
 
-  <p class="newsletter-privacy">
-    No spam. Unsubscribe anytime. <a href={site.subscribePath ?? '/subscribe'}>Privacy note</a>.
+  <p class="newsletter-privacy label">
+    Unsubscribe anytime. <a href={site.subscribePath}>Privacy note</a>.
   </p>
 </aside>
 
 <style>
   .newsletter {
-    border: 1px solid var(--border);
-    background: var(--paper);
-    padding: 1.15rem 1.2rem;
+    padding: 0;
   }
 
   .newsletter--compact .newsletter-heading {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .newsletter-heading {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.15;
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.4rem;
     color: var(--text);
   }
 
   .newsletter-text {
-    font-family: var(--font-serif);
-    font-size: 15px;
+    font-family: var(--font-body);
+    font-size: 17px;
     line-height: 1.5;
     color: var(--muted);
-    margin: 0 0 0.85rem;
+    margin: 0 0 0.75rem;
+    max-width: 42ch;
   }
 
   .newsletter-form {
@@ -74,50 +73,22 @@ const { compact = false, action = '#' } = Astro.props;
   .newsletter-form input {
     flex: 1 1 12rem;
     min-width: 0;
-    font-family: var(--font-sans);
+    font-family: var(--font-ui);
     font-size: 14px;
     padding: 0.5rem 0.65rem;
     border: 1px solid var(--border);
-    background: var(--bg);
+    background: var(--paper);
     color: var(--text);
     border-radius: 0;
   }
 
-  .newsletter-form input:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-  }
-
-  .newsletter-form button {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 0.55rem 0.9rem;
-    border: 1px solid var(--rule);
-    background: var(--text);
-    color: var(--paper);
-    cursor: pointer;
-    border-radius: 0;
-  }
-
-  .newsletter-form button:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-
   .newsletter-privacy {
-    font-family: var(--font-sans);
-    font-size: 11px;
+    margin: 0.55rem 0 0;
     color: var(--faint);
-    margin: 0.65rem 0 0;
-    line-height: 1.4;
   }
 
   .newsletter-privacy a {
     color: var(--muted);
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
 
   .visually-hidden {

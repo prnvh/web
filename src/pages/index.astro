@@ -6,236 +6,227 @@ import ArticleCard from '../components/ArticleCard.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { site } from '../config/site';
 import { topics } from '../data/topics';
-import {
-  getArticles,
-  getByType,
-  toListItem,
-} from '../utils/articles';
+import { getByType, toListItem } from '../utils/articles';
 
-const all = await getArticles();
-const items = all.map(toListItem);
-const featured = items.find((a) => a.featured) ?? items[0];
-const secondary = items.filter((a) => a.slug !== featured?.slug).slice(0, 2);
-const latestBriefs = (await getByType('brief')).map(toListItem).slice(0, 5);
+const featured = (await getByType('brief')).map(toListItem).find((a) => a.featured)
+  ?? (await getByType('essay')).map(toListItem).find((a) => a.featured);
+const allBriefs = (await getByType('brief')).map(toListItem);
+const secondary = allBriefs.filter((a) => a.slug !== featured?.slug).slice(0, 2);
+const latestBriefs = allBriefs.slice(0, 5);
 const researchNotes = (await getByType('research-note')).map(toListItem).slice(0, 4);
-const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 3);
-const showResearch = researchNotes.length > 0;
-const showFieldMaps = fieldMaps.length > 0;
+const fieldMaps = (await getByType('field-map')).map(toListItem).slice(0, 2);
 ---
 
 <BaseLayout title={site.name} description={site.description}>
   <div class="front-page site-container">
     {featured && (
-      <section class="lead" aria-label="Lead stories">
-        <div class="lead-grid">
-          <div class="lead-feature">
-            <FeaturedStory article={featured} label="Lead" />
+      <section class="front-lead" aria-label="Front page">
+        <div class="front-grid">
+          <div class="front-main">
+            <FeaturedStory article={featured} size="lead" label="Lead" />
           </div>
-          <div class="lead-aside">
-            {secondary.map((article) => (
-              <FeaturedStory article={article} label="Also" />
-            ))}
+          <aside class="front-aside">
+            <div class="front-secondary">
+              {secondary.map((article) => (
+                <FeaturedStory article={article} size="secondary" label="Also" />
+              ))}
+            </div>
             {latestBriefs.length > 0 && (
-              <div class="latest-briefs">
-                <h2 class="section-label">Latest briefs</h2>
+              <div class="front-briefs">
+                <h2 class="label front-section-title">Latest briefs</h2>
                 {latestBriefs.slice(0, 4).map((article) => (
-                  <ArticleRow article={article} />
+                  <ArticleRow article={article} compact />
                 ))}
               </div>
             )}
-          </div>
+          </aside>
         </div>
       </section>
     )}
 
-    <hr class="section-rule" />
-
-    <section class="latest-section" aria-labelledby="latest-heading">
-      <h2 class="section-label" id="latest-heading">Latest</h2>
-      {items.slice(0, 8).map((article) => (
-        <ArticleRow article={article} showTopics />
-      ))}
-    </section>
-
-    {showResearch && (
-      <>
-        <hr class="section-rule" />
-        <section aria-labelledby="research-heading">
-          <h2 class="section-label" id="research-heading">Research notes</h2>
+    {researchNotes.length > 0 && (
+      <section class="front-section" aria-labelledby="research-heading">
+        <h2 class="label front-section-title" id="research-heading">Research notes</h2>
+        <div class="notes-columns">
           {researchNotes.map((article) => (
             <ArticleRow article={article} />
           ))}
-          <p class="section-more">
-            <a href="/research-notes">All research notes →</a>
-          </p>
-        </section>
-      </>
+        </div>
+        <p class="front-more"><a href="/research-notes">All research notes</a></p>
+      </section>
     )}
 
-    {showFieldMaps && (
-      <>
-        <hr class="section-rule" />
-        <section aria-labelledby="maps-heading">
-          <h2 class="section-label" id="maps-heading">Field maps</h2>
-          <div class="field-maps-grid">
-            {fieldMaps.map((article) => (
-              <ArticleCard article={article} />
-            ))}
-          </div>
-          <p class="section-more">
-            <a href="/field-maps">All field maps →</a>
-          </p>
-        </section>
-      </>
+    {fieldMaps.length > 0 && (
+      <section class="front-section" aria-labelledby="maps-heading">
+        <h2 class="label front-section-title" id="maps-heading">Field maps</h2>
+        <div class="maps-row">
+          {fieldMaps.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+        <p class="front-more"><a href="/field-maps">All field maps</a></p>
+      </section>
     )}
 
-    <hr class="section-rule" />
-
-    <section class="topics-rail" aria-labelledby="topics-heading">
-      <h2 class="section-label" id="topics-heading">Topics</h2>
-      <div class="topics-list">
-        {topics.slice(0, 7).map((topic) => (
-          <a class="topic-link" href={`/topics/${topic.slug}`}>
-            {topic.title}
-          </a>
+    <section class="front-section" aria-labelledby="topics-heading">
+      <h2 class="label front-section-title" id="topics-heading">Topics</h2>
+      <ul class="topic-index">
+        {topics.slice(0, 8).map((topic) => (
+          <li>
+            <a href={`/topics/${topic.slug}`}>{topic.title}</a>
+          </li>
         ))}
+      </ul>
+      <p class="front-more"><a href="/topics">All topics</a></p>
+    </section>
+
+    <section class="front-section front-bottom">
+      <div class="bottom-grid">
+        <div class="bottom-start">
+          <h2 class="label front-section-title">Start here</h2>
+          <p class="bottom-copy">
+            Reading paths for technical readers — foundations, AGI, evaluation, compute, safety, and India & AI.
+          </p>
+          <a class="front-more" href="/start-here">Open reading paths</a>
+        </div>
+        <div class="bottom-newsletter">
+          <NewsletterSignup compact />
+        </div>
       </div>
-      <p class="section-more">
-        <a href="/topics">All topics →</a>
-      </p>
-    </section>
-
-    <hr class="section-rule" />
-
-    <section class="start-here-block" aria-labelledby="start-heading">
-      <h2 class="section-label" id="start-heading">Start here</h2>
-      <p class="start-copy">
-        New to the publication? Reading paths group essays, notes, and maps by theme — foundations, AGI, evaluation, compute, safety, and more.
-      </p>
-      <a class="start-link" href="/start-here">Open reading paths →</a>
-    </section>
-
-    <hr class="section-rule" />
-
-    <section class="newsletter-block" aria-label="Newsletter">
-      <NewsletterSignup />
     </section>
   </div>
 </BaseLayout>
 
 <style>
   .front-page {
-    padding: 1.75rem 0 3rem;
+    padding: 1.25rem 0 2.5rem;
   }
 
-  .lead-grid {
+  .front-lead {
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .front-grid {
     display: grid;
     gap: 2rem;
   }
 
-  @media (min-width: 900px) {
-    .lead-grid {
-      grid-template-columns: 1.4fr 1fr;
+  @media (min-width: 960px) {
+    .front-grid {
+      grid-template-columns: 1.55fr 1fr;
+      gap: 2.5rem;
       align-items: start;
     }
   }
 
-  .lead-aside :global(.featured-story) {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--border);
+  .front-secondary :global(.featured-story) {
+    margin-bottom: 1rem;
   }
 
-  .lead-aside :global(.featured-story:last-of-type) {
-    border-bottom: none;
-  }
-
-  .latest-briefs {
-    margin-top: 0.5rem;
+  .front-briefs {
+    margin-top: 1.25rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--rule);
+    border-top: 2px solid var(--rule);
   }
 
-  .section-label {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--muted);
+  .front-section-title {
     margin: 0 0 1rem;
-    font-weight: 600;
+    display: block;
   }
 
-  .section-rule {
-    border: none;
-    border-top: 1px solid var(--rule);
-    margin: 2rem 0;
+  .front-section {
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
   }
 
-  .section-more {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin: 1rem 0 0;
-  }
-
-  .section-more a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .field-maps-grid {
+  .notes-columns {
     display: grid;
-    gap: 1.5rem;
+    gap: 0;
   }
 
   @media (min-width: 720px) {
-    .field-maps-grid {
+    .notes-columns {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 2rem;
+    }
+
+    .notes-columns :global(.article-row:nth-child(odd)) {
+      border-right: none;
+    }
+  }
+
+  .maps-row {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 720px) {
+    .maps-row {
       grid-template-columns: 1fr 1fr;
     }
   }
 
-  .topics-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
+  .topic-index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 2;
+    column-gap: 2rem;
   }
 
-  .topic-link {
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
+  @media (min-width: 640px) {
+    .topic-index {
+      columns: 3;
+    }
+  }
+
+  .topic-index li {
+    margin-bottom: 0.45rem;
+    break-inside: avoid;
+  }
+
+  .topic-index a {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--text);
+    letter-spacing: -0.02em;
     text-decoration: underline;
     text-underline-offset: 3px;
+    color: var(--text);
   }
 
-  .topic-link:hover {
+  .topic-index a:hover {
     color: var(--accent);
   }
 
-  .start-copy {
-    font-family: var(--font-serif);
+  .front-more {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 1rem 0 0;
+    display: inline-block;
+  }
+
+  .bottom-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 720px) {
+    .bottom-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .bottom-copy {
+    font-family: var(--font-body);
     font-size: 17px;
     line-height: 1.55;
     color: var(--muted);
-    max-width: 52ch;
     margin: 0 0 0.75rem;
-  }
-
-  .start-link {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .newsletter-block {
-    max-width: 28rem;
+    max-width: 42ch;
   }
 </style>

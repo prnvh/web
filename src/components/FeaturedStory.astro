@@ -14,7 +14,7 @@ const description = dek ?? article.subtitle ?? article.description ?? '';
 ---
 
 <article class="featured-story">
-  <p class="featured-label">{label}</p>
+  <p class="label featured-label">{label}</p>
   <a class="featured-link" href={href}>
     <h2 class="featured-title">{article.title}</h2>
     {description && <p class="featured-dek">{description}</p>}
@@ -30,15 +30,10 @@ const description = dek ?? article.subtitle ?? article.description ?? '';
 <style>
   .featured-story {
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--rule);
+    border-bottom: 2px solid var(--rule);
   }
 
   .featured-label {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--muted);
     margin: 0 0 0.65rem;
   }
 
@@ -55,26 +50,26 @@ const description = dek ?? article.subtitle ?? article.description ?? '';
   }
 
   .featured-title {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     line-height: 0.98;
     margin: 0;
     color: var(--text);
-    max-width: 18ch;
+    max-width: 20ch;
   }
 
   .featured-dek {
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
     line-height: 1.55;
     color: var(--muted);
-    margin: 0.85rem 0 0.75rem;
-    max-width: 42ch;
+    margin: 0.75rem 0 0.65rem;
+    max-width: 44ch;
   }
 
   .featured-story :global(.metadata-line) {
-    margin-top: 0.75rem;
+    margin-top: 0.65rem;
   }
 </style>

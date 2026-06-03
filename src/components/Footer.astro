@@ -1,46 +1,29 @@
 ---
-import { site, navItems, footerLinks } from '../config/site';
+import { site, footerLinks } from '../config/site';
 import NewsletterSignup from './NewsletterSignup.astro';
-
-const links = footerLinks ?? navItems;
-const subscribeHref = site.subscribePath ?? '/subscribe';
-const rssHref = site.rssPath ?? '/rss.xml';
-const contactHref = site.contactPath ?? '/contact';
 ---
 
 <footer class="site-footer">
   <div class="site-container">
-    <div class="footer-grid">
-      <div class="footer-about">
-        <p class="footer-name">{site.name}</p>
-        <p class="footer-desc">{site.description}</p>
-      </div>
-
-      <div class="footer-newsletter">
-        <NewsletterSignup compact />
-      </div>
-
-      <nav class="footer-nav" aria-label="Footer">
-        <ul>
-          {links.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))}
-          <li>
-            <a href={rssHref}>RSS</a>
-          </li>
-          <li>
-            <a href={contactHref}>Contact</a>
-          </li>
-        </ul>
-      </nav>
+    <div class="footer-top">
+      <p class="footer-name">{site.name}</p>
+      <p class="footer-desc">{site.description}</p>
     </div>
 
-    <p class="footer-meta">
-      <a href={subscribeHref}>Subscribe</a>
-      <span aria-hidden="true">·</span>
-      <span>&copy; {new Date().getFullYear()} {site.name}</span>
+    <NewsletterSignup compact />
+
+    <nav class="footer-links" aria-label="Footer">
+      <ul>
+        {footerLinks.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="footer-copy">
+      &copy; {new Date().getFullYear()} {site.name}
     </p>
   </div>
 </footer>
@@ -48,80 +31,70 @@ const contactHref = site.contactPath ?? '/contact';
 <style>
   .site-footer {
     margin-top: 3rem;
-    padding: 2rem 0 2.5rem;
-    border-top: 1px solid var(--rule);
+    padding: 2rem 0 2.25rem;
+    border-top: 2px solid var(--rule);
     background: var(--bg);
   }
 
-  .footer-grid {
-    display: grid;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 768px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 2rem;
-    }
+  .footer-top {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .footer-name {
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
     font-weight: 700;
-    margin: 0 0 0.35rem;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.4rem;
     color: var(--text);
   }
 
   .footer-desc {
-    font-family: var(--font-serif);
-    font-size: 15px;
-    line-height: 1.5;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.55;
     color: var(--muted);
     margin: 0;
-    max-width: 32ch;
+    max-width: 48ch;
   }
 
-  .footer-nav ul {
+  .site-footer :global(.newsletter) {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .footer-links ul {
     list-style: none;
-    margin: 0;
+    margin: 0 0 1.25rem;
     padding: 0;
-    columns: 2;
-    column-gap: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
   }
 
-  .footer-nav li {
-    margin-bottom: 0.35rem;
-  }
-
-  .footer-nav a {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
+  .footer-links a {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 
-  .footer-nav a:hover {
+  .footer-links a:hover {
     color: var(--accent);
   }
 
-  .footer-meta {
-    font-family: var(--font-sans);
+  .footer-copy {
+    font-family: var(--font-ui);
     font-size: 11px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--faint);
-    margin: 1.5rem 0 0;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-meta a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    margin: 0;
   }
 </style>

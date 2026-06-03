@@ -1,11 +1,13 @@
 export const siteConfig = {
   name: 'Frontier Manual',
-  tagline: 'Frontier AI, research, and technology — explained with depth and restraint.',
+  tagline: 'Briefs, notes, and field maps on frontier AI and deep technology.',
   description:
-    'A text-first publication on frontier AI, world models, evaluation, compute, interpretability, safety, and the systems shaping what comes next. For technical readers who want clarity without hype.',
+    'A text-first publication: daily briefs on papers and releases, research notes on benchmarks and claims, essays on systems and policy, and field maps for readers entering a new area.',
   url: import.meta.env.SITE_URL ?? 'https://example.com',
   subscribePath: '/subscribe',
   searchPath: '/search',
+  rssPath: '/rss.xml',
+  contactPath: '/about#contact',
   contactEmail: 'hello@example.com',
   newsletterEmbedUrl: import.meta.env.NEWSLETTER_EMBED_URL ?? '',
   analyticsDomain: import.meta.env.PLAUSIBLE_DOMAIN ?? '',
@@ -35,7 +37,6 @@ export const navItems = [
   { label: 'Topics', href: '/topics' },
   { label: 'Start Here', href: '/start-here' },
   { label: 'About', href: '/about' },
-  { label: 'Subscribe', href: '/subscribe' },
   { label: 'Search', href: '/search' },
 ] as const;
 

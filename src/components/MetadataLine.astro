@@ -22,7 +22,7 @@ const timeLabel =
     : null;
 ---
 
-<p class="metadata-line">
+<p class="metadata-line label">
   <ArticleTypeLabel type={type} />
   <span class="sep" aria-hidden="true">{separator}</span>
   <time datetime={typeof date === 'string' ? date : date.toISOString()}>{dateLabel}</time>
@@ -49,17 +49,16 @@ const timeLabel =
 
 <style>
   .metadata-line {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--muted);
     margin: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.35rem 0.5rem;
     line-height: 1.4;
+  }
+
+  .metadata-line :global(.type-label) {
+    color: var(--muted);
   }
 
   .sep {

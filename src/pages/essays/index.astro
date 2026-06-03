@@ -11,21 +11,19 @@ const rest = essays.filter((e) => e.slug !== featured?.slug);
 
 <BaseLayout
   title="Essays"
-  description="Long-form analysis on frontier AI, research directions, and technical systems."
+  description="Long-form analysis on frontier AI, research directions, and technical change."
 >
   <div class="listing site-container">
-    <header class="listing-header">
-      <h1 class="listing-title">Essays</h1>
-      <p class="listing-dek">
-        Long-form analysis for readers who want argument, context, and technical depth.
-      </p>
+    <header class="page-header">
+      <h1 class="page-title">Essays</h1>
+      <p class="page-dek">Long-form analysis on frontier AI, research directions, and technical change.</p>
     </header>
     {featured && (
       <div class="listing-featured">
-        <FeaturedStory article={featured} label="Featured essay" />
+        <FeaturedStory article={featured} label="Featured essay" size="lead" />
       </div>
     )}
-    <div class="listing-rows">
+    <div class="listing-feed">
       {rest.map((article) => (
         <ArticleRow article={article} showTopics />
       ))}
@@ -34,37 +32,7 @@ const rest = essays.filter((e) => e.slug !== featured?.slug);
 </BaseLayout>
 
 <style>
-  .listing {
-    padding: 2rem 0 3rem;
-  }
-
-  .listing-title {
-    font-family: var(--font-serif);
-    font-size: 2.25rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 0.98;
-    margin: 0;
-  }
-
-  .listing-dek {
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-    color: var(--muted);
-    max-width: 48ch;
-    margin: 0.75rem 0 1.5rem;
-    line-height: 1.5;
-  }
-
-  .listing-header {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--rule);
-    margin-bottom: 1.25rem;
-  }
-
-  .listing-featured {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
+  .listing { padding: 1.75rem 0 3rem; }
+  .listing-featured { margin-bottom: 2rem; }
+  .listing-feed :global(.article-row:first-child) { border-top: 2px solid var(--rule); }
 </style>

@@ -9,7 +9,7 @@ const { items, label = 'In Short' } = Astro.props;
 
 {items.length > 0 && (
   <aside class="summary-box" aria-labelledby="summary-box-heading">
-    <p class="summary-label" id="summary-box-heading">{label}</p>
+    <p class="label" id="summary-box-heading">{label}</p>
     <ul class="summary-list">
       {items.map((item) => (
         <li>{item}</li>
@@ -20,27 +20,18 @@ const { items, label = 'In Short' } = Astro.props;
 
 <style>
   .summary-box {
-    border: 1px solid var(--border);
-    background: var(--paper);
-    padding: 1rem 1.15rem;
+    border-top: 2px solid var(--rule);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0 1.15rem;
     margin: 1.5rem 0;
   }
 
-  .summary-label {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 0.65rem;
-  }
-
   .summary-list {
-    margin: 0;
-    padding-left: 1.15rem;
-    font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.55;
+    margin: 0.65rem 0 0;
+    padding-left: 1.2rem;
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
     color: var(--text);
   }
 

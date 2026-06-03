@@ -1,11 +1,11 @@
 @import "./tokens.css";
 
 @import "@fontsource/newsreader/400.css";
+@import "@fontsource/newsreader/500.css";
 @import "@fontsource/newsreader/700.css";
 @import "@fontsource/source-serif-4/400.css";
+@import "@fontsource/source-serif-4/600.css";
 @import "@fontsource/source-serif-4/700.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
 @import "@fontsource/ibm-plex-sans/400.css";
 @import "@fontsource/ibm-plex-sans/500.css";
 @import "@fontsource/ibm-plex-mono/400.css";
@@ -24,10 +24,9 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: var(--font-serif);
-  font-size: 18px;
-  line-height: 1.65;
-  letter-spacing: 0;
+  font-family: var(--font-body);
+  font-size: 19px;
+  line-height: 1.68;
   color: var(--text);
   background-color: var(--bg);
 }
@@ -45,26 +44,52 @@ video {
   padding: 0 24px;
 }
 
+.label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.section {
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+}
+
+.front-section {
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+}
+
+.front-section:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
 .article-body {
   max-width: 680px;
+  font-family: var(--font-body);
+  font-size: 19px;
+  line-height: 1.68;
 }
 
 .article-body :where(h1, h2, h3, h4) {
-  font-family: var(--font-serif);
+  font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 0.98;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
   color: var(--text);
 }
 
 .article-body :where(h2, h3, h4) {
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  margin: 2rem 0 0.75rem;
 }
 
 .article-body :where(p, ul, ol, blockquote) {
-  margin-top: 0;
-  margin-bottom: 1.25rem;
+  margin: 0 0 1.15em;
 }
 
 .article-body :where(ul, ol) {
@@ -79,7 +104,7 @@ video {
 
 .article-body :where(pre, code) {
   font-family: var(--font-mono);
-  font-size: 0.9em;
+  font-size: 0.88em;
 }
 
 .article-body :where(pre) {
@@ -89,12 +114,22 @@ video {
   border: 1px solid var(--border);
 }
 
-.meta-label {
-  font-family: var(--font-sans);
+.button {
+  font-family: var(--font-ui);
   font-size: 12px;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--muted);
+  letter-spacing: 0.06em;
+  border: 1px solid var(--rule);
+  background: var(--text);
+  color: var(--paper);
+  padding: 10px 14px;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 hr,
@@ -140,7 +175,7 @@ select:focus-visible {
   overflow: hidden;
   z-index: 100;
   padding: 0.5rem 1rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-ui);
   font-size: 14px;
   background: var(--paper);
   color: var(--text);
@@ -154,4 +189,39 @@ select:focus-visible {
   top: 1rem;
   width: auto;
   height: auto;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin: 0;
+}
+
+.page-dek {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 52ch;
+  margin: 0.75rem 0 0;
+}
+
+.page-header {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--rule);
+}
+
+/* Legacy alias */
+.meta-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
 }

@@ -52,7 +52,8 @@ const metadata = { type, date, readingTime, author, topics };
 >
   <article class="article-page site-container">
     <div class="article-grid">
-      <aside class="article-rail article-rail--left" aria-label="Article navigation">
+      <aside class="article-rail article-rail--left" aria-label="Article metadata">
+        <ArticleTypeLabel type={type} />
         <MetadataLine {...metadata} />
         {toc.length > 0 && <TableOfContents headings={toc} />}
         <slot name="left" />
@@ -81,16 +82,19 @@ const metadata = { type, date, readingTime, author, topics };
 
       <aside class="article-rail article-rail--right" aria-label="Related reading">
         <RelatedReading articles={related} />
-        <NewsletterSignup compact />
         <slot name="right" />
       </aside>
+    </div>
+
+    <div class="article-footer-cta">
+      <NewsletterSignup compact />
     </div>
   </article>
 </BaseLayout>
 
 <style>
   .article-page {
-    padding: 2rem 0 3rem;
+    padding: 1.75rem 0 3rem;
   }
 
   .article-grid {
@@ -99,105 +103,96 @@ const metadata = { type, date, readingTime, author, topics };
   }
 
   .article-header {
-    margin-bottom: 0.5rem;
-    padding-bottom: 1rem;
+    margin-bottom: 32px;
+    padding-bottom: 1.25rem;
     border-bottom: 1px solid var(--border);
   }
 
   .article-title {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 4vw, 2.65rem);
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 0.98;
     margin: 0.5rem 0 0.35rem;
     color: var(--text);
-    max-width: 20ch;
+    max-width: 16ch;
   }
 
   .article-subtitle {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    line-height: 1.45;
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    line-height: 1.5;
     color: var(--muted);
-    margin: 0 0 0.75rem;
-    max-width: 42ch;
-  }
-
-  .article-body {
-    max-width: 680px;
-    font-family: var(--font-serif);
-    font-size: 18px;
-    line-height: 1.65;
-    color: var(--text);
-  }
-
-  .article-body :global(h2) {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 2.25rem 0 0.75rem;
-    line-height: 1.15;
-  }
-
-  .article-body :global(h3) {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 1.75rem 0 0.5rem;
-  }
-
-  .article-body :global(p) {
-    margin: 0 0 1.1rem;
-  }
-
-  .article-body :global(a) {
-    color: var(--text);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  .article-body :global(a:hover) {
-    color: var(--accent);
+    margin: 0 0 0.85rem;
+    max-width: 44ch;
   }
 
   .article-rail--left {
     display: none;
   }
 
-  @media (min-width: 1024px) {
+  .article-rail--left :global(.type-label) {
+    margin-bottom: 0.65rem;
+    display: block;
+  }
+
+  .article-footer-cta {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    max-width: 28rem;
+  }
+
+  @media (min-width: 1100px) {
     .article-grid {
-      grid-template-columns: minmax(160px, 200px) minmax(0, 1fr) minmax(200px, 240px);
-      align-items: start;
-      gap: 2.5rem;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 3rem;
     }
 
     .article-rail--left {
       display: block;
       position: sticky;
       top: 1.5rem;
+      align-self: start;
     }
 
+    .article-header :global(.type-label),
     .article-header-meta {
       display: none;
     }
 
     .article-rail--right {
-      position: sticky;
-      top: 1.5rem;
+      display: none;
     }
 
     .article-main {
-      min-width: 0;
+      max-width: 720px;
     }
   }
 
-  @media (max-width: 1023px) {
+  @media (min-width: 1400px) {
+    .article-grid {
+      grid-template-columns: 180px minmax(0, 680px) 220px;
+    }
+
+    .article-rail--right {
+      display: block;
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+    }
+
+    .article-footer-cta {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1099px) {
     .article-rail--right {
       margin-top: 2rem;
       padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
+      border-top: 2px solid var(--rule);
     }
   }
 </style>

@@ -10,16 +10,15 @@ const { homeHref = '/' } = Astro.props;
 
 <div class="masthead">
   <a class="masthead-link" href={homeHref}>
-    <span class="masthead-name">{site.name}</span>
-    {site.tagline && <span class="masthead-tagline">{site.tagline}</span>}
+    <span class="masthead-title">{site.name}</span>
   </a>
 </div>
 
 <style>
   .masthead {
     text-align: center;
-    padding: 1.25rem 0 0.85rem;
-    border-bottom: 1px solid var(--rule);
+    padding: 1rem 0 0.75rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .masthead-link {
@@ -28,27 +27,17 @@ const { homeHref = '/' } = Astro.props;
     display: inline-block;
   }
 
-  .masthead-link:hover .masthead-name {
+  .masthead-link:hover .masthead-title {
     color: var(--accent);
   }
 
-  .masthead-name {
+  .masthead-title {
     display: block;
-    font-family: var(--font-serif);
-    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    font-family: var(--font-display);
+    font-size: clamp(48px, 9vw, 112px);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
     font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 0.95;
     color: var(--text);
-  }
-
-  .masthead-tagline {
-    display: block;
-    font-family: var(--font-sans);
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--faint);
-    margin-top: 0.45rem;
   }
 </style>

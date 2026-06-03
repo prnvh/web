@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ReadingPath from '../components/ReadingPath.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
 import { getArticles, getArticleSlug, getArticlePath } from '../utils/articles';
 
 const all = await getArticles();
@@ -10,37 +9,37 @@ const bySlug = new Map(all.map((a) => [getArticleSlug(a), a]));
 const paths = [
   {
     title: 'Frontier AI foundations',
-    description: 'Core concepts in scaling, evaluation, and what “frontier” actually means in research discourse.',
+    description: 'Scaling, evaluation, and what counts as evidence in frontier systems.',
     difficulty: 'accessible',
     slugs: ['frontier-ai-foundations', 'why-next-token-prediction-may-not-be-enough', 'scaling-laws-still-matter'],
   },
   {
     title: 'AGI and world models',
-    description: 'Architectural bets beyond next-token prediction — latent prediction, planning, and generality.',
+    description: 'Architectural bets beyond next-token prediction.',
     difficulty: 'intermediate',
     slugs: ['a-map-of-current-agi-research-directions', 'world-models-explained', 'jepa-latent-prediction-brief'],
   },
   {
     title: 'Evaluation and benchmarks',
-    description: 'What leaderboards measure, when they mislead, and how to read new results.',
+    description: 'What leaderboards measure and when they mislead.',
     difficulty: 'intermediate',
     slugs: ['benchmarks-that-matter', 'a-map-of-ai-evaluation'],
   },
   {
     title: 'Compute and infrastructure',
-    description: 'Training economics, clusters, and the systems layer under model progress.',
+    description: 'Training economics and the systems layer under model progress.',
     difficulty: 'technical',
     slugs: ['compute-frontier-brief'],
   },
   {
     title: 'Interpretability and safety',
-    description: 'Mechanistic understanding, alignment debates, and what is knowable today.',
+    description: 'Mechanistic work and what we can claim today.',
     difficulty: 'technical',
     slugs: ['interpretability-landscape-brief'],
   },
   {
     title: 'India and frontier AI',
-    description: 'Policy, talent, and deployment context for AI in India — without hype framing.',
+    description: 'Policy, talent, and deployment without hype framing.',
     difficulty: 'accessible',
     slugs: ['india-ai-policy-brief'],
   },
@@ -49,13 +48,13 @@ const paths = [
 
 <BaseLayout
   title="Start Here"
-  description="Reading paths for new readers — oriented coverage of frontier AI and technology."
+  description="Reading paths for new readers."
 >
   <div class="start-page site-container">
-    <header>
+    <header class="page-header">
       <h1 class="page-title">Start Here</h1>
-      <p class="page-intro">
-        This publication explains frontier AI and technology for technical readers who want depth without unnecessary fog. Use the paths below instead of scrolling a chronological feed.
+      <p class="page-dek">
+        This publication explains frontier AI and technology for technical readers who want depth without unnecessary fog.
       </p>
     </header>
 
@@ -79,35 +78,10 @@ const paths = [
         );
       })}
     </div>
-
-    <NewsletterSignup />
   </div>
 </BaseLayout>
 
 <style>
-  .start-page {
-    padding: 2rem 0 3rem;
-    max-width: 720px;
-  }
-
-  .page-title {
-    font-family: var(--font-serif);
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    margin: 0;
-  }
-
-  .page-intro {
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    line-height: 1.55;
-    color: var(--muted);
-    margin: 1rem 0 2rem;
-    max-width: 58ch;
-  }
-
-  .paths {
-    margin-bottom: 2.5rem;
-  }
+  .start-page { padding: 1.75rem 0 3rem; max-width: 720px; }
+  .paths { margin-top: 0.5rem; }
 </style>
